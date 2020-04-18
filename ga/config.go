@@ -1,3 +1,5 @@
+// Copyright 2020 D33pBlue
+
 package ga
 
 import(

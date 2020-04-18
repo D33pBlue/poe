@@ -1,3 +1,9 @@
+// Copyright 2020 D33pBlue
+
+// Package op defines the operators the user should
+// use to define his Evaluator. When used, these operators
+// update a State. At the end of the execution
+// the miner can get an approximation of Evaluator's complexity.
 package op
 
 import (

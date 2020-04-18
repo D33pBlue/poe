@@ -29,8 +29,12 @@ func executeGA(dna ga.DNA,chIn,chOut chan ga.Packet){
 
 func main(){
   fmt.Println("Proof of Evolution")
-  dna := ga.LoadGA("examples/tsp/","tsp",
+  dna,err := ga.LoadGA("examples/tsp/","tsp",
     "examples/tsp/data/tsp0/burma14.json")
+  if err!=nil{
+    fmt.Println(err)
+    return
+  }
   chOut := make(chan ga.Packet)
   chIn := make(chan ga.Packet)
   go executeGA(dna,chIn,chOut)
