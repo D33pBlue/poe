@@ -1,16 +1,31 @@
+// Copyright 2020 D33pBlue
+
 package main
 
 import (
   "fmt"
+  "crypto/sha256"
   "github.com/D33pBlue/poe/ga"
 )
+
+func changeBH(conf *ga.Config){
+  // time.Sleep(100 * time.Millisecond)
+  first := sha256.New()
+	first.Write([]byte("ojeofbjeefqbeq"))
+	var hash []byte = first.Sum(nil)
+  conf.SetBlockHash(hash)
+}
 
 func executeGA(dna ga.DNA,chIn,chOut chan ga.Packet){
   var seed int64 = 42
   var generations int = 100
   var interrupt int = 10
-  ga.RunGA(dna,ga.RandConf(seed,generations,interrupt),chOut,chIn)
+  conf := ga.RandConf(seed,generations,interrupt)
+  changeBH(conf)
+  ga.RunGA(dna,conf,chOut,chIn)
 }
+
+
 
 func main(){
   fmt.Println("Proof of Evolution")

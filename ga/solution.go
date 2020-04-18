@@ -24,8 +24,8 @@ func (self Sol)DeepCopy()Sol {
   return *sol
 }
 
-func (self *Sol)eval(){
-  st := op.MakeState("")
+func (self *Sol)eval(st *op.State){
+  st.Reset()
   self.Fitness = self.Individual.Evaluate(st)
   self.Complex = st.NumOperations()
   self.IsEval = true

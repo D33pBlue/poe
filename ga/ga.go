@@ -1,3 +1,7 @@
+// Copyright 2020 D33pBlue
+
+// Package ga provides functions and types to define
+// and execute genetic algorithms.
 package ga
 
 import (
@@ -6,13 +10,15 @@ import (
   "math/rand"
 )
 
+// generatePopulation returns a random generated
+// population of n Sol, using an existing prng
+// and a dna.
 func generatePopulation(n int,dna DNA,prng *rand.Rand) (pop Population){
   for i:=0; i<n; i++{
     sol := new(Sol)
     sol.Individual = dna.Generate(prng)
     sol.Fitness = 9999999999999
     sol.IsEval = false
-    sol.eval()
     pop = append(pop,*sol)
   }
   return
@@ -57,13 +63,13 @@ func RunGA(dna DNA,conf *Config,chOut,chIn chan Packet){// (Population,Sol) {
   var prng *rand.Rand = rand.New(rand.NewSource(99))
   prng.Seed(conf.Miner)
   var population Population = generatePopulation(conf.NPop,dna,prng)
-  var bestOfAll Sol = population[0]
-  bestOfAll.eval()
+  var bestOfAll Sol = population.eval(conf.BlockHash)
+  // bestOfAll.eval()
   for epoch:=0; epoch<conf.Gen; epoch++{
-    population.reset()
     population = selectStd(population,conf.Mu)
     population = offspring(population,conf.Lambda,conf.Pcross,conf.Pmut,prng)
-    best := population.eval()
+    population.reset()
+    best := population.eval(conf.BlockHash)
     if Optimum(best.Fitness,bestOfAll.Fitness){
       bestOfAll = best
     }

@@ -15,6 +15,8 @@ func compilePlugin(dir,name string)error{
   baseName := dir+name
   cmd := exec.Command("go","build","-buildmode=plugin",
     "-o",baseName+".so",baseName+".go")
+  fmt.Println("go","build","-buildmode=plugin",
+    "-o",baseName+".so",baseName+".go")
   fmt.Println("Compiling plugin..")
 	return cmd.Run()
 }

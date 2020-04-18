@@ -14,6 +14,11 @@ type Config struct{
   Mu int
   Lambda int
   Verbose int
+  BlockHash []byte
+}
+
+func (c *Config)SetBlockHash(hash []byte){
+  c.BlockHash = hash
 }
 
 func DefConf(x int64,gen,step int)*Config{
