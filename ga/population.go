@@ -1,3 +1,15 @@
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-18
+ * @Project: Proof of Evolution
+ * @Filename: population.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
+
 // Copyright 2020 D33pBlue
 
 package ga
@@ -7,9 +19,13 @@ import(
 )
 
 type Comp func(float64,float64)bool
+
+// Function to choose for maximization problems.
 func Maximize(s1,s2 float64) bool{
   return s1 > s2
 }
+
+// Function to choose for minimization problems.
 func Minimize(s1,s2 float64) bool{
   return s1 < s2
 }
@@ -21,14 +37,7 @@ type Population []Sol
 func (a Population) Len() int { return len(a) }
 func (a Population) Swap(i, j int){ a[i], a[j] = a[j], a[i] }
 func (a Population) Less(i, j int) bool {
-  if !a[i].IsEval{
-    // a[i].eval()
-    panic("Solution not evaluated!")
-  }
-  if !a[j].IsEval{
-    // a[j].eval()
-    panic("Solution not evaluated!")
-  }
+  // if !a[i].IsEval || !a[j].IsEval{return }
   return Optimum(a[i].Fitness,a[j].Fitness)
 }
 

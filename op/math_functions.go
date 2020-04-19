@@ -1,10 +1,21 @@
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-17
+ * @Project: Proof of Evolution
+ * @Filename: math_functions.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
+
 package op
 
 import(
   "fmt"
   "math"
 )
-
 
 func wrap1(a any,f func(float64)float64)any{
   var t string = fmt.Sprintf("%T", a)

@@ -1,4 +1,17 @@
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-17
+ * @Project: Proof of Evolution
+ * @Filename: assignment.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
+
 package op
+
 
 func (self *State)SetInt(a *int,b any){
   self.IncOperations(self.coeff["assign"]+self.off["assign"])

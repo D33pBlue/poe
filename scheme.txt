@@ -1,0 +1,3497 @@
+Proof of Evolution
+     0  *ast.File {
+     1  .  Package: examples/tsp/tsp.go:1:1
+     2  .  Name: *ast.Ident {
+     3  .  .  NamePos: examples/tsp/tsp.go:1:9
+     4  .  .  Name: "main"
+     5  .  }
+     6  .  Decls: []ast.Decl (len = 15) {
+     7  .  .  0: *ast.GenDecl {
+     8  .  .  .  TokPos: examples/tsp/tsp.go:3:1
+     9  .  .  .  Tok: import
+    10  .  .  .  Lparen: examples/tsp/tsp.go:3:7
+    11  .  .  .  Specs: []ast.Spec (len = 5) {
+    12  .  .  .  .  0: *ast.ImportSpec {
+    13  .  .  .  .  .  Path: *ast.BasicLit {
+    14  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:4:3
+    15  .  .  .  .  .  .  Kind: STRING
+    16  .  .  .  .  .  .  Value: "\"math/rand\""
+    17  .  .  .  .  .  }
+    18  .  .  .  .  .  EndPos: -
+    19  .  .  .  .  }
+    20  .  .  .  .  1: *ast.ImportSpec {
+    21  .  .  .  .  .  Path: *ast.BasicLit {
+    22  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:5:3
+    23  .  .  .  .  .  .  Kind: STRING
+    24  .  .  .  .  .  .  Value: "\"io/ioutil\""
+    25  .  .  .  .  .  }
+    26  .  .  .  .  .  EndPos: -
+    27  .  .  .  .  }
+    28  .  .  .  .  2: *ast.ImportSpec {
+    29  .  .  .  .  .  Path: *ast.BasicLit {
+    30  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:6:3
+    31  .  .  .  .  .  .  Kind: STRING
+    32  .  .  .  .  .  .  Value: "\"encoding/json\""
+    33  .  .  .  .  .  }
+    34  .  .  .  .  .  EndPos: -
+    35  .  .  .  .  }
+    36  .  .  .  .  3: *ast.ImportSpec {
+    37  .  .  .  .  .  Path: *ast.BasicLit {
+    38  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:7:3
+    39  .  .  .  .  .  .  Kind: STRING
+    40  .  .  .  .  .  .  Value: "\"github.com/D33pBlue/poe/op\""
+    41  .  .  .  .  .  }
+    42  .  .  .  .  .  EndPos: -
+    43  .  .  .  .  }
+    44  .  .  .  .  4: *ast.ImportSpec {
+    45  .  .  .  .  .  Name: *ast.Ident {
+    46  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:8:3
+    47  .  .  .  .  .  .  Name: "."
+    48  .  .  .  .  .  }
+    49  .  .  .  .  .  Path: *ast.BasicLit {
+    50  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:8:5
+    51  .  .  .  .  .  .  Kind: STRING
+    52  .  .  .  .  .  .  Value: "\"github.com/D33pBlue/poe/ga\""
+    53  .  .  .  .  .  }
+    54  .  .  .  .  .  EndPos: -
+    55  .  .  .  .  }
+    56  .  .  .  }
+    57  .  .  .  Rparen: examples/tsp/tsp.go:9:1
+    58  .  .  }
+    59  .  .  1: *ast.GenDecl {
+    60  .  .  .  TokPos: examples/tsp/tsp.go:11:1
+    61  .  .  .  Tok: type
+    62  .  .  .  Lparen: -
+    63  .  .  .  Specs: []ast.Spec (len = 1) {
+    64  .  .  .  .  0: *ast.TypeSpec {
+    65  .  .  .  .  .  Name: *ast.Ident {
+    66  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:11:6
+    67  .  .  .  .  .  .  Name: "Problem"
+    68  .  .  .  .  .  .  Obj: *ast.Object {
+    69  .  .  .  .  .  .  .  Kind: type
+    70  .  .  .  .  .  .  .  Name: "Problem"
+    71  .  .  .  .  .  .  .  Decl: *(obj @ 64)
+    72  .  .  .  .  .  .  }
+    73  .  .  .  .  .  }
+    74  .  .  .  .  .  Assign: -
+    75  .  .  .  .  .  Type: *ast.StructType {
+    76  .  .  .  .  .  .  Struct: examples/tsp/tsp.go:11:14
+    77  .  .  .  .  .  .  Fields: *ast.FieldList {
+    78  .  .  .  .  .  .  .  Opening: examples/tsp/tsp.go:11:20
+    79  .  .  .  .  .  .  .  List: []*ast.Field (len = 3) {
+    80  .  .  .  .  .  .  .  .  0: *ast.Field {
+    81  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+    82  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+    83  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:12:3
+    84  .  .  .  .  .  .  .  .  .  .  .  Name: "TourSize"
+    85  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+    86  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+    87  .  .  .  .  .  .  .  .  .  .  .  .  Name: "TourSize"
+    88  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 80)
+    89  .  .  .  .  .  .  .  .  .  .  .  }
+    90  .  .  .  .  .  .  .  .  .  .  }
+    91  .  .  .  .  .  .  .  .  .  }
+    92  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+    93  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:12:12
+    94  .  .  .  .  .  .  .  .  .  .  Name: "int"
+    95  .  .  .  .  .  .  .  .  .  }
+    96  .  .  .  .  .  .  .  .  }
+    97  .  .  .  .  .  .  .  .  1: *ast.Field {
+    98  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+    99  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   100  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:13:3
+   101  .  .  .  .  .  .  .  .  .  .  .  Name: "DistanceMatrix"
+   102  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   103  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+   104  .  .  .  .  .  .  .  .  .  .  .  .  Name: "DistanceMatrix"
+   105  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 97)
+   106  .  .  .  .  .  .  .  .  .  .  .  }
+   107  .  .  .  .  .  .  .  .  .  .  }
+   108  .  .  .  .  .  .  .  .  .  }
+   109  .  .  .  .  .  .  .  .  .  Type: *ast.ArrayType {
+   110  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:13:18
+   111  .  .  .  .  .  .  .  .  .  .  Elt: *ast.ArrayType {
+   112  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:13:20
+   113  .  .  .  .  .  .  .  .  .  .  .  Elt: *ast.Ident {
+   114  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:13:22
+   115  .  .  .  .  .  .  .  .  .  .  .  .  Name: "float64"
+   116  .  .  .  .  .  .  .  .  .  .  .  }
+   117  .  .  .  .  .  .  .  .  .  .  }
+   118  .  .  .  .  .  .  .  .  .  }
+   119  .  .  .  .  .  .  .  .  }
+   120  .  .  .  .  .  .  .  .  2: *ast.Field {
+   121  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+   122  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   123  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:14:3
+   124  .  .  .  .  .  .  .  .  .  .  .  Name: "OptDistance"
+   125  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   126  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+   127  .  .  .  .  .  .  .  .  .  .  .  .  Name: "OptDistance"
+   128  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 120)
+   129  .  .  .  .  .  .  .  .  .  .  .  }
+   130  .  .  .  .  .  .  .  .  .  .  }
+   131  .  .  .  .  .  .  .  .  .  }
+   132  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+   133  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:14:15
+   134  .  .  .  .  .  .  .  .  .  .  Name: "float64"
+   135  .  .  .  .  .  .  .  .  .  }
+   136  .  .  .  .  .  .  .  .  }
+   137  .  .  .  .  .  .  .  }
+   138  .  .  .  .  .  .  .  Closing: examples/tsp/tsp.go:15:1
+   139  .  .  .  .  .  .  }
+   140  .  .  .  .  .  .  Incomplete: false
+   141  .  .  .  .  .  }
+   142  .  .  .  .  }
+   143  .  .  .  }
+   144  .  .  .  Rparen: -
+   145  .  .  }
+   146  .  .  2: *ast.GenDecl {
+   147  .  .  .  TokPos: examples/tsp/tsp.go:17:1
+   148  .  .  .  Tok: var
+   149  .  .  .  Lparen: -
+   150  .  .  .  Specs: []ast.Spec (len = 1) {
+   151  .  .  .  .  0: *ast.ValueSpec {
+   152  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+   153  .  .  .  .  .  .  0: *ast.Ident {
+   154  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:17:5
+   155  .  .  .  .  .  .  .  Name: "problem"
+   156  .  .  .  .  .  .  .  Obj: *ast.Object {
+   157  .  .  .  .  .  .  .  .  Kind: var
+   158  .  .  .  .  .  .  .  .  Name: "problem"
+   159  .  .  .  .  .  .  .  .  Decl: *(obj @ 151)
+   160  .  .  .  .  .  .  .  .  Data: 0
+   161  .  .  .  .  .  .  .  }
+   162  .  .  .  .  .  .  }
+   163  .  .  .  .  .  }
+   164  .  .  .  .  .  Type: *ast.Ident {
+   165  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:17:13
+   166  .  .  .  .  .  .  Name: "Problem"
+   167  .  .  .  .  .  .  Obj: *(obj @ 68)
+   168  .  .  .  .  .  }
+   169  .  .  .  .  }
+   170  .  .  .  }
+   171  .  .  .  Rparen: -
+   172  .  .  }
+   173  .  .  3: *ast.GenDecl {
+   174  .  .  .  TokPos: examples/tsp/tsp.go:19:1
+   175  .  .  .  Tok: type
+   176  .  .  .  Lparen: -
+   177  .  .  .  Specs: []ast.Spec (len = 1) {
+   178  .  .  .  .  0: *ast.TypeSpec {
+   179  .  .  .  .  .  Name: *ast.Ident {
+   180  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:19:6
+   181  .  .  .  .  .  .  Name: "TSP"
+   182  .  .  .  .  .  .  Obj: *ast.Object {
+   183  .  .  .  .  .  .  .  Kind: type
+   184  .  .  .  .  .  .  .  Name: "TSP"
+   185  .  .  .  .  .  .  .  Decl: *(obj @ 178)
+   186  .  .  .  .  .  .  }
+   187  .  .  .  .  .  }
+   188  .  .  .  .  .  Assign: -
+   189  .  .  .  .  .  Type: *ast.StructType {
+   190  .  .  .  .  .  .  Struct: examples/tsp/tsp.go:19:10
+   191  .  .  .  .  .  .  Fields: *ast.FieldList {
+   192  .  .  .  .  .  .  .  Opening: examples/tsp/tsp.go:19:16
+   193  .  .  .  .  .  .  .  List: []*ast.Field (len = 1) {
+   194  .  .  .  .  .  .  .  .  0: *ast.Field {
+   195  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+   196  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   197  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:20:3
+   198  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+   199  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   200  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+   201  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+   202  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 194)
+   203  .  .  .  .  .  .  .  .  .  .  .  }
+   204  .  .  .  .  .  .  .  .  .  .  }
+   205  .  .  .  .  .  .  .  .  .  }
+   206  .  .  .  .  .  .  .  .  .  Type: *ast.ArrayType {
+   207  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:20:8
+   208  .  .  .  .  .  .  .  .  .  .  Elt: *ast.Ident {
+   209  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:20:10
+   210  .  .  .  .  .  .  .  .  .  .  .  Name: "int"
+   211  .  .  .  .  .  .  .  .  .  .  }
+   212  .  .  .  .  .  .  .  .  .  }
+   213  .  .  .  .  .  .  .  .  }
+   214  .  .  .  .  .  .  .  }
+   215  .  .  .  .  .  .  .  Closing: examples/tsp/tsp.go:21:1
+   216  .  .  .  .  .  .  }
+   217  .  .  .  .  .  .  Incomplete: false
+   218  .  .  .  .  .  }
+   219  .  .  .  .  }
+   220  .  .  .  }
+   221  .  .  .  Rparen: -
+   222  .  .  }
+   223  .  .  4: *ast.GenDecl {
+   224  .  .  .  TokPos: examples/tsp/tsp.go:23:1
+   225  .  .  .  Tok: type
+   226  .  .  .  Lparen: -
+   227  .  .  .  Specs: []ast.Spec (len = 1) {
+   228  .  .  .  .  0: *ast.TypeSpec {
+   229  .  .  .  .  .  Name: *ast.Ident {
+   230  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:23:6
+   231  .  .  .  .  .  .  Name: "definition"
+   232  .  .  .  .  .  .  Obj: *ast.Object {
+   233  .  .  .  .  .  .  .  Kind: type
+   234  .  .  .  .  .  .  .  Name: "definition"
+   235  .  .  .  .  .  .  .  Decl: *(obj @ 228)
+   236  .  .  .  .  .  .  }
+   237  .  .  .  .  .  }
+   238  .  .  .  .  .  Assign: -
+   239  .  .  .  .  .  Type: *ast.Ident {
+   240  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:23:17
+   241  .  .  .  .  .  .  Name: "string"
+   242  .  .  .  .  .  }
+   243  .  .  .  .  }
+   244  .  .  .  }
+   245  .  .  .  Rparen: -
+   246  .  .  }
+   247  .  .  5: *ast.FuncDecl {
+   248  .  .  .  Recv: *ast.FieldList {
+   249  .  .  .  .  Opening: examples/tsp/tsp.go:25:6
+   250  .  .  .  .  List: []*ast.Field (len = 1) {
+   251  .  .  .  .  .  0: *ast.Field {
+   252  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+   253  .  .  .  .  .  .  .  0: *ast.Ident {
+   254  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:25:7
+   255  .  .  .  .  .  .  .  .  Name: "s"
+   256  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   257  .  .  .  .  .  .  .  .  .  Kind: var
+   258  .  .  .  .  .  .  .  .  .  Name: "s"
+   259  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 251)
+   260  .  .  .  .  .  .  .  .  }
+   261  .  .  .  .  .  .  .  }
+   262  .  .  .  .  .  .  }
+   263  .  .  .  .  .  .  Type: *ast.Ident {
+   264  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:25:9
+   265  .  .  .  .  .  .  .  Name: "definition"
+   266  .  .  .  .  .  .  .  Obj: *(obj @ 232)
+   267  .  .  .  .  .  .  }
+   268  .  .  .  .  .  }
+   269  .  .  .  .  }
+   270  .  .  .  .  Closing: examples/tsp/tsp.go:25:19
+   271  .  .  .  }
+   272  .  .  .  Name: *ast.Ident {
+   273  .  .  .  .  NamePos: examples/tsp/tsp.go:25:20
+   274  .  .  .  .  Name: "Initialize"
+   275  .  .  .  }
+   276  .  .  .  Type: *ast.FuncType {
+   277  .  .  .  .  Func: examples/tsp/tsp.go:25:1
+   278  .  .  .  .  Params: *ast.FieldList {
+   279  .  .  .  .  .  Opening: examples/tsp/tsp.go:25:30
+   280  .  .  .  .  .  List: []*ast.Field (len = 1) {
+   281  .  .  .  .  .  .  0: *ast.Field {
+   282  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+   283  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   284  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:25:31
+   285  .  .  .  .  .  .  .  .  .  Name: "path"
+   286  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   287  .  .  .  .  .  .  .  .  .  .  Kind: var
+   288  .  .  .  .  .  .  .  .  .  .  Name: "path"
+   289  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 281)
+   290  .  .  .  .  .  .  .  .  .  }
+   291  .  .  .  .  .  .  .  .  }
+   292  .  .  .  .  .  .  .  }
+   293  .  .  .  .  .  .  .  Type: *ast.Ident {
+   294  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:25:36
+   295  .  .  .  .  .  .  .  .  Name: "string"
+   296  .  .  .  .  .  .  .  }
+   297  .  .  .  .  .  .  }
+   298  .  .  .  .  .  }
+   299  .  .  .  .  .  Closing: examples/tsp/tsp.go:25:42
+   300  .  .  .  .  }
+   301  .  .  .  }
+   302  .  .  .  Body: *ast.BlockStmt {
+   303  .  .  .  .  Lbrace: examples/tsp/tsp.go:25:43
+   304  .  .  .  .  List: []ast.Stmt (len = 4) {
+   305  .  .  .  .  .  0: *ast.AssignStmt {
+   306  .  .  .  .  .  .  Lhs: []ast.Expr (len = 2) {
+   307  .  .  .  .  .  .  .  0: *ast.Ident {
+   308  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:26:3
+   309  .  .  .  .  .  .  .  .  Name: "dat"
+   310  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   311  .  .  .  .  .  .  .  .  .  Kind: var
+   312  .  .  .  .  .  .  .  .  .  Name: "dat"
+   313  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 305)
+   314  .  .  .  .  .  .  .  .  }
+   315  .  .  .  .  .  .  .  }
+   316  .  .  .  .  .  .  .  1: *ast.Ident {
+   317  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:26:8
+   318  .  .  .  .  .  .  .  .  Name: "err"
+   319  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   320  .  .  .  .  .  .  .  .  .  Kind: var
+   321  .  .  .  .  .  .  .  .  .  Name: "err"
+   322  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 305)
+   323  .  .  .  .  .  .  .  .  }
+   324  .  .  .  .  .  .  .  }
+   325  .  .  .  .  .  .  }
+   326  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:26:12
+   327  .  .  .  .  .  .  Tok: :=
+   328  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+   329  .  .  .  .  .  .  .  0: *ast.CallExpr {
+   330  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+   331  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   332  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:26:15
+   333  .  .  .  .  .  .  .  .  .  .  Name: "ioutil"
+   334  .  .  .  .  .  .  .  .  .  }
+   335  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   336  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:26:22
+   337  .  .  .  .  .  .  .  .  .  .  Name: "ReadFile"
+   338  .  .  .  .  .  .  .  .  .  }
+   339  .  .  .  .  .  .  .  .  }
+   340  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:26:30
+   341  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+   342  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   343  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:26:31
+   344  .  .  .  .  .  .  .  .  .  .  Name: "path"
+   345  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 286)
+   346  .  .  .  .  .  .  .  .  .  }
+   347  .  .  .  .  .  .  .  .  }
+   348  .  .  .  .  .  .  .  .  Ellipsis: -
+   349  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:26:35
+   350  .  .  .  .  .  .  .  }
+   351  .  .  .  .  .  .  }
+   352  .  .  .  .  .  }
+   353  .  .  .  .  .  1: *ast.IfStmt {
+   354  .  .  .  .  .  .  If: examples/tsp/tsp.go:27:3
+   355  .  .  .  .  .  .  Cond: *ast.BinaryExpr {
+   356  .  .  .  .  .  .  .  X: *ast.Ident {
+   357  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:27:6
+   358  .  .  .  .  .  .  .  .  Name: "err"
+   359  .  .  .  .  .  .  .  .  Obj: *(obj @ 319)
+   360  .  .  .  .  .  .  .  }
+   361  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:27:10
+   362  .  .  .  .  .  .  .  Op: !=
+   363  .  .  .  .  .  .  .  Y: *ast.Ident {
+   364  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:27:13
+   365  .  .  .  .  .  .  .  .  Name: "nil"
+   366  .  .  .  .  .  .  .  }
+   367  .  .  .  .  .  .  }
+   368  .  .  .  .  .  .  Body: *ast.BlockStmt {
+   369  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:27:17
+   370  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+   371  .  .  .  .  .  .  .  .  0: *ast.ExprStmt {
+   372  .  .  .  .  .  .  .  .  .  X: *ast.CallExpr {
+   373  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+   374  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:27:19
+   375  .  .  .  .  .  .  .  .  .  .  .  Name: "panic"
+   376  .  .  .  .  .  .  .  .  .  .  }
+   377  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:27:24
+   378  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+   379  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   380  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:27:25
+   381  .  .  .  .  .  .  .  .  .  .  .  .  Name: "err"
+   382  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 319)
+   383  .  .  .  .  .  .  .  .  .  .  .  }
+   384  .  .  .  .  .  .  .  .  .  .  }
+   385  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+   386  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:27:28
+   387  .  .  .  .  .  .  .  .  .  }
+   388  .  .  .  .  .  .  .  .  }
+   389  .  .  .  .  .  .  .  }
+   390  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:27:30
+   391  .  .  .  .  .  .  }
+   392  .  .  .  .  .  }
+   393  .  .  .  .  .  2: *ast.AssignStmt {
+   394  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+   395  .  .  .  .  .  .  .  0: *ast.Ident {
+   396  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:28:3
+   397  .  .  .  .  .  .  .  .  Name: "err"
+   398  .  .  .  .  .  .  .  .  Obj: *(obj @ 319)
+   399  .  .  .  .  .  .  .  }
+   400  .  .  .  .  .  .  }
+   401  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:28:7
+   402  .  .  .  .  .  .  Tok: =
+   403  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+   404  .  .  .  .  .  .  .  0: *ast.CallExpr {
+   405  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+   406  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   407  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:28:9
+   408  .  .  .  .  .  .  .  .  .  .  Name: "json"
+   409  .  .  .  .  .  .  .  .  .  }
+   410  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   411  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:28:14
+   412  .  .  .  .  .  .  .  .  .  .  Name: "Unmarshal"
+   413  .  .  .  .  .  .  .  .  .  }
+   414  .  .  .  .  .  .  .  .  }
+   415  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:28:23
+   416  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+   417  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+   418  .  .  .  .  .  .  .  .  .  .  Fun: *ast.ArrayType {
+   419  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:28:24
+   420  .  .  .  .  .  .  .  .  .  .  .  Elt: *ast.Ident {
+   421  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:28:26
+   422  .  .  .  .  .  .  .  .  .  .  .  .  Name: "byte"
+   423  .  .  .  .  .  .  .  .  .  .  .  }
+   424  .  .  .  .  .  .  .  .  .  .  }
+   425  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:28:30
+   426  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+   427  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   428  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:28:31
+   429  .  .  .  .  .  .  .  .  .  .  .  .  Name: "dat"
+   430  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 310)
+   431  .  .  .  .  .  .  .  .  .  .  .  }
+   432  .  .  .  .  .  .  .  .  .  .  }
+   433  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+   434  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:28:34
+   435  .  .  .  .  .  .  .  .  .  }
+   436  .  .  .  .  .  .  .  .  .  1: *ast.UnaryExpr {
+   437  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:28:37
+   438  .  .  .  .  .  .  .  .  .  .  Op: &
+   439  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   440  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:28:38
+   441  .  .  .  .  .  .  .  .  .  .  .  Name: "problem"
+   442  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 156)
+   443  .  .  .  .  .  .  .  .  .  .  }
+   444  .  .  .  .  .  .  .  .  .  }
+   445  .  .  .  .  .  .  .  .  }
+   446  .  .  .  .  .  .  .  .  Ellipsis: -
+   447  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:28:45
+   448  .  .  .  .  .  .  .  }
+   449  .  .  .  .  .  .  }
+   450  .  .  .  .  .  }
+   451  .  .  .  .  .  3: *ast.IfStmt {
+   452  .  .  .  .  .  .  If: examples/tsp/tsp.go:29:3
+   453  .  .  .  .  .  .  Cond: *ast.BinaryExpr {
+   454  .  .  .  .  .  .  .  X: *ast.Ident {
+   455  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:29:6
+   456  .  .  .  .  .  .  .  .  Name: "err"
+   457  .  .  .  .  .  .  .  .  Obj: *(obj @ 319)
+   458  .  .  .  .  .  .  .  }
+   459  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:29:10
+   460  .  .  .  .  .  .  .  Op: !=
+   461  .  .  .  .  .  .  .  Y: *ast.Ident {
+   462  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:29:13
+   463  .  .  .  .  .  .  .  .  Name: "nil"
+   464  .  .  .  .  .  .  .  }
+   465  .  .  .  .  .  .  }
+   466  .  .  .  .  .  .  Body: *ast.BlockStmt {
+   467  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:29:17
+   468  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+   469  .  .  .  .  .  .  .  .  0: *ast.ExprStmt {
+   470  .  .  .  .  .  .  .  .  .  X: *ast.CallExpr {
+   471  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+   472  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:29:19
+   473  .  .  .  .  .  .  .  .  .  .  .  Name: "panic"
+   474  .  .  .  .  .  .  .  .  .  .  }
+   475  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:29:24
+   476  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+   477  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   478  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:29:25
+   479  .  .  .  .  .  .  .  .  .  .  .  .  Name: "err"
+   480  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 319)
+   481  .  .  .  .  .  .  .  .  .  .  .  }
+   482  .  .  .  .  .  .  .  .  .  .  }
+   483  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+   484  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:29:28
+   485  .  .  .  .  .  .  .  .  .  }
+   486  .  .  .  .  .  .  .  .  }
+   487  .  .  .  .  .  .  .  }
+   488  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:29:30
+   489  .  .  .  .  .  .  }
+   490  .  .  .  .  .  }
+   491  .  .  .  .  }
+   492  .  .  .  .  Rbrace: examples/tsp/tsp.go:30:1
+   493  .  .  .  }
+   494  .  .  }
+   495  .  .  6: *ast.FuncDecl {
+   496  .  .  .  Name: *ast.Ident {
+   497  .  .  .  .  NamePos: examples/tsp/tsp.go:32:6
+   498  .  .  .  .  Name: "build"
+   499  .  .  .  .  Obj: *ast.Object {
+   500  .  .  .  .  .  Kind: func
+   501  .  .  .  .  .  Name: "build"
+   502  .  .  .  .  .  Decl: *(obj @ 495)
+   503  .  .  .  .  }
+   504  .  .  .  }
+   505  .  .  .  Type: *ast.FuncType {
+   506  .  .  .  .  Func: examples/tsp/tsp.go:32:1
+   507  .  .  .  .  Params: *ast.FieldList {
+   508  .  .  .  .  .  Opening: examples/tsp/tsp.go:32:11
+   509  .  .  .  .  .  Closing: examples/tsp/tsp.go:32:12
+   510  .  .  .  .  }
+   511  .  .  .  .  Results: *ast.FieldList {
+   512  .  .  .  .  .  Opening: -
+   513  .  .  .  .  .  List: []*ast.Field (len = 1) {
+   514  .  .  .  .  .  .  0: *ast.Field {
+   515  .  .  .  .  .  .  .  Type: *ast.StarExpr {
+   516  .  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:32:13
+   517  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   518  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:32:14
+   519  .  .  .  .  .  .  .  .  .  Name: "TSP"
+   520  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+   521  .  .  .  .  .  .  .  .  }
+   522  .  .  .  .  .  .  .  }
+   523  .  .  .  .  .  .  }
+   524  .  .  .  .  .  }
+   525  .  .  .  .  .  Closing: -
+   526  .  .  .  .  }
+   527  .  .  .  }
+   528  .  .  .  Body: *ast.BlockStmt {
+   529  .  .  .  .  Lbrace: examples/tsp/tsp.go:32:17
+   530  .  .  .  .  List: []ast.Stmt (len = 3) {
+   531  .  .  .  .  .  0: *ast.DeclStmt {
+   532  .  .  .  .  .  .  Decl: *ast.GenDecl {
+   533  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:33:3
+   534  .  .  .  .  .  .  .  Tok: var
+   535  .  .  .  .  .  .  .  Lparen: -
+   536  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+   537  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+   538  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+   539  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   540  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:33:7
+   541  .  .  .  .  .  .  .  .  .  .  .  Name: "tsp"
+   542  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   543  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+   544  .  .  .  .  .  .  .  .  .  .  .  .  Name: "tsp"
+   545  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 537)
+   546  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+   547  .  .  .  .  .  .  .  .  .  .  .  }
+   548  .  .  .  .  .  .  .  .  .  .  }
+   549  .  .  .  .  .  .  .  .  .  }
+   550  .  .  .  .  .  .  .  .  .  Type: *ast.StarExpr {
+   551  .  .  .  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:33:11
+   552  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   553  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:33:12
+   554  .  .  .  .  .  .  .  .  .  .  .  Name: "TSP"
+   555  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+   556  .  .  .  .  .  .  .  .  .  .  }
+   557  .  .  .  .  .  .  .  .  .  }
+   558  .  .  .  .  .  .  .  .  .  Values: []ast.Expr (len = 1) {
+   559  .  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+   560  .  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+   561  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:33:18
+   562  .  .  .  .  .  .  .  .  .  .  .  .  Name: "new"
+   563  .  .  .  .  .  .  .  .  .  .  .  }
+   564  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:33:21
+   565  .  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+   566  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   567  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:33:22
+   568  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "TSP"
+   569  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+   570  .  .  .  .  .  .  .  .  .  .  .  .  }
+   571  .  .  .  .  .  .  .  .  .  .  .  }
+   572  .  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+   573  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:33:25
+   574  .  .  .  .  .  .  .  .  .  .  }
+   575  .  .  .  .  .  .  .  .  .  }
+   576  .  .  .  .  .  .  .  .  }
+   577  .  .  .  .  .  .  .  }
+   578  .  .  .  .  .  .  .  Rparen: -
+   579  .  .  .  .  .  .  }
+   580  .  .  .  .  .  }
+   581  .  .  .  .  .  1: *ast.ForStmt {
+   582  .  .  .  .  .  .  For: examples/tsp/tsp.go:34:3
+   583  .  .  .  .  .  .  Init: *ast.AssignStmt {
+   584  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+   585  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   586  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:34:7
+   587  .  .  .  .  .  .  .  .  .  Name: "i"
+   588  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   589  .  .  .  .  .  .  .  .  .  .  Kind: var
+   590  .  .  .  .  .  .  .  .  .  .  Name: "i"
+   591  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 583)
+   592  .  .  .  .  .  .  .  .  .  }
+   593  .  .  .  .  .  .  .  .  }
+   594  .  .  .  .  .  .  .  }
+   595  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:34:8
+   596  .  .  .  .  .  .  .  Tok: :=
+   597  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+   598  .  .  .  .  .  .  .  .  0: *ast.BasicLit {
+   599  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:34:10
+   600  .  .  .  .  .  .  .  .  .  Kind: INT
+   601  .  .  .  .  .  .  .  .  .  Value: "0"
+   602  .  .  .  .  .  .  .  .  }
+   603  .  .  .  .  .  .  .  }
+   604  .  .  .  .  .  .  }
+   605  .  .  .  .  .  .  Cond: *ast.BinaryExpr {
+   606  .  .  .  .  .  .  .  X: *ast.Ident {
+   607  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:34:12
+   608  .  .  .  .  .  .  .  .  Name: "i"
+   609  .  .  .  .  .  .  .  .  Obj: *(obj @ 588)
+   610  .  .  .  .  .  .  .  }
+   611  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:34:13
+   612  .  .  .  .  .  .  .  Op: <
+   613  .  .  .  .  .  .  .  Y: *ast.SelectorExpr {
+   614  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   615  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:34:14
+   616  .  .  .  .  .  .  .  .  .  Name: "problem"
+   617  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 156)
+   618  .  .  .  .  .  .  .  .  }
+   619  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   620  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:34:22
+   621  .  .  .  .  .  .  .  .  .  Name: "TourSize"
+   622  .  .  .  .  .  .  .  .  }
+   623  .  .  .  .  .  .  .  }
+   624  .  .  .  .  .  .  }
+   625  .  .  .  .  .  .  Post: *ast.IncDecStmt {
+   626  .  .  .  .  .  .  .  X: *ast.Ident {
+   627  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:34:31
+   628  .  .  .  .  .  .  .  .  Name: "i"
+   629  .  .  .  .  .  .  .  .  Obj: *(obj @ 588)
+   630  .  .  .  .  .  .  .  }
+   631  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:34:32
+   632  .  .  .  .  .  .  .  Tok: ++
+   633  .  .  .  .  .  .  }
+   634  .  .  .  .  .  .  Body: *ast.BlockStmt {
+   635  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:34:34
+   636  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+   637  .  .  .  .  .  .  .  .  0: *ast.AssignStmt {
+   638  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+   639  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+   640  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   641  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:35:5
+   642  .  .  .  .  .  .  .  .  .  .  .  .  Name: "tsp"
+   643  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 542)
+   644  .  .  .  .  .  .  .  .  .  .  .  }
+   645  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   646  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:35:9
+   647  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+   648  .  .  .  .  .  .  .  .  .  .  .  }
+   649  .  .  .  .  .  .  .  .  .  .  }
+   650  .  .  .  .  .  .  .  .  .  }
+   651  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:35:14
+   652  .  .  .  .  .  .  .  .  .  Tok: =
+   653  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+   654  .  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+   655  .  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+   656  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:35:16
+   657  .  .  .  .  .  .  .  .  .  .  .  .  Name: "append"
+   658  .  .  .  .  .  .  .  .  .  .  .  }
+   659  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:35:22
+   660  .  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+   661  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+   662  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   663  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:35:23
+   664  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "tsp"
+   665  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 542)
+   666  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   667  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   668  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:35:27
+   669  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+   670  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   671  .  .  .  .  .  .  .  .  .  .  .  .  }
+   672  .  .  .  .  .  .  .  .  .  .  .  .  1: *ast.Ident {
+   673  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:35:32
+   674  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+   675  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 588)
+   676  .  .  .  .  .  .  .  .  .  .  .  .  }
+   677  .  .  .  .  .  .  .  .  .  .  .  }
+   678  .  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+   679  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:35:33
+   680  .  .  .  .  .  .  .  .  .  .  }
+   681  .  .  .  .  .  .  .  .  .  }
+   682  .  .  .  .  .  .  .  .  }
+   683  .  .  .  .  .  .  .  }
+   684  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:36:3
+   685  .  .  .  .  .  .  }
+   686  .  .  .  .  .  }
+   687  .  .  .  .  .  2: *ast.ReturnStmt {
+   688  .  .  .  .  .  .  Return: examples/tsp/tsp.go:37:3
+   689  .  .  .  .  .  .  Results: []ast.Expr (len = 1) {
+   690  .  .  .  .  .  .  .  0: *ast.Ident {
+   691  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:37:10
+   692  .  .  .  .  .  .  .  .  Name: "tsp"
+   693  .  .  .  .  .  .  .  .  Obj: *(obj @ 542)
+   694  .  .  .  .  .  .  .  }
+   695  .  .  .  .  .  .  }
+   696  .  .  .  .  .  }
+   697  .  .  .  .  }
+   698  .  .  .  .  Rbrace: examples/tsp/tsp.go:38:1
+   699  .  .  .  }
+   700  .  .  }
+   701  .  .  7: *ast.FuncDecl {
+   702  .  .  .  Recv: *ast.FieldList {
+   703  .  .  .  .  Opening: examples/tsp/tsp.go:40:6
+   704  .  .  .  .  List: []*ast.Field (len = 1) {
+   705  .  .  .  .  .  0: *ast.Field {
+   706  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+   707  .  .  .  .  .  .  .  0: *ast.Ident {
+   708  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:40:7
+   709  .  .  .  .  .  .  .  .  Name: "s"
+   710  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   711  .  .  .  .  .  .  .  .  .  Kind: var
+   712  .  .  .  .  .  .  .  .  .  Name: "s"
+   713  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 705)
+   714  .  .  .  .  .  .  .  .  }
+   715  .  .  .  .  .  .  .  }
+   716  .  .  .  .  .  .  }
+   717  .  .  .  .  .  .  Type: *ast.Ident {
+   718  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:40:9
+   719  .  .  .  .  .  .  .  Name: "definition"
+   720  .  .  .  .  .  .  .  Obj: *(obj @ 232)
+   721  .  .  .  .  .  .  }
+   722  .  .  .  .  .  }
+   723  .  .  .  .  }
+   724  .  .  .  .  Closing: examples/tsp/tsp.go:40:19
+   725  .  .  .  }
+   726  .  .  .  Name: *ast.Ident {
+   727  .  .  .  .  NamePos: examples/tsp/tsp.go:40:20
+   728  .  .  .  .  Name: "New"
+   729  .  .  .  }
+   730  .  .  .  Type: *ast.FuncType {
+   731  .  .  .  .  Func: examples/tsp/tsp.go:40:1
+   732  .  .  .  .  Params: *ast.FieldList {
+   733  .  .  .  .  .  Opening: examples/tsp/tsp.go:40:23
+   734  .  .  .  .  .  Closing: examples/tsp/tsp.go:40:24
+   735  .  .  .  .  }
+   736  .  .  .  .  Results: *ast.FieldList {
+   737  .  .  .  .  .  Opening: -
+   738  .  .  .  .  .  List: []*ast.Field (len = 1) {
+   739  .  .  .  .  .  .  0: *ast.Field {
+   740  .  .  .  .  .  .  .  Type: *ast.Ident {
+   741  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:40:25
+   742  .  .  .  .  .  .  .  .  Name: "DNA"
+   743  .  .  .  .  .  .  .  }
+   744  .  .  .  .  .  .  }
+   745  .  .  .  .  .  }
+   746  .  .  .  .  .  Closing: -
+   747  .  .  .  .  }
+   748  .  .  .  }
+   749  .  .  .  Body: *ast.BlockStmt {
+   750  .  .  .  .  Lbrace: examples/tsp/tsp.go:40:28
+   751  .  .  .  .  List: []ast.Stmt (len = 1) {
+   752  .  .  .  .  .  0: *ast.ReturnStmt {
+   753  .  .  .  .  .  .  Return: examples/tsp/tsp.go:41:3
+   754  .  .  .  .  .  .  Results: []ast.Expr (len = 1) {
+   755  .  .  .  .  .  .  .  0: *ast.CallExpr {
+   756  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+   757  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:41:10
+   758  .  .  .  .  .  .  .  .  .  Name: "build"
+   759  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 499)
+   760  .  .  .  .  .  .  .  .  }
+   761  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:41:15
+   762  .  .  .  .  .  .  .  .  Ellipsis: -
+   763  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:41:16
+   764  .  .  .  .  .  .  .  }
+   765  .  .  .  .  .  .  }
+   766  .  .  .  .  .  }
+   767  .  .  .  .  }
+   768  .  .  .  .  Rbrace: examples/tsp/tsp.go:42:1
+   769  .  .  .  }
+   770  .  .  }
+   771  .  .  8: *ast.FuncDecl {
+   772  .  .  .  Recv: *ast.FieldList {
+   773  .  .  .  .  Opening: examples/tsp/tsp.go:44:6
+   774  .  .  .  .  List: []*ast.Field (len = 1) {
+   775  .  .  .  .  .  0: *ast.Field {
+   776  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+   777  .  .  .  .  .  .  .  0: *ast.Ident {
+   778  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:44:7
+   779  .  .  .  .  .  .  .  .  Name: "self"
+   780  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   781  .  .  .  .  .  .  .  .  .  Kind: var
+   782  .  .  .  .  .  .  .  .  .  Name: "self"
+   783  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 775)
+   784  .  .  .  .  .  .  .  .  }
+   785  .  .  .  .  .  .  .  }
+   786  .  .  .  .  .  .  }
+   787  .  .  .  .  .  .  Type: *ast.StarExpr {
+   788  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:44:12
+   789  .  .  .  .  .  .  .  X: *ast.Ident {
+   790  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:44:13
+   791  .  .  .  .  .  .  .  .  Name: "TSP"
+   792  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+   793  .  .  .  .  .  .  .  }
+   794  .  .  .  .  .  .  }
+   795  .  .  .  .  .  }
+   796  .  .  .  .  }
+   797  .  .  .  .  Closing: examples/tsp/tsp.go:44:16
+   798  .  .  .  }
+   799  .  .  .  Name: *ast.Ident {
+   800  .  .  .  .  NamePos: examples/tsp/tsp.go:44:17
+   801  .  .  .  .  Name: "Generate"
+   802  .  .  .  }
+   803  .  .  .  Type: *ast.FuncType {
+   804  .  .  .  .  Func: examples/tsp/tsp.go:44:1
+   805  .  .  .  .  Params: *ast.FieldList {
+   806  .  .  .  .  .  Opening: examples/tsp/tsp.go:44:25
+   807  .  .  .  .  .  List: []*ast.Field (len = 1) {
+   808  .  .  .  .  .  .  0: *ast.Field {
+   809  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+   810  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   811  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:44:26
+   812  .  .  .  .  .  .  .  .  .  Name: "prng"
+   813  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   814  .  .  .  .  .  .  .  .  .  .  Kind: var
+   815  .  .  .  .  .  .  .  .  .  .  Name: "prng"
+   816  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 808)
+   817  .  .  .  .  .  .  .  .  .  }
+   818  .  .  .  .  .  .  .  .  }
+   819  .  .  .  .  .  .  .  }
+   820  .  .  .  .  .  .  .  Type: *ast.StarExpr {
+   821  .  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:44:31
+   822  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+   823  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   824  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:44:32
+   825  .  .  .  .  .  .  .  .  .  .  Name: "rand"
+   826  .  .  .  .  .  .  .  .  .  }
+   827  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   828  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:44:37
+   829  .  .  .  .  .  .  .  .  .  .  Name: "Rand"
+   830  .  .  .  .  .  .  .  .  .  }
+   831  .  .  .  .  .  .  .  .  }
+   832  .  .  .  .  .  .  .  }
+   833  .  .  .  .  .  .  }
+   834  .  .  .  .  .  }
+   835  .  .  .  .  .  Closing: examples/tsp/tsp.go:44:41
+   836  .  .  .  .  }
+   837  .  .  .  .  Results: *ast.FieldList {
+   838  .  .  .  .  .  Opening: -
+   839  .  .  .  .  .  List: []*ast.Field (len = 1) {
+   840  .  .  .  .  .  .  0: *ast.Field {
+   841  .  .  .  .  .  .  .  Type: *ast.Ident {
+   842  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:44:43
+   843  .  .  .  .  .  .  .  .  Name: "DNA"
+   844  .  .  .  .  .  .  .  }
+   845  .  .  .  .  .  .  }
+   846  .  .  .  .  .  }
+   847  .  .  .  .  .  Closing: -
+   848  .  .  .  .  }
+   849  .  .  .  }
+   850  .  .  .  Body: *ast.BlockStmt {
+   851  .  .  .  .  Lbrace: examples/tsp/tsp.go:44:46
+   852  .  .  .  .  List: []ast.Stmt (len = 3) {
+   853  .  .  .  .  .  0: *ast.AssignStmt {
+   854  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+   855  .  .  .  .  .  .  .  0: *ast.Ident {
+   856  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:45:3
+   857  .  .  .  .  .  .  .  .  Name: "tsp"
+   858  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   859  .  .  .  .  .  .  .  .  .  Kind: var
+   860  .  .  .  .  .  .  .  .  .  Name: "tsp"
+   861  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 853)
+   862  .  .  .  .  .  .  .  .  }
+   863  .  .  .  .  .  .  .  }
+   864  .  .  .  .  .  .  }
+   865  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:45:7
+   866  .  .  .  .  .  .  Tok: :=
+   867  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+   868  .  .  .  .  .  .  .  0: *ast.CallExpr {
+   869  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+   870  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:45:10
+   871  .  .  .  .  .  .  .  .  .  Name: "build"
+   872  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 499)
+   873  .  .  .  .  .  .  .  .  }
+   874  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:45:15
+   875  .  .  .  .  .  .  .  .  Ellipsis: -
+   876  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:45:16
+   877  .  .  .  .  .  .  .  }
+   878  .  .  .  .  .  .  }
+   879  .  .  .  .  .  }
+   880  .  .  .  .  .  1: *ast.ExprStmt {
+   881  .  .  .  .  .  .  X: *ast.CallExpr {
+   882  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+   883  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   884  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:3
+   885  .  .  .  .  .  .  .  .  .  Name: "prng"
+   886  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 813)
+   887  .  .  .  .  .  .  .  .  }
+   888  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   889  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:8
+   890  .  .  .  .  .  .  .  .  .  Name: "Shuffle"
+   891  .  .  .  .  .  .  .  .  }
+   892  .  .  .  .  .  .  .  }
+   893  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:46:15
+   894  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+   895  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+   896  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+   897  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:16
+   898  .  .  .  .  .  .  .  .  .  .  Name: "len"
+   899  .  .  .  .  .  .  .  .  .  }
+   900  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:46:19
+   901  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+   902  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+   903  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   904  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:20
+   905  .  .  .  .  .  .  .  .  .  .  .  .  Name: "tsp"
+   906  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 858)
+   907  .  .  .  .  .  .  .  .  .  .  .  }
+   908  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   909  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:24
+   910  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+   911  .  .  .  .  .  .  .  .  .  .  .  }
+   912  .  .  .  .  .  .  .  .  .  .  }
+   913  .  .  .  .  .  .  .  .  .  }
+   914  .  .  .  .  .  .  .  .  .  Ellipsis: -
+   915  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:46:28
+   916  .  .  .  .  .  .  .  .  }
+   917  .  .  .  .  .  .  .  .  1: *ast.FuncLit {
+   918  .  .  .  .  .  .  .  .  .  Type: *ast.FuncType {
+   919  .  .  .  .  .  .  .  .  .  .  Func: examples/tsp/tsp.go:46:30
+   920  .  .  .  .  .  .  .  .  .  .  Params: *ast.FieldList {
+   921  .  .  .  .  .  .  .  .  .  .  .  Opening: examples/tsp/tsp.go:46:34
+   922  .  .  .  .  .  .  .  .  .  .  .  List: []*ast.Field (len = 1) {
+   923  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Field {
+   924  .  .  .  .  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 2) {
+   925  .  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+   926  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:35
+   927  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+   928  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   929  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+   930  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+   931  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 923)
+   932  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   933  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   934  .  .  .  .  .  .  .  .  .  .  .  .  .  .  1: *ast.Ident {
+   935  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:37
+   936  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "j"
+   937  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+   938  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+   939  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "j"
+   940  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 923)
+   941  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   942  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   943  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   944  .  .  .  .  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+   945  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:39
+   946  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "int"
+   947  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   948  .  .  .  .  .  .  .  .  .  .  .  .  }
+   949  .  .  .  .  .  .  .  .  .  .  .  }
+   950  .  .  .  .  .  .  .  .  .  .  .  Closing: examples/tsp/tsp.go:46:42
+   951  .  .  .  .  .  .  .  .  .  .  }
+   952  .  .  .  .  .  .  .  .  .  }
+   953  .  .  .  .  .  .  .  .  .  Body: *ast.BlockStmt {
+   954  .  .  .  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:46:43
+   955  .  .  .  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+   956  .  .  .  .  .  .  .  .  .  .  .  0: *ast.AssignStmt {
+   957  .  .  .  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 2) {
+   958  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+   959  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+   960  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   961  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:44
+   962  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "tsp"
+   963  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 858)
+   964  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   965  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   966  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:48
+   967  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+   968  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   969  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   970  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:46:52
+   971  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+   972  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:53
+   973  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+   974  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 928)
+   975  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   976  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:46:54
+   977  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   978  .  .  .  .  .  .  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+   979  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+   980  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+   981  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:56
+   982  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "tsp"
+   983  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 858)
+   984  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   985  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+   986  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:60
+   987  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+   988  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   989  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   990  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:46:64
+   991  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+   992  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:65
+   993  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "j"
+   994  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 937)
+   995  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   996  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:46:66
+   997  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+   998  .  .  .  .  .  .  .  .  .  .  .  .  }
+   999  .  .  .  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:46:67
+  1000  .  .  .  .  .  .  .  .  .  .  .  .  Tok: =
+  1001  .  .  .  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 2) {
+  1002  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  1003  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1004  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1005  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:68
+  1006  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "tsp"
+  1007  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 858)
+  1008  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1009  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1010  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:72
+  1011  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1012  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1013  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1014  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:46:76
+  1015  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  1016  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:77
+  1017  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "j"
+  1018  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 937)
+  1019  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1020  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:46:78
+  1021  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1022  .  .  .  .  .  .  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+  1023  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1024  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1025  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:80
+  1026  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "tsp"
+  1027  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 858)
+  1028  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1029  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1030  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:84
+  1031  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1032  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1033  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1034  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:46:88
+  1035  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  1036  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:46:89
+  1037  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  1038  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 928)
+  1039  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1040  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:46:90
+  1041  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1042  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1043  .  .  .  .  .  .  .  .  .  .  .  }
+  1044  .  .  .  .  .  .  .  .  .  .  }
+  1045  .  .  .  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:46:91
+  1046  .  .  .  .  .  .  .  .  .  }
+  1047  .  .  .  .  .  .  .  .  }
+  1048  .  .  .  .  .  .  .  }
+  1049  .  .  .  .  .  .  .  Ellipsis: -
+  1050  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:46:92
+  1051  .  .  .  .  .  .  }
+  1052  .  .  .  .  .  }
+  1053  .  .  .  .  .  2: *ast.ReturnStmt {
+  1054  .  .  .  .  .  .  Return: examples/tsp/tsp.go:47:3
+  1055  .  .  .  .  .  .  Results: []ast.Expr (len = 1) {
+  1056  .  .  .  .  .  .  .  0: *ast.Ident {
+  1057  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:47:10
+  1058  .  .  .  .  .  .  .  .  Name: "tsp"
+  1059  .  .  .  .  .  .  .  .  Obj: *(obj @ 858)
+  1060  .  .  .  .  .  .  .  }
+  1061  .  .  .  .  .  .  }
+  1062  .  .  .  .  .  }
+  1063  .  .  .  .  }
+  1064  .  .  .  .  Rbrace: examples/tsp/tsp.go:48:1
+  1065  .  .  .  }
+  1066  .  .  }
+  1067  .  .  9: *ast.FuncDecl {
+  1068  .  .  .  Recv: *ast.FieldList {
+  1069  .  .  .  .  Opening: examples/tsp/tsp.go:50:6
+  1070  .  .  .  .  List: []*ast.Field (len = 1) {
+  1071  .  .  .  .  .  0: *ast.Field {
+  1072  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  1073  .  .  .  .  .  .  .  0: *ast.Ident {
+  1074  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:50:7
+  1075  .  .  .  .  .  .  .  .  Name: "self"
+  1076  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1077  .  .  .  .  .  .  .  .  .  Kind: var
+  1078  .  .  .  .  .  .  .  .  .  Name: "self"
+  1079  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1071)
+  1080  .  .  .  .  .  .  .  .  }
+  1081  .  .  .  .  .  .  .  }
+  1082  .  .  .  .  .  .  }
+  1083  .  .  .  .  .  .  Type: *ast.StarExpr {
+  1084  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:50:12
+  1085  .  .  .  .  .  .  .  X: *ast.Ident {
+  1086  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:50:13
+  1087  .  .  .  .  .  .  .  .  Name: "TSP"
+  1088  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+  1089  .  .  .  .  .  .  .  }
+  1090  .  .  .  .  .  .  }
+  1091  .  .  .  .  .  }
+  1092  .  .  .  .  }
+  1093  .  .  .  .  Closing: examples/tsp/tsp.go:50:16
+  1094  .  .  .  }
+  1095  .  .  .  Name: *ast.Ident {
+  1096  .  .  .  .  NamePos: examples/tsp/tsp.go:50:17
+  1097  .  .  .  .  Name: "Mutate"
+  1098  .  .  .  }
+  1099  .  .  .  Type: *ast.FuncType {
+  1100  .  .  .  .  Func: examples/tsp/tsp.go:50:1
+  1101  .  .  .  .  Params: *ast.FieldList {
+  1102  .  .  .  .  .  Opening: examples/tsp/tsp.go:50:23
+  1103  .  .  .  .  .  List: []*ast.Field (len = 1) {
+  1104  .  .  .  .  .  .  0: *ast.Field {
+  1105  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  1106  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1107  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:50:24
+  1108  .  .  .  .  .  .  .  .  .  Name: "prng"
+  1109  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1110  .  .  .  .  .  .  .  .  .  .  Kind: var
+  1111  .  .  .  .  .  .  .  .  .  .  Name: "prng"
+  1112  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1104)
+  1113  .  .  .  .  .  .  .  .  .  }
+  1114  .  .  .  .  .  .  .  .  }
+  1115  .  .  .  .  .  .  .  }
+  1116  .  .  .  .  .  .  .  Type: *ast.StarExpr {
+  1117  .  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:50:29
+  1118  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1119  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1120  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:50:30
+  1121  .  .  .  .  .  .  .  .  .  .  Name: "rand"
+  1122  .  .  .  .  .  .  .  .  .  }
+  1123  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1124  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:50:35
+  1125  .  .  .  .  .  .  .  .  .  .  Name: "Rand"
+  1126  .  .  .  .  .  .  .  .  .  }
+  1127  .  .  .  .  .  .  .  .  }
+  1128  .  .  .  .  .  .  .  }
+  1129  .  .  .  .  .  .  }
+  1130  .  .  .  .  .  }
+  1131  .  .  .  .  .  Closing: examples/tsp/tsp.go:50:39
+  1132  .  .  .  .  }
+  1133  .  .  .  .  Results: *ast.FieldList {
+  1134  .  .  .  .  .  Opening: -
+  1135  .  .  .  .  .  List: []*ast.Field (len = 1) {
+  1136  .  .  .  .  .  .  0: *ast.Field {
+  1137  .  .  .  .  .  .  .  Type: *ast.Ident {
+  1138  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:50:41
+  1139  .  .  .  .  .  .  .  .  Name: "DNA"
+  1140  .  .  .  .  .  .  .  }
+  1141  .  .  .  .  .  .  }
+  1142  .  .  .  .  .  }
+  1143  .  .  .  .  .  Closing: -
+  1144  .  .  .  .  }
+  1145  .  .  .  }
+  1146  .  .  .  Body: *ast.BlockStmt {
+  1147  .  .  .  .  Lbrace: examples/tsp/tsp.go:50:44
+  1148  .  .  .  .  List: []ast.Stmt (len = 5) {
+  1149  .  .  .  .  .  0: *ast.AssignStmt {
+  1150  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  1151  .  .  .  .  .  .  .  0: *ast.Ident {
+  1152  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:51:3
+  1153  .  .  .  .  .  .  .  .  Name: "i"
+  1154  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1155  .  .  .  .  .  .  .  .  .  Kind: var
+  1156  .  .  .  .  .  .  .  .  .  Name: "i"
+  1157  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1149)
+  1158  .  .  .  .  .  .  .  .  }
+  1159  .  .  .  .  .  .  .  }
+  1160  .  .  .  .  .  .  }
+  1161  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:51:5
+  1162  .  .  .  .  .  .  Tok: :=
+  1163  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  1164  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  1165  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  1166  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1167  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:51:8
+  1168  .  .  .  .  .  .  .  .  .  .  Name: "prng"
+  1169  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1109)
+  1170  .  .  .  .  .  .  .  .  .  }
+  1171  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1172  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:51:13
+  1173  .  .  .  .  .  .  .  .  .  .  Name: "Intn"
+  1174  .  .  .  .  .  .  .  .  .  }
+  1175  .  .  .  .  .  .  .  .  }
+  1176  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:51:17
+  1177  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1178  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  1179  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  1180  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:51:18
+  1181  .  .  .  .  .  .  .  .  .  .  .  Name: "len"
+  1182  .  .  .  .  .  .  .  .  .  .  }
+  1183  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:51:21
+  1184  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1185  .  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+  1186  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1187  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:51:22
+  1188  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1189  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1076)
+  1190  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1191  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1192  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:51:27
+  1193  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1194  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1195  .  .  .  .  .  .  .  .  .  .  .  }
+  1196  .  .  .  .  .  .  .  .  .  .  }
+  1197  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  1198  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:51:31
+  1199  .  .  .  .  .  .  .  .  .  }
+  1200  .  .  .  .  .  .  .  .  }
+  1201  .  .  .  .  .  .  .  .  Ellipsis: -
+  1202  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:51:32
+  1203  .  .  .  .  .  .  .  }
+  1204  .  .  .  .  .  .  }
+  1205  .  .  .  .  .  }
+  1206  .  .  .  .  .  1: *ast.AssignStmt {
+  1207  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  1208  .  .  .  .  .  .  .  0: *ast.Ident {
+  1209  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:52:3
+  1210  .  .  .  .  .  .  .  .  Name: "j"
+  1211  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1212  .  .  .  .  .  .  .  .  .  Kind: var
+  1213  .  .  .  .  .  .  .  .  .  Name: "j"
+  1214  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1206)
+  1215  .  .  .  .  .  .  .  .  }
+  1216  .  .  .  .  .  .  .  }
+  1217  .  .  .  .  .  .  }
+  1218  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:52:5
+  1219  .  .  .  .  .  .  Tok: :=
+  1220  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  1221  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  1222  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  1223  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1224  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:52:8
+  1225  .  .  .  .  .  .  .  .  .  .  Name: "prng"
+  1226  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1109)
+  1227  .  .  .  .  .  .  .  .  .  }
+  1228  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1229  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:52:13
+  1230  .  .  .  .  .  .  .  .  .  .  Name: "Intn"
+  1231  .  .  .  .  .  .  .  .  .  }
+  1232  .  .  .  .  .  .  .  .  }
+  1233  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:52:17
+  1234  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1235  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  1236  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  1237  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:52:18
+  1238  .  .  .  .  .  .  .  .  .  .  .  Name: "len"
+  1239  .  .  .  .  .  .  .  .  .  .  }
+  1240  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:52:21
+  1241  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1242  .  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+  1243  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1244  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:52:22
+  1245  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1246  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1076)
+  1247  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1248  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1249  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:52:27
+  1250  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1251  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1252  .  .  .  .  .  .  .  .  .  .  .  }
+  1253  .  .  .  .  .  .  .  .  .  .  }
+  1254  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  1255  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:52:31
+  1256  .  .  .  .  .  .  .  .  .  }
+  1257  .  .  .  .  .  .  .  .  }
+  1258  .  .  .  .  .  .  .  .  Ellipsis: -
+  1259  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:52:32
+  1260  .  .  .  .  .  .  .  }
+  1261  .  .  .  .  .  .  }
+  1262  .  .  .  .  .  }
+  1263  .  .  .  .  .  2: *ast.ForStmt {
+  1264  .  .  .  .  .  .  For: examples/tsp/tsp.go:53:3
+  1265  .  .  .  .  .  .  Cond: *ast.BinaryExpr {
+  1266  .  .  .  .  .  .  .  X: *ast.BinaryExpr {
+  1267  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1268  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:53:8
+  1269  .  .  .  .  .  .  .  .  .  Name: "i"
+  1270  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1154)
+  1271  .  .  .  .  .  .  .  .  }
+  1272  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:53:9
+  1273  .  .  .  .  .  .  .  .  Op: ==
+  1274  .  .  .  .  .  .  .  .  Y: *ast.Ident {
+  1275  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:53:11
+  1276  .  .  .  .  .  .  .  .  .  Name: "j"
+  1277  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1211)
+  1278  .  .  .  .  .  .  .  .  }
+  1279  .  .  .  .  .  .  .  }
+  1280  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:53:13
+  1281  .  .  .  .  .  .  .  Op: &&
+  1282  .  .  .  .  .  .  .  Y: *ast.BinaryExpr {
+  1283  .  .  .  .  .  .  .  .  X: *ast.CallExpr {
+  1284  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  1285  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:53:16
+  1286  .  .  .  .  .  .  .  .  .  .  Name: "len"
+  1287  .  .  .  .  .  .  .  .  .  }
+  1288  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:53:19
+  1289  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1290  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+  1291  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1292  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:53:20
+  1293  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1294  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1076)
+  1295  .  .  .  .  .  .  .  .  .  .  .  }
+  1296  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1297  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:53:25
+  1298  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1299  .  .  .  .  .  .  .  .  .  .  .  }
+  1300  .  .  .  .  .  .  .  .  .  .  }
+  1301  .  .  .  .  .  .  .  .  .  }
+  1302  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  1303  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:53:29
+  1304  .  .  .  .  .  .  .  .  }
+  1305  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:53:30
+  1306  .  .  .  .  .  .  .  .  Op: >
+  1307  .  .  .  .  .  .  .  .  Y: *ast.BasicLit {
+  1308  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:53:31
+  1309  .  .  .  .  .  .  .  .  .  Kind: INT
+  1310  .  .  .  .  .  .  .  .  .  Value: "1"
+  1311  .  .  .  .  .  .  .  .  }
+  1312  .  .  .  .  .  .  .  }
+  1313  .  .  .  .  .  .  }
+  1314  .  .  .  .  .  .  Body: *ast.BlockStmt {
+  1315  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:53:33
+  1316  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+  1317  .  .  .  .  .  .  .  .  0: *ast.AssignStmt {
+  1318  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  1319  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1320  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:54:5
+  1321  .  .  .  .  .  .  .  .  .  .  .  Name: "j"
+  1322  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1211)
+  1323  .  .  .  .  .  .  .  .  .  .  }
+  1324  .  .  .  .  .  .  .  .  .  }
+  1325  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:54:7
+  1326  .  .  .  .  .  .  .  .  .  Tok: =
+  1327  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  1328  .  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  1329  .  .  .  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  1330  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1331  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:54:9
+  1332  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "prng"
+  1333  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1109)
+  1334  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1335  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1336  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:54:14
+  1337  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Intn"
+  1338  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1339  .  .  .  .  .  .  .  .  .  .  .  }
+  1340  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:54:18
+  1341  .  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1342  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  1343  .  .  .  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  1344  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:54:19
+  1345  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "len"
+  1346  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1347  .  .  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:54:22
+  1348  .  .  .  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1349  .  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+  1350  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1351  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:54:23
+  1352  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1353  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1076)
+  1354  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1355  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1356  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:54:28
+  1357  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1358  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1359  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1360  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1361  .  .  .  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  1362  .  .  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:54:32
+  1363  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1364  .  .  .  .  .  .  .  .  .  .  .  }
+  1365  .  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  1366  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:54:33
+  1367  .  .  .  .  .  .  .  .  .  .  }
+  1368  .  .  .  .  .  .  .  .  .  }
+  1369  .  .  .  .  .  .  .  .  }
+  1370  .  .  .  .  .  .  .  }
+  1371  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:55:3
+  1372  .  .  .  .  .  .  }
+  1373  .  .  .  .  .  }
+  1374  .  .  .  .  .  3: *ast.AssignStmt {
+  1375  .  .  .  .  .  .  Lhs: []ast.Expr (len = 2) {
+  1376  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  1377  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1378  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1379  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:3
+  1380  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1381  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1076)
+  1382  .  .  .  .  .  .  .  .  .  }
+  1383  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1384  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:8
+  1385  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1386  .  .  .  .  .  .  .  .  .  }
+  1387  .  .  .  .  .  .  .  .  }
+  1388  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:56:12
+  1389  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  1390  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:13
+  1391  .  .  .  .  .  .  .  .  .  Name: "i"
+  1392  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1154)
+  1393  .  .  .  .  .  .  .  .  }
+  1394  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:56:14
+  1395  .  .  .  .  .  .  .  }
+  1396  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+  1397  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1398  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1399  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:16
+  1400  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1401  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1076)
+  1402  .  .  .  .  .  .  .  .  .  }
+  1403  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1404  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:21
+  1405  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1406  .  .  .  .  .  .  .  .  .  }
+  1407  .  .  .  .  .  .  .  .  }
+  1408  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:56:25
+  1409  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  1410  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:26
+  1411  .  .  .  .  .  .  .  .  .  Name: "j"
+  1412  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1211)
+  1413  .  .  .  .  .  .  .  .  }
+  1414  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:56:27
+  1415  .  .  .  .  .  .  .  }
+  1416  .  .  .  .  .  .  }
+  1417  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:56:29
+  1418  .  .  .  .  .  .  Tok: =
+  1419  .  .  .  .  .  .  Rhs: []ast.Expr (len = 2) {
+  1420  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  1421  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1422  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1423  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:31
+  1424  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1425  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1076)
+  1426  .  .  .  .  .  .  .  .  .  }
+  1427  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1428  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:36
+  1429  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1430  .  .  .  .  .  .  .  .  .  }
+  1431  .  .  .  .  .  .  .  .  }
+  1432  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:56:40
+  1433  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  1434  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:41
+  1435  .  .  .  .  .  .  .  .  .  Name: "j"
+  1436  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1211)
+  1437  .  .  .  .  .  .  .  .  }
+  1438  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:56:42
+  1439  .  .  .  .  .  .  .  }
+  1440  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+  1441  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1442  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1443  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:44
+  1444  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1445  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1076)
+  1446  .  .  .  .  .  .  .  .  .  }
+  1447  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1448  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:49
+  1449  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1450  .  .  .  .  .  .  .  .  .  }
+  1451  .  .  .  .  .  .  .  .  }
+  1452  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:56:53
+  1453  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  1454  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:56:54
+  1455  .  .  .  .  .  .  .  .  .  Name: "i"
+  1456  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1154)
+  1457  .  .  .  .  .  .  .  .  }
+  1458  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:56:55
+  1459  .  .  .  .  .  .  .  }
+  1460  .  .  .  .  .  .  }
+  1461  .  .  .  .  .  }
+  1462  .  .  .  .  .  4: *ast.ReturnStmt {
+  1463  .  .  .  .  .  .  Return: examples/tsp/tsp.go:57:3
+  1464  .  .  .  .  .  .  Results: []ast.Expr (len = 1) {
+  1465  .  .  .  .  .  .  .  0: *ast.Ident {
+  1466  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:57:10
+  1467  .  .  .  .  .  .  .  .  Name: "self"
+  1468  .  .  .  .  .  .  .  .  Obj: *(obj @ 1076)
+  1469  .  .  .  .  .  .  .  }
+  1470  .  .  .  .  .  .  }
+  1471  .  .  .  .  .  }
+  1472  .  .  .  .  }
+  1473  .  .  .  .  Rbrace: examples/tsp/tsp.go:58:1
+  1474  .  .  .  }
+  1475  .  .  }
+  1476  .  .  10: *ast.FuncDecl {
+  1477  .  .  .  Recv: *ast.FieldList {
+  1478  .  .  .  .  Opening: examples/tsp/tsp.go:60:6
+  1479  .  .  .  .  List: []*ast.Field (len = 1) {
+  1480  .  .  .  .  .  0: *ast.Field {
+  1481  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  1482  .  .  .  .  .  .  .  0: *ast.Ident {
+  1483  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:60:7
+  1484  .  .  .  .  .  .  .  .  Name: "self"
+  1485  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1486  .  .  .  .  .  .  .  .  .  Kind: var
+  1487  .  .  .  .  .  .  .  .  .  Name: "self"
+  1488  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1480)
+  1489  .  .  .  .  .  .  .  .  }
+  1490  .  .  .  .  .  .  .  }
+  1491  .  .  .  .  .  .  }
+  1492  .  .  .  .  .  .  Type: *ast.StarExpr {
+  1493  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:60:12
+  1494  .  .  .  .  .  .  .  X: *ast.Ident {
+  1495  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:60:13
+  1496  .  .  .  .  .  .  .  .  Name: "TSP"
+  1497  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+  1498  .  .  .  .  .  .  .  }
+  1499  .  .  .  .  .  .  }
+  1500  .  .  .  .  .  }
+  1501  .  .  .  .  }
+  1502  .  .  .  .  Closing: examples/tsp/tsp.go:60:16
+  1503  .  .  .  }
+  1504  .  .  .  Name: *ast.Ident {
+  1505  .  .  .  .  NamePos: examples/tsp/tsp.go:60:17
+  1506  .  .  .  .  Name: "Crossover"
+  1507  .  .  .  }
+  1508  .  .  .  Type: *ast.FuncType {
+  1509  .  .  .  .  Func: examples/tsp/tsp.go:60:1
+  1510  .  .  .  .  Params: *ast.FieldList {
+  1511  .  .  .  .  .  Opening: examples/tsp/tsp.go:60:26
+  1512  .  .  .  .  .  List: []*ast.Field (len = 2) {
+  1513  .  .  .  .  .  .  0: *ast.Field {
+  1514  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  1515  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1516  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:60:27
+  1517  .  .  .  .  .  .  .  .  .  Name: "ind2"
+  1518  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1519  .  .  .  .  .  .  .  .  .  .  Kind: var
+  1520  .  .  .  .  .  .  .  .  .  .  Name: "ind2"
+  1521  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1513)
+  1522  .  .  .  .  .  .  .  .  .  }
+  1523  .  .  .  .  .  .  .  .  }
+  1524  .  .  .  .  .  .  .  }
+  1525  .  .  .  .  .  .  .  Type: *ast.Ident {
+  1526  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:60:32
+  1527  .  .  .  .  .  .  .  .  Name: "DNA"
+  1528  .  .  .  .  .  .  .  }
+  1529  .  .  .  .  .  .  }
+  1530  .  .  .  .  .  .  1: *ast.Field {
+  1531  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  1532  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1533  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:60:36
+  1534  .  .  .  .  .  .  .  .  .  Name: "prng"
+  1535  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1536  .  .  .  .  .  .  .  .  .  .  Kind: var
+  1537  .  .  .  .  .  .  .  .  .  .  Name: "prng"
+  1538  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1530)
+  1539  .  .  .  .  .  .  .  .  .  }
+  1540  .  .  .  .  .  .  .  .  }
+  1541  .  .  .  .  .  .  .  }
+  1542  .  .  .  .  .  .  .  Type: *ast.StarExpr {
+  1543  .  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:60:41
+  1544  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1545  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1546  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:60:42
+  1547  .  .  .  .  .  .  .  .  .  .  Name: "rand"
+  1548  .  .  .  .  .  .  .  .  .  }
+  1549  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1550  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:60:47
+  1551  .  .  .  .  .  .  .  .  .  .  Name: "Rand"
+  1552  .  .  .  .  .  .  .  .  .  }
+  1553  .  .  .  .  .  .  .  .  }
+  1554  .  .  .  .  .  .  .  }
+  1555  .  .  .  .  .  .  }
+  1556  .  .  .  .  .  }
+  1557  .  .  .  .  .  Closing: examples/tsp/tsp.go:60:51
+  1558  .  .  .  .  }
+  1559  .  .  .  .  Results: *ast.FieldList {
+  1560  .  .  .  .  .  Opening: -
+  1561  .  .  .  .  .  List: []*ast.Field (len = 1) {
+  1562  .  .  .  .  .  .  0: *ast.Field {
+  1563  .  .  .  .  .  .  .  Type: *ast.Ident {
+  1564  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:60:53
+  1565  .  .  .  .  .  .  .  .  Name: "DNA"
+  1566  .  .  .  .  .  .  .  }
+  1567  .  .  .  .  .  .  }
+  1568  .  .  .  .  .  }
+  1569  .  .  .  .  .  Closing: -
+  1570  .  .  .  .  }
+  1571  .  .  .  }
+  1572  .  .  .  Body: *ast.BlockStmt {
+  1573  .  .  .  .  Lbrace: examples/tsp/tsp.go:60:56
+  1574  .  .  .  .  List: []ast.Stmt (len = 7) {
+  1575  .  .  .  .  .  0: *ast.DeclStmt {
+  1576  .  .  .  .  .  .  Decl: *ast.GenDecl {
+  1577  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:61:3
+  1578  .  .  .  .  .  .  .  Tok: var
+  1579  .  .  .  .  .  .  .  Lparen: -
+  1580  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+  1581  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+  1582  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  1583  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1584  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:61:7
+  1585  .  .  .  .  .  .  .  .  .  .  .  Name: "second"
+  1586  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1587  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  1588  .  .  .  .  .  .  .  .  .  .  .  .  Name: "second"
+  1589  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1581)
+  1590  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+  1591  .  .  .  .  .  .  .  .  .  .  .  }
+  1592  .  .  .  .  .  .  .  .  .  .  }
+  1593  .  .  .  .  .  .  .  .  .  }
+  1594  .  .  .  .  .  .  .  .  .  Type: *ast.StarExpr {
+  1595  .  .  .  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:61:14
+  1596  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1597  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:61:15
+  1598  .  .  .  .  .  .  .  .  .  .  .  Name: "TSP"
+  1599  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+  1600  .  .  .  .  .  .  .  .  .  .  }
+  1601  .  .  .  .  .  .  .  .  .  }
+  1602  .  .  .  .  .  .  .  .  .  Values: []ast.Expr (len = 1) {
+  1603  .  .  .  .  .  .  .  .  .  .  0: *ast.TypeAssertExpr {
+  1604  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1605  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:61:21
+  1606  .  .  .  .  .  .  .  .  .  .  .  .  Name: "ind2"
+  1607  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1518)
+  1608  .  .  .  .  .  .  .  .  .  .  .  }
+  1609  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:61:26
+  1610  .  .  .  .  .  .  .  .  .  .  .  Type: *ast.StarExpr {
+  1611  .  .  .  .  .  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:61:27
+  1612  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1613  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:61:28
+  1614  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "TSP"
+  1615  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+  1616  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1617  .  .  .  .  .  .  .  .  .  .  .  }
+  1618  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:61:31
+  1619  .  .  .  .  .  .  .  .  .  .  }
+  1620  .  .  .  .  .  .  .  .  .  }
+  1621  .  .  .  .  .  .  .  .  }
+  1622  .  .  .  .  .  .  .  }
+  1623  .  .  .  .  .  .  .  Rparen: -
+  1624  .  .  .  .  .  .  }
+  1625  .  .  .  .  .  }
+  1626  .  .  .  .  .  1: *ast.AssignStmt {
+  1627  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  1628  .  .  .  .  .  .  .  0: *ast.Ident {
+  1629  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:62:3
+  1630  .  .  .  .  .  .  .  .  Name: "j"
+  1631  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1632  .  .  .  .  .  .  .  .  .  Kind: var
+  1633  .  .  .  .  .  .  .  .  .  Name: "j"
+  1634  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1626)
+  1635  .  .  .  .  .  .  .  .  }
+  1636  .  .  .  .  .  .  .  }
+  1637  .  .  .  .  .  .  }
+  1638  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:62:5
+  1639  .  .  .  .  .  .  Tok: :=
+  1640  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  1641  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  1642  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  1643  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1644  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:62:8
+  1645  .  .  .  .  .  .  .  .  .  .  Name: "prng"
+  1646  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1535)
+  1647  .  .  .  .  .  .  .  .  .  }
+  1648  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1649  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:62:13
+  1650  .  .  .  .  .  .  .  .  .  .  Name: "Intn"
+  1651  .  .  .  .  .  .  .  .  .  }
+  1652  .  .  .  .  .  .  .  .  }
+  1653  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:62:17
+  1654  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1655  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  1656  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  1657  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:62:18
+  1658  .  .  .  .  .  .  .  .  .  .  .  Name: "len"
+  1659  .  .  .  .  .  .  .  .  .  .  }
+  1660  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:62:21
+  1661  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1662  .  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+  1663  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1664  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:62:22
+  1665  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1666  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1485)
+  1667  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1668  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1669  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:62:27
+  1670  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1671  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1672  .  .  .  .  .  .  .  .  .  .  .  }
+  1673  .  .  .  .  .  .  .  .  .  .  }
+  1674  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  1675  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:62:31
+  1676  .  .  .  .  .  .  .  .  .  }
+  1677  .  .  .  .  .  .  .  .  }
+  1678  .  .  .  .  .  .  .  .  Ellipsis: -
+  1679  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:62:32
+  1680  .  .  .  .  .  .  .  }
+  1681  .  .  .  .  .  .  }
+  1682  .  .  .  .  .  }
+  1683  .  .  .  .  .  2: *ast.DeclStmt {
+  1684  .  .  .  .  .  .  Decl: *ast.GenDecl {
+  1685  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:63:3
+  1686  .  .  .  .  .  .  .  Tok: var
+  1687  .  .  .  .  .  .  .  Lparen: -
+  1688  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+  1689  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+  1690  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  1691  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1692  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:63:7
+  1693  .  .  .  .  .  .  .  .  .  .  .  Name: "rem"
+  1694  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1695  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  1696  .  .  .  .  .  .  .  .  .  .  .  .  Name: "rem"
+  1697  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1689)
+  1698  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+  1699  .  .  .  .  .  .  .  .  .  .  .  }
+  1700  .  .  .  .  .  .  .  .  .  .  }
+  1701  .  .  .  .  .  .  .  .  .  }
+  1702  .  .  .  .  .  .  .  .  .  Type: *ast.ArrayType {
+  1703  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:63:11
+  1704  .  .  .  .  .  .  .  .  .  .  Elt: *ast.Ident {
+  1705  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:63:13
+  1706  .  .  .  .  .  .  .  .  .  .  .  Name: "int"
+  1707  .  .  .  .  .  .  .  .  .  .  }
+  1708  .  .  .  .  .  .  .  .  .  }
+  1709  .  .  .  .  .  .  .  .  }
+  1710  .  .  .  .  .  .  .  }
+  1711  .  .  .  .  .  .  .  Rparen: -
+  1712  .  .  .  .  .  .  }
+  1713  .  .  .  .  .  }
+  1714  .  .  .  .  .  3: *ast.ForStmt {
+  1715  .  .  .  .  .  .  For: examples/tsp/tsp.go:64:3
+  1716  .  .  .  .  .  .  Init: *ast.AssignStmt {
+  1717  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  1718  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1719  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:64:7
+  1720  .  .  .  .  .  .  .  .  .  Name: "i"
+  1721  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1722  .  .  .  .  .  .  .  .  .  .  Kind: var
+  1723  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  1724  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1716)
+  1725  .  .  .  .  .  .  .  .  .  }
+  1726  .  .  .  .  .  .  .  .  }
+  1727  .  .  .  .  .  .  .  }
+  1728  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:64:8
+  1729  .  .  .  .  .  .  .  Tok: :=
+  1730  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  1731  .  .  .  .  .  .  .  .  0: *ast.BasicLit {
+  1732  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:64:10
+  1733  .  .  .  .  .  .  .  .  .  Kind: INT
+  1734  .  .  .  .  .  .  .  .  .  Value: "0"
+  1735  .  .  .  .  .  .  .  .  }
+  1736  .  .  .  .  .  .  .  }
+  1737  .  .  .  .  .  .  }
+  1738  .  .  .  .  .  .  Cond: *ast.BinaryExpr {
+  1739  .  .  .  .  .  .  .  X: *ast.Ident {
+  1740  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:64:12
+  1741  .  .  .  .  .  .  .  .  Name: "i"
+  1742  .  .  .  .  .  .  .  .  Obj: *(obj @ 1721)
+  1743  .  .  .  .  .  .  .  }
+  1744  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:64:13
+  1745  .  .  .  .  .  .  .  Op: <
+  1746  .  .  .  .  .  .  .  Y: *ast.CallExpr {
+  1747  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  1748  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:64:14
+  1749  .  .  .  .  .  .  .  .  .  Name: "len"
+  1750  .  .  .  .  .  .  .  .  }
+  1751  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:64:17
+  1752  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  1753  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+  1754  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1755  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:64:18
+  1756  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1757  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1485)
+  1758  .  .  .  .  .  .  .  .  .  .  }
+  1759  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1760  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:64:23
+  1761  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1762  .  .  .  .  .  .  .  .  .  .  }
+  1763  .  .  .  .  .  .  .  .  .  }
+  1764  .  .  .  .  .  .  .  .  }
+  1765  .  .  .  .  .  .  .  .  Ellipsis: -
+  1766  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:64:27
+  1767  .  .  .  .  .  .  .  }
+  1768  .  .  .  .  .  .  }
+  1769  .  .  .  .  .  .  Post: *ast.IncDecStmt {
+  1770  .  .  .  .  .  .  .  X: *ast.Ident {
+  1771  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:64:29
+  1772  .  .  .  .  .  .  .  .  Name: "i"
+  1773  .  .  .  .  .  .  .  .  Obj: *(obj @ 1721)
+  1774  .  .  .  .  .  .  .  }
+  1775  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:64:30
+  1776  .  .  .  .  .  .  .  Tok: ++
+  1777  .  .  .  .  .  .  }
+  1778  .  .  .  .  .  .  Body: *ast.BlockStmt {
+  1779  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:64:32
+  1780  .  .  .  .  .  .  .  List: []ast.Stmt (len = 4) {
+  1781  .  .  .  .  .  .  .  .  0: *ast.AssignStmt {
+  1782  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  1783  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1784  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:65:5
+  1785  .  .  .  .  .  .  .  .  .  .  .  Name: "n"
+  1786  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1787  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  1788  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n"
+  1789  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1781)
+  1790  .  .  .  .  .  .  .  .  .  .  .  }
+  1791  .  .  .  .  .  .  .  .  .  .  }
+  1792  .  .  .  .  .  .  .  .  .  }
+  1793  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:65:7
+  1794  .  .  .  .  .  .  .  .  .  Tok: :=
+  1795  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  1796  .  .  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  1797  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1798  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1799  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:65:10
+  1800  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  1801  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1485)
+  1802  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1803  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1804  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:65:15
+  1805  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1806  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1807  .  .  .  .  .  .  .  .  .  .  .  }
+  1808  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:65:19
+  1809  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  1810  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:65:20
+  1811  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  1812  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1721)
+  1813  .  .  .  .  .  .  .  .  .  .  .  }
+  1814  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:65:21
+  1815  .  .  .  .  .  .  .  .  .  .  }
+  1816  .  .  .  .  .  .  .  .  .  }
+  1817  .  .  .  .  .  .  .  .  }
+  1818  .  .  .  .  .  .  .  .  1: *ast.DeclStmt {
+  1819  .  .  .  .  .  .  .  .  .  Decl: *ast.GenDecl {
+  1820  .  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:66:5
+  1821  .  .  .  .  .  .  .  .  .  .  Tok: var
+  1822  .  .  .  .  .  .  .  .  .  .  Lparen: -
+  1823  .  .  .  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+  1824  .  .  .  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+  1825  .  .  .  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  1826  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1827  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:66:9
+  1828  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "used"
+  1829  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1830  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  1831  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "used"
+  1832  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1824)
+  1833  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+  1834  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1835  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1836  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1837  .  .  .  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+  1838  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:66:14
+  1839  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "bool"
+  1840  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1841  .  .  .  .  .  .  .  .  .  .  .  .  Values: []ast.Expr (len = 1) {
+  1842  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1843  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:66:21
+  1844  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "false"
+  1845  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1846  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1847  .  .  .  .  .  .  .  .  .  .  .  }
+  1848  .  .  .  .  .  .  .  .  .  .  }
+  1849  .  .  .  .  .  .  .  .  .  .  Rparen: -
+  1850  .  .  .  .  .  .  .  .  .  }
+  1851  .  .  .  .  .  .  .  .  }
+  1852  .  .  .  .  .  .  .  .  2: *ast.ForStmt {
+  1853  .  .  .  .  .  .  .  .  .  For: examples/tsp/tsp.go:67:5
+  1854  .  .  .  .  .  .  .  .  .  Init: *ast.AssignStmt {
+  1855  .  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  1856  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1857  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:67:9
+  1858  .  .  .  .  .  .  .  .  .  .  .  .  Name: "k"
+  1859  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  1860  .  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  1861  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "k"
+  1862  .  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 1854)
+  1863  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1864  .  .  .  .  .  .  .  .  .  .  .  }
+  1865  .  .  .  .  .  .  .  .  .  .  }
+  1866  .  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:67:10
+  1867  .  .  .  .  .  .  .  .  .  .  Tok: :=
+  1868  .  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  1869  .  .  .  .  .  .  .  .  .  .  .  0: *ast.BasicLit {
+  1870  .  .  .  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:67:12
+  1871  .  .  .  .  .  .  .  .  .  .  .  .  Kind: INT
+  1872  .  .  .  .  .  .  .  .  .  .  .  .  Value: "0"
+  1873  .  .  .  .  .  .  .  .  .  .  .  }
+  1874  .  .  .  .  .  .  .  .  .  .  }
+  1875  .  .  .  .  .  .  .  .  .  }
+  1876  .  .  .  .  .  .  .  .  .  Cond: *ast.BinaryExpr {
+  1877  .  .  .  .  .  .  .  .  .  .  X: *ast.BinaryExpr {
+  1878  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1879  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:67:14
+  1880  .  .  .  .  .  .  .  .  .  .  .  .  Name: "k"
+  1881  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1859)
+  1882  .  .  .  .  .  .  .  .  .  .  .  }
+  1883  .  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:67:15
+  1884  .  .  .  .  .  .  .  .  .  .  .  Op: <
+  1885  .  .  .  .  .  .  .  .  .  .  .  Y: *ast.Ident {
+  1886  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:67:16
+  1887  .  .  .  .  .  .  .  .  .  .  .  .  Name: "j"
+  1888  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1631)
+  1889  .  .  .  .  .  .  .  .  .  .  .  }
+  1890  .  .  .  .  .  .  .  .  .  .  }
+  1891  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:67:18
+  1892  .  .  .  .  .  .  .  .  .  .  Op: &&
+  1893  .  .  .  .  .  .  .  .  .  .  Y: *ast.UnaryExpr {
+  1894  .  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:67:21
+  1895  .  .  .  .  .  .  .  .  .  .  .  Op: !
+  1896  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1897  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:67:22
+  1898  .  .  .  .  .  .  .  .  .  .  .  .  Name: "used"
+  1899  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1829)
+  1900  .  .  .  .  .  .  .  .  .  .  .  }
+  1901  .  .  .  .  .  .  .  .  .  .  }
+  1902  .  .  .  .  .  .  .  .  .  }
+  1903  .  .  .  .  .  .  .  .  .  Post: *ast.IncDecStmt {
+  1904  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1905  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:67:27
+  1906  .  .  .  .  .  .  .  .  .  .  .  Name: "k"
+  1907  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1859)
+  1908  .  .  .  .  .  .  .  .  .  .  }
+  1909  .  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:67:28
+  1910  .  .  .  .  .  .  .  .  .  .  Tok: ++
+  1911  .  .  .  .  .  .  .  .  .  }
+  1912  .  .  .  .  .  .  .  .  .  Body: *ast.BlockStmt {
+  1913  .  .  .  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:67:30
+  1914  .  .  .  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+  1915  .  .  .  .  .  .  .  .  .  .  .  0: *ast.IfStmt {
+  1916  .  .  .  .  .  .  .  .  .  .  .  .  If: examples/tsp/tsp.go:68:7
+  1917  .  .  .  .  .  .  .  .  .  .  .  .  Cond: *ast.BinaryExpr {
+  1918  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.IndexExpr {
+  1919  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  1920  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1921  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:68:10
+  1922  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "second"
+  1923  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1586)
+  1924  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1925  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  1926  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:68:17
+  1927  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  1928  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1929  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1930  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:68:21
+  1931  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  1932  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:68:22
+  1933  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "k"
+  1934  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1859)
+  1935  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1936  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:68:23
+  1937  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1938  .  .  .  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:68:24
+  1939  .  .  .  .  .  .  .  .  .  .  .  .  .  Op: ==
+  1940  .  .  .  .  .  .  .  .  .  .  .  .  .  Y: *ast.Ident {
+  1941  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:68:26
+  1942  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n"
+  1943  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1786)
+  1944  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1945  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1946  .  .  .  .  .  .  .  .  .  .  .  .  Body: *ast.BlockStmt {
+  1947  .  .  .  .  .  .  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:68:27
+  1948  .  .  .  .  .  .  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+  1949  .  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.AssignStmt {
+  1950  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  1951  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1952  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:69:9
+  1953  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "used"
+  1954  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1829)
+  1955  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1956  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1957  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:69:14
+  1958  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Tok: =
+  1959  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  1960  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1961  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:69:16
+  1962  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "true"
+  1963  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1964  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1965  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1966  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1967  .  .  .  .  .  .  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:70:7
+  1968  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1969  .  .  .  .  .  .  .  .  .  .  .  }
+  1970  .  .  .  .  .  .  .  .  .  .  }
+  1971  .  .  .  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:71:5
+  1972  .  .  .  .  .  .  .  .  .  }
+  1973  .  .  .  .  .  .  .  .  }
+  1974  .  .  .  .  .  .  .  .  3: *ast.IfStmt {
+  1975  .  .  .  .  .  .  .  .  .  If: examples/tsp/tsp.go:72:5
+  1976  .  .  .  .  .  .  .  .  .  Cond: *ast.UnaryExpr {
+  1977  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:72:8
+  1978  .  .  .  .  .  .  .  .  .  .  Op: !
+  1979  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  1980  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:72:9
+  1981  .  .  .  .  .  .  .  .  .  .  .  Name: "used"
+  1982  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1829)
+  1983  .  .  .  .  .  .  .  .  .  .  }
+  1984  .  .  .  .  .  .  .  .  .  }
+  1985  .  .  .  .  .  .  .  .  .  Body: *ast.BlockStmt {
+  1986  .  .  .  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:72:13
+  1987  .  .  .  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+  1988  .  .  .  .  .  .  .  .  .  .  .  0: *ast.AssignStmt {
+  1989  .  .  .  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  1990  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  1991  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:73:7
+  1992  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "rem"
+  1993  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1694)
+  1994  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1995  .  .  .  .  .  .  .  .  .  .  .  .  }
+  1996  .  .  .  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:73:11
+  1997  .  .  .  .  .  .  .  .  .  .  .  .  Tok: =
+  1998  .  .  .  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  1999  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  2000  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  2001  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:73:13
+  2002  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "append"
+  2003  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2004  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:73:19
+  2005  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2006  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2007  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:73:20
+  2008  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "rem"
+  2009  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1694)
+  2010  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2011  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  1: *ast.Ident {
+  2012  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:73:24
+  2013  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n"
+  2014  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1786)
+  2015  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2016  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2017  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2018  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:73:25
+  2019  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2020  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2021  .  .  .  .  .  .  .  .  .  .  .  }
+  2022  .  .  .  .  .  .  .  .  .  .  }
+  2023  .  .  .  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:74:5
+  2024  .  .  .  .  .  .  .  .  .  }
+  2025  .  .  .  .  .  .  .  .  }
+  2026  .  .  .  .  .  .  .  }
+  2027  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:75:3
+  2028  .  .  .  .  .  .  }
+  2029  .  .  .  .  .  }
+  2030  .  .  .  .  .  4: *ast.ForStmt {
+  2031  .  .  .  .  .  .  For: examples/tsp/tsp.go:76:3
+  2032  .  .  .  .  .  .  Init: *ast.AssignStmt {
+  2033  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  2034  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2035  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:76:7
+  2036  .  .  .  .  .  .  .  .  .  Name: "i"
+  2037  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2038  .  .  .  .  .  .  .  .  .  .  Kind: var
+  2039  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2040  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2032)
+  2041  .  .  .  .  .  .  .  .  .  }
+  2042  .  .  .  .  .  .  .  .  }
+  2043  .  .  .  .  .  .  .  }
+  2044  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:76:8
+  2045  .  .  .  .  .  .  .  Tok: :=
+  2046  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  2047  .  .  .  .  .  .  .  .  0: *ast.BasicLit {
+  2048  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:76:10
+  2049  .  .  .  .  .  .  .  .  .  Kind: INT
+  2050  .  .  .  .  .  .  .  .  .  Value: "0"
+  2051  .  .  .  .  .  .  .  .  }
+  2052  .  .  .  .  .  .  .  }
+  2053  .  .  .  .  .  .  }
+  2054  .  .  .  .  .  .  Cond: *ast.BinaryExpr {
+  2055  .  .  .  .  .  .  .  X: *ast.Ident {
+  2056  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:76:12
+  2057  .  .  .  .  .  .  .  .  Name: "i"
+  2058  .  .  .  .  .  .  .  .  Obj: *(obj @ 2037)
+  2059  .  .  .  .  .  .  .  }
+  2060  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:76:13
+  2061  .  .  .  .  .  .  .  Op: <
+  2062  .  .  .  .  .  .  .  Y: *ast.Ident {
+  2063  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:76:14
+  2064  .  .  .  .  .  .  .  .  Name: "j"
+  2065  .  .  .  .  .  .  .  .  Obj: *(obj @ 1631)
+  2066  .  .  .  .  .  .  .  }
+  2067  .  .  .  .  .  .  }
+  2068  .  .  .  .  .  .  Post: *ast.IncDecStmt {
+  2069  .  .  .  .  .  .  .  X: *ast.Ident {
+  2070  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:76:16
+  2071  .  .  .  .  .  .  .  .  Name: "i"
+  2072  .  .  .  .  .  .  .  .  Obj: *(obj @ 2037)
+  2073  .  .  .  .  .  .  .  }
+  2074  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:76:17
+  2075  .  .  .  .  .  .  .  Tok: ++
+  2076  .  .  .  .  .  .  }
+  2077  .  .  .  .  .  .  Body: *ast.BlockStmt {
+  2078  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:76:19
+  2079  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+  2080  .  .  .  .  .  .  .  .  0: *ast.AssignStmt {
+  2081  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  2082  .  .  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  2083  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  2084  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2085  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:77:5
+  2086  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  2087  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1485)
+  2088  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2089  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2090  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:77:10
+  2091  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  2092  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2093  .  .  .  .  .  .  .  .  .  .  .  }
+  2094  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:77:14
+  2095  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  2096  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:77:15
+  2097  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2098  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2037)
+  2099  .  .  .  .  .  .  .  .  .  .  .  }
+  2100  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:77:16
+  2101  .  .  .  .  .  .  .  .  .  .  }
+  2102  .  .  .  .  .  .  .  .  .  }
+  2103  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:77:18
+  2104  .  .  .  .  .  .  .  .  .  Tok: =
+  2105  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  2106  .  .  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  2107  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  2108  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2109  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:77:20
+  2110  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "second"
+  2111  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1586)
+  2112  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2113  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2114  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:77:27
+  2115  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  2116  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2117  .  .  .  .  .  .  .  .  .  .  .  }
+  2118  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:77:31
+  2119  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  2120  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:77:32
+  2121  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2122  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2037)
+  2123  .  .  .  .  .  .  .  .  .  .  .  }
+  2124  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:77:33
+  2125  .  .  .  .  .  .  .  .  .  .  }
+  2126  .  .  .  .  .  .  .  .  .  }
+  2127  .  .  .  .  .  .  .  .  }
+  2128  .  .  .  .  .  .  .  }
+  2129  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:78:3
+  2130  .  .  .  .  .  .  }
+  2131  .  .  .  .  .  }
+  2132  .  .  .  .  .  5: *ast.ForStmt {
+  2133  .  .  .  .  .  .  For: examples/tsp/tsp.go:79:3
+  2134  .  .  .  .  .  .  Init: *ast.AssignStmt {
+  2135  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  2136  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2137  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:79:7
+  2138  .  .  .  .  .  .  .  .  .  Name: "i"
+  2139  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2140  .  .  .  .  .  .  .  .  .  .  Kind: var
+  2141  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2142  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2134)
+  2143  .  .  .  .  .  .  .  .  .  }
+  2144  .  .  .  .  .  .  .  .  }
+  2145  .  .  .  .  .  .  .  }
+  2146  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:79:8
+  2147  .  .  .  .  .  .  .  Tok: :=
+  2148  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  2149  .  .  .  .  .  .  .  .  0: *ast.BasicLit {
+  2150  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:79:10
+  2151  .  .  .  .  .  .  .  .  .  Kind: INT
+  2152  .  .  .  .  .  .  .  .  .  Value: "0"
+  2153  .  .  .  .  .  .  .  .  }
+  2154  .  .  .  .  .  .  .  }
+  2155  .  .  .  .  .  .  }
+  2156  .  .  .  .  .  .  Cond: *ast.BinaryExpr {
+  2157  .  .  .  .  .  .  .  X: *ast.Ident {
+  2158  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:79:12
+  2159  .  .  .  .  .  .  .  .  Name: "i"
+  2160  .  .  .  .  .  .  .  .  Obj: *(obj @ 2139)
+  2161  .  .  .  .  .  .  .  }
+  2162  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:79:13
+  2163  .  .  .  .  .  .  .  Op: <
+  2164  .  .  .  .  .  .  .  Y: *ast.CallExpr {
+  2165  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  2166  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:79:14
+  2167  .  .  .  .  .  .  .  .  .  Name: "len"
+  2168  .  .  .  .  .  .  .  .  }
+  2169  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:79:17
+  2170  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  2171  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2172  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:79:18
+  2173  .  .  .  .  .  .  .  .  .  .  Name: "rem"
+  2174  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1694)
+  2175  .  .  .  .  .  .  .  .  .  }
+  2176  .  .  .  .  .  .  .  .  }
+  2177  .  .  .  .  .  .  .  .  Ellipsis: -
+  2178  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:79:21
+  2179  .  .  .  .  .  .  .  }
+  2180  .  .  .  .  .  .  }
+  2181  .  .  .  .  .  .  Post: *ast.IncDecStmt {
+  2182  .  .  .  .  .  .  .  X: *ast.Ident {
+  2183  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:79:23
+  2184  .  .  .  .  .  .  .  .  Name: "i"
+  2185  .  .  .  .  .  .  .  .  Obj: *(obj @ 2139)
+  2186  .  .  .  .  .  .  .  }
+  2187  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:79:24
+  2188  .  .  .  .  .  .  .  Tok: ++
+  2189  .  .  .  .  .  .  }
+  2190  .  .  .  .  .  .  Body: *ast.BlockStmt {
+  2191  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:79:26
+  2192  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+  2193  .  .  .  .  .  .  .  .  0: *ast.AssignStmt {
+  2194  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  2195  .  .  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  2196  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  2197  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2198  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:80:5
+  2199  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  2200  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1485)
+  2201  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2202  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2203  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:80:10
+  2204  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  2205  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2206  .  .  .  .  .  .  .  .  .  .  .  }
+  2207  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:80:14
+  2208  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.BinaryExpr {
+  2209  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2210  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:80:15
+  2211  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "j"
+  2212  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1631)
+  2213  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2214  .  .  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:80:16
+  2215  .  .  .  .  .  .  .  .  .  .  .  .  Op: +
+  2216  .  .  .  .  .  .  .  .  .  .  .  .  Y: *ast.Ident {
+  2217  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:80:17
+  2218  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2219  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2139)
+  2220  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2221  .  .  .  .  .  .  .  .  .  .  .  }
+  2222  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:80:18
+  2223  .  .  .  .  .  .  .  .  .  .  }
+  2224  .  .  .  .  .  .  .  .  .  }
+  2225  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:80:20
+  2226  .  .  .  .  .  .  .  .  .  Tok: =
+  2227  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  2228  .  .  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  2229  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2230  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:80:22
+  2231  .  .  .  .  .  .  .  .  .  .  .  .  Name: "rem"
+  2232  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 1694)
+  2233  .  .  .  .  .  .  .  .  .  .  .  }
+  2234  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:80:25
+  2235  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  2236  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:80:26
+  2237  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2238  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2139)
+  2239  .  .  .  .  .  .  .  .  .  .  .  }
+  2240  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:80:27
+  2241  .  .  .  .  .  .  .  .  .  .  }
+  2242  .  .  .  .  .  .  .  .  .  }
+  2243  .  .  .  .  .  .  .  .  }
+  2244  .  .  .  .  .  .  .  }
+  2245  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:81:3
+  2246  .  .  .  .  .  .  }
+  2247  .  .  .  .  .  }
+  2248  .  .  .  .  .  6: *ast.ReturnStmt {
+  2249  .  .  .  .  .  .  Return: examples/tsp/tsp.go:82:3
+  2250  .  .  .  .  .  .  Results: []ast.Expr (len = 1) {
+  2251  .  .  .  .  .  .  .  0: *ast.Ident {
+  2252  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:82:10
+  2253  .  .  .  .  .  .  .  .  Name: "self"
+  2254  .  .  .  .  .  .  .  .  Obj: *(obj @ 1485)
+  2255  .  .  .  .  .  .  .  }
+  2256  .  .  .  .  .  .  }
+  2257  .  .  .  .  .  }
+  2258  .  .  .  .  }
+  2259  .  .  .  .  Rbrace: examples/tsp/tsp.go:83:1
+  2260  .  .  .  }
+  2261  .  .  }
+  2262  .  .  11: *ast.FuncDecl {
+  2263  .  .  .  Recv: *ast.FieldList {
+  2264  .  .  .  .  Opening: examples/tsp/tsp.go:99:6
+  2265  .  .  .  .  List: []*ast.Field (len = 1) {
+  2266  .  .  .  .  .  0: *ast.Field {
+  2267  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  2268  .  .  .  .  .  .  .  0: *ast.Ident {
+  2269  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:99:7
+  2270  .  .  .  .  .  .  .  .  Name: "self"
+  2271  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2272  .  .  .  .  .  .  .  .  .  Kind: var
+  2273  .  .  .  .  .  .  .  .  .  Name: "self"
+  2274  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2266)
+  2275  .  .  .  .  .  .  .  .  }
+  2276  .  .  .  .  .  .  .  }
+  2277  .  .  .  .  .  .  }
+  2278  .  .  .  .  .  .  Type: *ast.StarExpr {
+  2279  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:99:12
+  2280  .  .  .  .  .  .  .  X: *ast.Ident {
+  2281  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:99:13
+  2282  .  .  .  .  .  .  .  .  Name: "TSP"
+  2283  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+  2284  .  .  .  .  .  .  .  }
+  2285  .  .  .  .  .  .  }
+  2286  .  .  .  .  .  }
+  2287  .  .  .  .  }
+  2288  .  .  .  .  Closing: examples/tsp/tsp.go:99:16
+  2289  .  .  .  }
+  2290  .  .  .  Name: *ast.Ident {
+  2291  .  .  .  .  NamePos: examples/tsp/tsp.go:99:17
+  2292  .  .  .  .  Name: "Evaluate"
+  2293  .  .  .  }
+  2294  .  .  .  Type: *ast.FuncType {
+  2295  .  .  .  .  Func: examples/tsp/tsp.go:99:1
+  2296  .  .  .  .  Params: *ast.FieldList {
+  2297  .  .  .  .  .  Opening: examples/tsp/tsp.go:99:25
+  2298  .  .  .  .  .  List: []*ast.Field (len = 1) {
+  2299  .  .  .  .  .  .  0: *ast.Field {
+  2300  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  2301  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2302  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:99:26
+  2303  .  .  .  .  .  .  .  .  .  Name: "st"
+  2304  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2305  .  .  .  .  .  .  .  .  .  .  Kind: var
+  2306  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2307  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2299)
+  2308  .  .  .  .  .  .  .  .  .  }
+  2309  .  .  .  .  .  .  .  .  }
+  2310  .  .  .  .  .  .  .  }
+  2311  .  .  .  .  .  .  .  Type: *ast.StarExpr {
+  2312  .  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:99:29
+  2313  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  2314  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2315  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:99:30
+  2316  .  .  .  .  .  .  .  .  .  .  Name: "op"
+  2317  .  .  .  .  .  .  .  .  .  }
+  2318  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2319  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:99:33
+  2320  .  .  .  .  .  .  .  .  .  .  Name: "State"
+  2321  .  .  .  .  .  .  .  .  .  }
+  2322  .  .  .  .  .  .  .  .  }
+  2323  .  .  .  .  .  .  .  }
+  2324  .  .  .  .  .  .  }
+  2325  .  .  .  .  .  }
+  2326  .  .  .  .  .  Closing: examples/tsp/tsp.go:99:38
+  2327  .  .  .  .  }
+  2328  .  .  .  .  Results: *ast.FieldList {
+  2329  .  .  .  .  .  Opening: -
+  2330  .  .  .  .  .  List: []*ast.Field (len = 1) {
+  2331  .  .  .  .  .  .  0: *ast.Field {
+  2332  .  .  .  .  .  .  .  Type: *ast.Ident {
+  2333  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:99:40
+  2334  .  .  .  .  .  .  .  .  Name: "float64"
+  2335  .  .  .  .  .  .  .  }
+  2336  .  .  .  .  .  .  }
+  2337  .  .  .  .  .  }
+  2338  .  .  .  .  .  Closing: -
+  2339  .  .  .  .  }
+  2340  .  .  .  }
+  2341  .  .  .  Body: *ast.BlockStmt {
+  2342  .  .  .  .  Lbrace: examples/tsp/tsp.go:99:47
+  2343  .  .  .  .  List: []ast.Stmt (len = 10) {
+  2344  .  .  .  .  .  0: *ast.DeclStmt {
+  2345  .  .  .  .  .  .  Decl: *ast.GenDecl {
+  2346  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:100:3
+  2347  .  .  .  .  .  .  .  Tok: var
+  2348  .  .  .  .  .  .  .  Lparen: -
+  2349  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+  2350  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+  2351  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  2352  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2353  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:100:7
+  2354  .  .  .  .  .  .  .  .  .  .  .  Name: "dist"
+  2355  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2356  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  2357  .  .  .  .  .  .  .  .  .  .  .  .  Name: "dist"
+  2358  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2350)
+  2359  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+  2360  .  .  .  .  .  .  .  .  .  .  .  }
+  2361  .  .  .  .  .  .  .  .  .  .  }
+  2362  .  .  .  .  .  .  .  .  .  }
+  2363  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+  2364  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:100:12
+  2365  .  .  .  .  .  .  .  .  .  .  Name: "float64"
+  2366  .  .  .  .  .  .  .  .  .  }
+  2367  .  .  .  .  .  .  .  .  }
+  2368  .  .  .  .  .  .  .  }
+  2369  .  .  .  .  .  .  .  Rparen: -
+  2370  .  .  .  .  .  .  }
+  2371  .  .  .  .  .  }
+  2372  .  .  .  .  .  1: *ast.ExprStmt {
+  2373  .  .  .  .  .  .  X: *ast.CallExpr {
+  2374  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2375  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2376  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:101:3
+  2377  .  .  .  .  .  .  .  .  .  Name: "st"
+  2378  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2379  .  .  .  .  .  .  .  .  }
+  2380  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2381  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:101:6
+  2382  .  .  .  .  .  .  .  .  .  Name: "SetFloat64"
+  2383  .  .  .  .  .  .  .  .  }
+  2384  .  .  .  .  .  .  .  }
+  2385  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:101:16
+  2386  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2387  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  2388  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:101:17
+  2389  .  .  .  .  .  .  .  .  .  Op: &
+  2390  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2391  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:101:18
+  2392  .  .  .  .  .  .  .  .  .  .  Name: "dist"
+  2393  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2355)
+  2394  .  .  .  .  .  .  .  .  .  }
+  2395  .  .  .  .  .  .  .  .  }
+  2396  .  .  .  .  .  .  .  .  1: *ast.BasicLit {
+  2397  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:101:23
+  2398  .  .  .  .  .  .  .  .  .  Kind: FLOAT
+  2399  .  .  .  .  .  .  .  .  .  Value: "0.0"
+  2400  .  .  .  .  .  .  .  .  }
+  2401  .  .  .  .  .  .  .  }
+  2402  .  .  .  .  .  .  .  Ellipsis: -
+  2403  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:101:26
+  2404  .  .  .  .  .  .  }
+  2405  .  .  .  .  .  }
+  2406  .  .  .  .  .  2: *ast.DeclStmt {
+  2407  .  .  .  .  .  .  Decl: *ast.GenDecl {
+  2408  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:102:3
+  2409  .  .  .  .  .  .  .  Tok: var
+  2410  .  .  .  .  .  .  .  Lparen: -
+  2411  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+  2412  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+  2413  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  2414  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2415  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:102:7
+  2416  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2417  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2418  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  2419  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2420  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2412)
+  2421  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+  2422  .  .  .  .  .  .  .  .  .  .  .  }
+  2423  .  .  .  .  .  .  .  .  .  .  }
+  2424  .  .  .  .  .  .  .  .  .  }
+  2425  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+  2426  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:102:9
+  2427  .  .  .  .  .  .  .  .  .  .  Name: "int"
+  2428  .  .  .  .  .  .  .  .  .  }
+  2429  .  .  .  .  .  .  .  .  }
+  2430  .  .  .  .  .  .  .  }
+  2431  .  .  .  .  .  .  .  Rparen: -
+  2432  .  .  .  .  .  .  }
+  2433  .  .  .  .  .  }
+  2434  .  .  .  .  .  3: *ast.ForStmt {
+  2435  .  .  .  .  .  .  For: examples/tsp/tsp.go:103:3
+  2436  .  .  .  .  .  .  Init: *ast.ExprStmt {
+  2437  .  .  .  .  .  .  .  X: *ast.CallExpr {
+  2438  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2439  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2440  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:7
+  2441  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2442  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2443  .  .  .  .  .  .  .  .  .  }
+  2444  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2445  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:10
+  2446  .  .  .  .  .  .  .  .  .  .  Name: "SetInt"
+  2447  .  .  .  .  .  .  .  .  .  }
+  2448  .  .  .  .  .  .  .  .  }
+  2449  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:103:16
+  2450  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2451  .  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  2452  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:103:17
+  2453  .  .  .  .  .  .  .  .  .  .  Op: &
+  2454  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2455  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:18
+  2456  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2457  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2417)
+  2458  .  .  .  .  .  .  .  .  .  .  }
+  2459  .  .  .  .  .  .  .  .  .  }
+  2460  .  .  .  .  .  .  .  .  .  1: *ast.BasicLit {
+  2461  .  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:103:20
+  2462  .  .  .  .  .  .  .  .  .  .  Kind: INT
+  2463  .  .  .  .  .  .  .  .  .  .  Value: "1"
+  2464  .  .  .  .  .  .  .  .  .  }
+  2465  .  .  .  .  .  .  .  .  }
+  2466  .  .  .  .  .  .  .  .  Ellipsis: -
+  2467  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:103:21
+  2468  .  .  .  .  .  .  .  }
+  2469  .  .  .  .  .  .  }
+  2470  .  .  .  .  .  .  Cond: *ast.CallExpr {
+  2471  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2472  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2473  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:23
+  2474  .  .  .  .  .  .  .  .  .  Name: "st"
+  2475  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2476  .  .  .  .  .  .  .  .  }
+  2477  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2478  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:26
+  2479  .  .  .  .  .  .  .  .  .  Name: "Lt"
+  2480  .  .  .  .  .  .  .  .  }
+  2481  .  .  .  .  .  .  .  }
+  2482  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:103:28
+  2483  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2484  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2485  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:29
+  2486  .  .  .  .  .  .  .  .  .  Name: "i"
+  2487  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2417)
+  2488  .  .  .  .  .  .  .  .  }
+  2489  .  .  .  .  .  .  .  .  1: *ast.CallExpr {
+  2490  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  2491  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:31
+  2492  .  .  .  .  .  .  .  .  .  .  Name: "len"
+  2493  .  .  .  .  .  .  .  .  .  }
+  2494  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:103:34
+  2495  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  2496  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+  2497  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2498  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:35
+  2499  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  2500  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2271)
+  2501  .  .  .  .  .  .  .  .  .  .  .  }
+  2502  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2503  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:40
+  2504  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  2505  .  .  .  .  .  .  .  .  .  .  .  }
+  2506  .  .  .  .  .  .  .  .  .  .  }
+  2507  .  .  .  .  .  .  .  .  .  }
+  2508  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2509  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:103:44
+  2510  .  .  .  .  .  .  .  .  }
+  2511  .  .  .  .  .  .  .  }
+  2512  .  .  .  .  .  .  .  Ellipsis: -
+  2513  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:103:45
+  2514  .  .  .  .  .  .  }
+  2515  .  .  .  .  .  .  Post: *ast.ExprStmt {
+  2516  .  .  .  .  .  .  .  X: *ast.CallExpr {
+  2517  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2518  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2519  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:47
+  2520  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2521  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2522  .  .  .  .  .  .  .  .  .  }
+  2523  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2524  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:50
+  2525  .  .  .  .  .  .  .  .  .  .  Name: "SetInt"
+  2526  .  .  .  .  .  .  .  .  .  }
+  2527  .  .  .  .  .  .  .  .  }
+  2528  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:103:56
+  2529  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2530  .  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  2531  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:103:57
+  2532  .  .  .  .  .  .  .  .  .  .  Op: &
+  2533  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2534  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:58
+  2535  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2536  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2417)
+  2537  .  .  .  .  .  .  .  .  .  .  }
+  2538  .  .  .  .  .  .  .  .  .  }
+  2539  .  .  .  .  .  .  .  .  .  1: *ast.CallExpr {
+  2540  .  .  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2541  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2542  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:60
+  2543  .  .  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2544  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2545  .  .  .  .  .  .  .  .  .  .  .  }
+  2546  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2547  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:63
+  2548  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Succ"
+  2549  .  .  .  .  .  .  .  .  .  .  .  }
+  2550  .  .  .  .  .  .  .  .  .  .  }
+  2551  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:103:67
+  2552  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  2553  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2554  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:103:68
+  2555  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2556  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2417)
+  2557  .  .  .  .  .  .  .  .  .  .  .  }
+  2558  .  .  .  .  .  .  .  .  .  .  }
+  2559  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2560  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:103:69
+  2561  .  .  .  .  .  .  .  .  .  }
+  2562  .  .  .  .  .  .  .  .  }
+  2563  .  .  .  .  .  .  .  .  Ellipsis: -
+  2564  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:103:70
+  2565  .  .  .  .  .  .  .  }
+  2566  .  .  .  .  .  .  }
+  2567  .  .  .  .  .  .  Body: *ast.BlockStmt {
+  2568  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:103:71
+  2569  .  .  .  .  .  .  .  List: []ast.Stmt (len = 5) {
+  2570  .  .  .  .  .  .  .  .  0: *ast.DeclStmt {
+  2571  .  .  .  .  .  .  .  .  .  Decl: *ast.GenDecl {
+  2572  .  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:104:5
+  2573  .  .  .  .  .  .  .  .  .  .  Tok: var
+  2574  .  .  .  .  .  .  .  .  .  .  Lparen: -
+  2575  .  .  .  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+  2576  .  .  .  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+  2577  .  .  .  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  2578  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2579  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:104:9
+  2580  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n1"
+  2581  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2582  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  2583  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n1"
+  2584  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2576)
+  2585  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+  2586  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2587  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2588  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2589  .  .  .  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+  2590  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:104:12
+  2591  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "int"
+  2592  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2593  .  .  .  .  .  .  .  .  .  .  .  }
+  2594  .  .  .  .  .  .  .  .  .  .  }
+  2595  .  .  .  .  .  .  .  .  .  .  Rparen: -
+  2596  .  .  .  .  .  .  .  .  .  }
+  2597  .  .  .  .  .  .  .  .  }
+  2598  .  .  .  .  .  .  .  .  1: *ast.DeclStmt {
+  2599  .  .  .  .  .  .  .  .  .  Decl: *ast.GenDecl {
+  2600  .  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:105:5
+  2601  .  .  .  .  .  .  .  .  .  .  Tok: var
+  2602  .  .  .  .  .  .  .  .  .  .  Lparen: -
+  2603  .  .  .  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+  2604  .  .  .  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+  2605  .  .  .  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  2606  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2607  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:105:9
+  2608  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n2"
+  2609  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2610  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  2611  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n2"
+  2612  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2604)
+  2613  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+  2614  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2615  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2616  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2617  .  .  .  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+  2618  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:105:12
+  2619  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "int"
+  2620  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2621  .  .  .  .  .  .  .  .  .  .  .  }
+  2622  .  .  .  .  .  .  .  .  .  .  }
+  2623  .  .  .  .  .  .  .  .  .  .  Rparen: -
+  2624  .  .  .  .  .  .  .  .  .  }
+  2625  .  .  .  .  .  .  .  .  }
+  2626  .  .  .  .  .  .  .  .  2: *ast.ExprStmt {
+  2627  .  .  .  .  .  .  .  .  .  X: *ast.CallExpr {
+  2628  .  .  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2629  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2630  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:106:5
+  2631  .  .  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2632  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2633  .  .  .  .  .  .  .  .  .  .  .  }
+  2634  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2635  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:106:8
+  2636  .  .  .  .  .  .  .  .  .  .  .  .  Name: "SetInt"
+  2637  .  .  .  .  .  .  .  .  .  .  .  }
+  2638  .  .  .  .  .  .  .  .  .  .  }
+  2639  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:106:14
+  2640  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2641  .  .  .  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  2642  .  .  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:106:15
+  2643  .  .  .  .  .  .  .  .  .  .  .  .  Op: &
+  2644  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2645  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:106:16
+  2646  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n1"
+  2647  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2581)
+  2648  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2649  .  .  .  .  .  .  .  .  .  .  .  }
+  2650  .  .  .  .  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+  2651  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  2652  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2653  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:106:19
+  2654  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  2655  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2271)
+  2656  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2657  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2658  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:106:24
+  2659  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  2660  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2661  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2662  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:106:28
+  2663  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.TypeAssertExpr {
+  2664  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.CallExpr {
+  2665  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2666  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2667  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:106:29
+  2668  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2669  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2670  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2671  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2672  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:106:32
+  2673  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Sub"
+  2674  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2675  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2676  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:106:35
+  2677  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2678  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2679  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:106:36
+  2680  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2681  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2417)
+  2682  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2683  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  1: *ast.BasicLit {
+  2684  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:106:38
+  2685  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Kind: INT
+  2686  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Value: "1"
+  2687  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2688  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2689  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2690  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:106:39
+  2691  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2692  .  .  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:106:41
+  2693  .  .  .  .  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+  2694  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:106:42
+  2695  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "int"
+  2696  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2697  .  .  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:106:45
+  2698  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2699  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:106:46
+  2700  .  .  .  .  .  .  .  .  .  .  .  }
+  2701  .  .  .  .  .  .  .  .  .  .  }
+  2702  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2703  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:106:47
+  2704  .  .  .  .  .  .  .  .  .  }
+  2705  .  .  .  .  .  .  .  .  }
+  2706  .  .  .  .  .  .  .  .  3: *ast.ExprStmt {
+  2707  .  .  .  .  .  .  .  .  .  X: *ast.CallExpr {
+  2708  .  .  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2709  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2710  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:107:5
+  2711  .  .  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2712  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2713  .  .  .  .  .  .  .  .  .  .  .  }
+  2714  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2715  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:107:8
+  2716  .  .  .  .  .  .  .  .  .  .  .  .  Name: "SetInt"
+  2717  .  .  .  .  .  .  .  .  .  .  .  }
+  2718  .  .  .  .  .  .  .  .  .  .  }
+  2719  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:107:14
+  2720  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2721  .  .  .  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  2722  .  .  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:107:15
+  2723  .  .  .  .  .  .  .  .  .  .  .  .  Op: &
+  2724  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2725  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:107:16
+  2726  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n2"
+  2727  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2609)
+  2728  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2729  .  .  .  .  .  .  .  .  .  .  .  }
+  2730  .  .  .  .  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+  2731  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  2732  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2733  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:107:19
+  2734  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  2735  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2271)
+  2736  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2737  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2738  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:107:24
+  2739  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  2740  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2741  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2742  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:107:28
+  2743  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  2744  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:107:29
+  2745  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "i"
+  2746  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2417)
+  2747  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2748  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:107:30
+  2749  .  .  .  .  .  .  .  .  .  .  .  }
+  2750  .  .  .  .  .  .  .  .  .  .  }
+  2751  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2752  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:107:31
+  2753  .  .  .  .  .  .  .  .  .  }
+  2754  .  .  .  .  .  .  .  .  }
+  2755  .  .  .  .  .  .  .  .  4: *ast.ExprStmt {
+  2756  .  .  .  .  .  .  .  .  .  X: *ast.CallExpr {
+  2757  .  .  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2758  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2759  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:5
+  2760  .  .  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2761  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2762  .  .  .  .  .  .  .  .  .  .  .  }
+  2763  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2764  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:8
+  2765  .  .  .  .  .  .  .  .  .  .  .  .  Name: "SetFloat64"
+  2766  .  .  .  .  .  .  .  .  .  .  .  }
+  2767  .  .  .  .  .  .  .  .  .  .  }
+  2768  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:108:18
+  2769  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2770  .  .  .  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  2771  .  .  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:108:19
+  2772  .  .  .  .  .  .  .  .  .  .  .  .  Op: &
+  2773  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2774  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:20
+  2775  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "dist"
+  2776  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2355)
+  2777  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2778  .  .  .  .  .  .  .  .  .  .  .  }
+  2779  .  .  .  .  .  .  .  .  .  .  .  1: *ast.CallExpr {
+  2780  .  .  .  .  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2781  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2782  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:25
+  2783  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2784  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2785  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2786  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2787  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:28
+  2788  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Add"
+  2789  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2790  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2791  .  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:108:31
+  2792  .  .  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2793  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2794  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:32
+  2795  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "dist"
+  2796  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2355)
+  2797  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2798  .  .  .  .  .  .  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+  2799  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.IndexExpr {
+  2800  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  2801  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2802  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:37
+  2803  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "problem"
+  2804  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 156)
+  2805  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2806  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2807  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:45
+  2808  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "DistanceMatrix"
+  2809  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2810  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2811  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:108:59
+  2812  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  2813  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:60
+  2814  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n1"
+  2815  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2581)
+  2816  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2817  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:108:62
+  2818  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2819  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:108:63
+  2820  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  2821  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:108:64
+  2822  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "n2"
+  2823  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2609)
+  2824  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2825  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:108:66
+  2826  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2827  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2828  .  .  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2829  .  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:108:67
+  2830  .  .  .  .  .  .  .  .  .  .  .  }
+  2831  .  .  .  .  .  .  .  .  .  .  }
+  2832  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2833  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:108:68
+  2834  .  .  .  .  .  .  .  .  .  }
+  2835  .  .  .  .  .  .  .  .  }
+  2836  .  .  .  .  .  .  .  }
+  2837  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:109:3
+  2838  .  .  .  .  .  .  }
+  2839  .  .  .  .  .  }
+  2840  .  .  .  .  .  4: *ast.DeclStmt {
+  2841  .  .  .  .  .  .  Decl: *ast.GenDecl {
+  2842  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:110:3
+  2843  .  .  .  .  .  .  .  Tok: var
+  2844  .  .  .  .  .  .  .  Lparen: -
+  2845  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+  2846  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+  2847  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  2848  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2849  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:110:7
+  2850  .  .  .  .  .  .  .  .  .  .  .  Name: "last"
+  2851  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2852  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  2853  .  .  .  .  .  .  .  .  .  .  .  .  Name: "last"
+  2854  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2846)
+  2855  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+  2856  .  .  .  .  .  .  .  .  .  .  .  }
+  2857  .  .  .  .  .  .  .  .  .  .  }
+  2858  .  .  .  .  .  .  .  .  .  }
+  2859  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+  2860  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:110:12
+  2861  .  .  .  .  .  .  .  .  .  .  Name: "int"
+  2862  .  .  .  .  .  .  .  .  .  }
+  2863  .  .  .  .  .  .  .  .  }
+  2864  .  .  .  .  .  .  .  }
+  2865  .  .  .  .  .  .  .  Rparen: -
+  2866  .  .  .  .  .  .  }
+  2867  .  .  .  .  .  }
+  2868  .  .  .  .  .  5: *ast.DeclStmt {
+  2869  .  .  .  .  .  .  Decl: *ast.GenDecl {
+  2870  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:111:3
+  2871  .  .  .  .  .  .  .  Tok: var
+  2872  .  .  .  .  .  .  .  Lparen: -
+  2873  .  .  .  .  .  .  .  Specs: []ast.Spec (len = 1) {
+  2874  .  .  .  .  .  .  .  .  0: *ast.ValueSpec {
+  2875  .  .  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  2876  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  2877  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:111:7
+  2878  .  .  .  .  .  .  .  .  .  .  .  Name: "first"
+  2879  .  .  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  2880  .  .  .  .  .  .  .  .  .  .  .  .  Kind: var
+  2881  .  .  .  .  .  .  .  .  .  .  .  .  Name: "first"
+  2882  .  .  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 2874)
+  2883  .  .  .  .  .  .  .  .  .  .  .  .  Data: 0
+  2884  .  .  .  .  .  .  .  .  .  .  .  }
+  2885  .  .  .  .  .  .  .  .  .  .  }
+  2886  .  .  .  .  .  .  .  .  .  }
+  2887  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+  2888  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:111:13
+  2889  .  .  .  .  .  .  .  .  .  .  Name: "int"
+  2890  .  .  .  .  .  .  .  .  .  }
+  2891  .  .  .  .  .  .  .  .  }
+  2892  .  .  .  .  .  .  .  }
+  2893  .  .  .  .  .  .  .  Rparen: -
+  2894  .  .  .  .  .  .  }
+  2895  .  .  .  .  .  }
+  2896  .  .  .  .  .  6: *ast.ExprStmt {
+  2897  .  .  .  .  .  .  X: *ast.CallExpr {
+  2898  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2899  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2900  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:3
+  2901  .  .  .  .  .  .  .  .  .  Name: "st"
+  2902  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2903  .  .  .  .  .  .  .  .  }
+  2904  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2905  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:6
+  2906  .  .  .  .  .  .  .  .  .  Name: "SetInt"
+  2907  .  .  .  .  .  .  .  .  }
+  2908  .  .  .  .  .  .  .  }
+  2909  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:112:12
+  2910  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2911  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  2912  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:112:13
+  2913  .  .  .  .  .  .  .  .  .  Op: &
+  2914  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2915  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:14
+  2916  .  .  .  .  .  .  .  .  .  .  Name: "last"
+  2917  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2851)
+  2918  .  .  .  .  .  .  .  .  .  }
+  2919  .  .  .  .  .  .  .  .  }
+  2920  .  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+  2921  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  2922  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2923  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:19
+  2924  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  2925  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2271)
+  2926  .  .  .  .  .  .  .  .  .  .  }
+  2927  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2928  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:24
+  2929  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  2930  .  .  .  .  .  .  .  .  .  .  }
+  2931  .  .  .  .  .  .  .  .  .  }
+  2932  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:112:28
+  2933  .  .  .  .  .  .  .  .  .  Index: *ast.TypeAssertExpr {
+  2934  .  .  .  .  .  .  .  .  .  .  X: *ast.CallExpr {
+  2935  .  .  .  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2936  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2937  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:29
+  2938  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  2939  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  2940  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2941  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2942  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:32
+  2943  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Sub"
+  2944  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2945  .  .  .  .  .  .  .  .  .  .  .  }
+  2946  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:112:35
+  2947  .  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  2948  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  2949  .  .  .  .  .  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  2950  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:36
+  2951  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "len"
+  2952  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2953  .  .  .  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:112:39
+  2954  .  .  .  .  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+  2955  .  .  .  .  .  .  .  .  .  .  .  .  .  .  0: *ast.SelectorExpr {
+  2956  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2957  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:40
+  2958  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  2959  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2271)
+  2960  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2961  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  2962  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:45
+  2963  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  2964  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2965  .  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2966  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2967  .  .  .  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2968  .  .  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:112:49
+  2969  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2970  .  .  .  .  .  .  .  .  .  .  .  .  1: *ast.BasicLit {
+  2971  .  .  .  .  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:112:51
+  2972  .  .  .  .  .  .  .  .  .  .  .  .  .  Kind: INT
+  2973  .  .  .  .  .  .  .  .  .  .  .  .  .  Value: "1"
+  2974  .  .  .  .  .  .  .  .  .  .  .  .  }
+  2975  .  .  .  .  .  .  .  .  .  .  .  }
+  2976  .  .  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  2977  .  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:112:52
+  2978  .  .  .  .  .  .  .  .  .  .  }
+  2979  .  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:112:54
+  2980  .  .  .  .  .  .  .  .  .  .  Type: *ast.Ident {
+  2981  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:112:55
+  2982  .  .  .  .  .  .  .  .  .  .  .  Name: "int"
+  2983  .  .  .  .  .  .  .  .  .  .  }
+  2984  .  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:112:58
+  2985  .  .  .  .  .  .  .  .  .  }
+  2986  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:112:59
+  2987  .  .  .  .  .  .  .  .  }
+  2988  .  .  .  .  .  .  .  }
+  2989  .  .  .  .  .  .  .  Ellipsis: -
+  2990  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:112:60
+  2991  .  .  .  .  .  .  }
+  2992  .  .  .  .  .  }
+  2993  .  .  .  .  .  7: *ast.ExprStmt {
+  2994  .  .  .  .  .  .  X: *ast.CallExpr {
+  2995  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  2996  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  2997  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:113:3
+  2998  .  .  .  .  .  .  .  .  .  Name: "st"
+  2999  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  3000  .  .  .  .  .  .  .  .  }
+  3001  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  3002  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:113:6
+  3003  .  .  .  .  .  .  .  .  .  Name: "SetInt"
+  3004  .  .  .  .  .  .  .  .  }
+  3005  .  .  .  .  .  .  .  }
+  3006  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:113:12
+  3007  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  3008  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  3009  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:113:13
+  3010  .  .  .  .  .  .  .  .  .  Op: &
+  3011  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  3012  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:113:14
+  3013  .  .  .  .  .  .  .  .  .  .  Name: "first"
+  3014  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2879)
+  3015  .  .  .  .  .  .  .  .  .  }
+  3016  .  .  .  .  .  .  .  .  }
+  3017  .  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+  3018  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  3019  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  3020  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:113:20
+  3021  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  3022  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2271)
+  3023  .  .  .  .  .  .  .  .  .  .  }
+  3024  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  3025  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:113:25
+  3026  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  3027  .  .  .  .  .  .  .  .  .  .  }
+  3028  .  .  .  .  .  .  .  .  .  }
+  3029  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:113:29
+  3030  .  .  .  .  .  .  .  .  .  Index: *ast.BasicLit {
+  3031  .  .  .  .  .  .  .  .  .  .  ValuePos: examples/tsp/tsp.go:113:30
+  3032  .  .  .  .  .  .  .  .  .  .  Kind: INT
+  3033  .  .  .  .  .  .  .  .  .  .  Value: "0"
+  3034  .  .  .  .  .  .  .  .  .  }
+  3035  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:113:31
+  3036  .  .  .  .  .  .  .  .  }
+  3037  .  .  .  .  .  .  .  }
+  3038  .  .  .  .  .  .  .  Ellipsis: -
+  3039  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:113:32
+  3040  .  .  .  .  .  .  }
+  3041  .  .  .  .  .  }
+  3042  .  .  .  .  .  8: *ast.ExprStmt {
+  3043  .  .  .  .  .  .  X: *ast.CallExpr {
+  3044  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  3045  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  3046  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:3
+  3047  .  .  .  .  .  .  .  .  .  Name: "st"
+  3048  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  3049  .  .  .  .  .  .  .  .  }
+  3050  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  3051  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:6
+  3052  .  .  .  .  .  .  .  .  .  Name: "SetFloat64"
+  3053  .  .  .  .  .  .  .  .  }
+  3054  .  .  .  .  .  .  .  }
+  3055  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:114:16
+  3056  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  3057  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  3058  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:114:17
+  3059  .  .  .  .  .  .  .  .  .  Op: &
+  3060  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  3061  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:18
+  3062  .  .  .  .  .  .  .  .  .  .  Name: "dist"
+  3063  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2355)
+  3064  .  .  .  .  .  .  .  .  .  }
+  3065  .  .  .  .  .  .  .  .  }
+  3066  .  .  .  .  .  .  .  .  1: *ast.CallExpr {
+  3067  .  .  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
+  3068  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  3069  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:23
+  3070  .  .  .  .  .  .  .  .  .  .  .  Name: "st"
+  3071  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2304)
+  3072  .  .  .  .  .  .  .  .  .  .  }
+  3073  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  3074  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:26
+  3075  .  .  .  .  .  .  .  .  .  .  .  Name: "Add"
+  3076  .  .  .  .  .  .  .  .  .  .  }
+  3077  .  .  .  .  .  .  .  .  .  }
+  3078  .  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:114:29
+  3079  .  .  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+  3080  .  .  .  .  .  .  .  .  .  .  0: *ast.Ident {
+  3081  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:30
+  3082  .  .  .  .  .  .  .  .  .  .  .  Name: "dist"
+  3083  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2355)
+  3084  .  .  .  .  .  .  .  .  .  .  }
+  3085  .  .  .  .  .  .  .  .  .  .  1: *ast.IndexExpr {
+  3086  .  .  .  .  .  .  .  .  .  .  .  X: *ast.IndexExpr {
+  3087  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  3088  .  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  3089  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:35
+  3090  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "problem"
+  3091  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 156)
+  3092  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3093  .  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  3094  .  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:43
+  3095  .  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "DistanceMatrix"
+  3096  .  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3097  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3098  .  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:114:57
+  3099  .  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  3100  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:58
+  3101  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "last"
+  3102  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2851)
+  3103  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3104  .  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:114:62
+  3105  .  .  .  .  .  .  .  .  .  .  .  }
+  3106  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:114:63
+  3107  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  3108  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:114:64
+  3109  .  .  .  .  .  .  .  .  .  .  .  .  Name: "first"
+  3110  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 2879)
+  3111  .  .  .  .  .  .  .  .  .  .  .  }
+  3112  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:114:69
+  3113  .  .  .  .  .  .  .  .  .  .  }
+  3114  .  .  .  .  .  .  .  .  .  }
+  3115  .  .  .  .  .  .  .  .  .  Ellipsis: -
+  3116  .  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:114:70
+  3117  .  .  .  .  .  .  .  .  }
+  3118  .  .  .  .  .  .  .  }
+  3119  .  .  .  .  .  .  .  Ellipsis: -
+  3120  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:114:71
+  3121  .  .  .  .  .  .  }
+  3122  .  .  .  .  .  }
+  3123  .  .  .  .  .  9: *ast.ReturnStmt {
+  3124  .  .  .  .  .  .  Return: examples/tsp/tsp.go:115:3
+  3125  .  .  .  .  .  .  Results: []ast.Expr (len = 1) {
+  3126  .  .  .  .  .  .  .  0: *ast.Ident {
+  3127  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:115:10
+  3128  .  .  .  .  .  .  .  .  Name: "dist"
+  3129  .  .  .  .  .  .  .  .  Obj: *(obj @ 2355)
+  3130  .  .  .  .  .  .  .  }
+  3131  .  .  .  .  .  .  }
+  3132  .  .  .  .  .  }
+  3133  .  .  .  .  }
+  3134  .  .  .  .  Rbrace: examples/tsp/tsp.go:116:1
+  3135  .  .  .  }
+  3136  .  .  }
+  3137  .  .  12: *ast.FuncDecl {
+  3138  .  .  .  Recv: *ast.FieldList {
+  3139  .  .  .  .  Opening: examples/tsp/tsp.go:118:6
+  3140  .  .  .  .  List: []*ast.Field (len = 1) {
+  3141  .  .  .  .  .  0: *ast.Field {
+  3142  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  3143  .  .  .  .  .  .  .  0: *ast.Ident {
+  3144  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:118:7
+  3145  .  .  .  .  .  .  .  .  Name: "self"
+  3146  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  3147  .  .  .  .  .  .  .  .  .  Kind: var
+  3148  .  .  .  .  .  .  .  .  .  Name: "self"
+  3149  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 3141)
+  3150  .  .  .  .  .  .  .  .  }
+  3151  .  .  .  .  .  .  .  }
+  3152  .  .  .  .  .  .  }
+  3153  .  .  .  .  .  .  Type: *ast.StarExpr {
+  3154  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:118:12
+  3155  .  .  .  .  .  .  .  X: *ast.Ident {
+  3156  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:118:13
+  3157  .  .  .  .  .  .  .  .  Name: "TSP"
+  3158  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+  3159  .  .  .  .  .  .  .  }
+  3160  .  .  .  .  .  .  }
+  3161  .  .  .  .  .  }
+  3162  .  .  .  .  }
+  3163  .  .  .  .  Closing: examples/tsp/tsp.go:118:16
+  3164  .  .  .  }
+  3165  .  .  .  Name: *ast.Ident {
+  3166  .  .  .  .  NamePos: examples/tsp/tsp.go:118:17
+  3167  .  .  .  .  Name: "DeepCopy"
+  3168  .  .  .  }
+  3169  .  .  .  Type: *ast.FuncType {
+  3170  .  .  .  .  Func: examples/tsp/tsp.go:118:1
+  3171  .  .  .  .  Params: *ast.FieldList {
+  3172  .  .  .  .  .  Opening: examples/tsp/tsp.go:118:25
+  3173  .  .  .  .  .  Closing: examples/tsp/tsp.go:118:26
+  3174  .  .  .  .  }
+  3175  .  .  .  .  Results: *ast.FieldList {
+  3176  .  .  .  .  .  Opening: -
+  3177  .  .  .  .  .  List: []*ast.Field (len = 1) {
+  3178  .  .  .  .  .  .  0: *ast.Field {
+  3179  .  .  .  .  .  .  .  Type: *ast.Ident {
+  3180  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:118:28
+  3181  .  .  .  .  .  .  .  .  Name: "DNA"
+  3182  .  .  .  .  .  .  .  }
+  3183  .  .  .  .  .  .  }
+  3184  .  .  .  .  .  }
+  3185  .  .  .  .  .  Closing: -
+  3186  .  .  .  .  }
+  3187  .  .  .  }
+  3188  .  .  .  Body: *ast.BlockStmt {
+  3189  .  .  .  .  Lbrace: examples/tsp/tsp.go:118:31
+  3190  .  .  .  .  List: []ast.Stmt (len = 3) {
+  3191  .  .  .  .  .  0: *ast.AssignStmt {
+  3192  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  3193  .  .  .  .  .  .  .  0: *ast.Ident {
+  3194  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:119:3
+  3195  .  .  .  .  .  .  .  .  Name: "k"
+  3196  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  3197  .  .  .  .  .  .  .  .  .  Kind: var
+  3198  .  .  .  .  .  .  .  .  .  Name: "k"
+  3199  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 3191)
+  3200  .  .  .  .  .  .  .  .  }
+  3201  .  .  .  .  .  .  .  }
+  3202  .  .  .  .  .  .  }
+  3203  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:119:5
+  3204  .  .  .  .  .  .  Tok: :=
+  3205  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  3206  .  .  .  .  .  .  .  0: *ast.CallExpr {
+  3207  .  .  .  .  .  .  .  .  Fun: *ast.Ident {
+  3208  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:119:8
+  3209  .  .  .  .  .  .  .  .  .  Name: "build"
+  3210  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 499)
+  3211  .  .  .  .  .  .  .  .  }
+  3212  .  .  .  .  .  .  .  .  Lparen: examples/tsp/tsp.go:119:13
+  3213  .  .  .  .  .  .  .  .  Ellipsis: -
+  3214  .  .  .  .  .  .  .  .  Rparen: examples/tsp/tsp.go:119:14
+  3215  .  .  .  .  .  .  .  }
+  3216  .  .  .  .  .  .  }
+  3217  .  .  .  .  .  }
+  3218  .  .  .  .  .  1: *ast.RangeStmt {
+  3219  .  .  .  .  .  .  For: examples/tsp/tsp.go:120:3
+  3220  .  .  .  .  .  .  Key: *ast.Ident {
+  3221  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:120:7
+  3222  .  .  .  .  .  .  .  Name: "el"
+  3223  .  .  .  .  .  .  .  Obj: *ast.Object {
+  3224  .  .  .  .  .  .  .  .  Kind: var
+  3225  .  .  .  .  .  .  .  .  Name: "el"
+  3226  .  .  .  .  .  .  .  .  Decl: *ast.AssignStmt {
+  3227  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  3228  .  .  .  .  .  .  .  .  .  .  0: *(obj @ 3220)
+  3229  .  .  .  .  .  .  .  .  .  }
+  3230  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:120:10
+  3231  .  .  .  .  .  .  .  .  .  Tok: :=
+  3232  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  3233  .  .  .  .  .  .  .  .  .  .  0: *ast.UnaryExpr {
+  3234  .  .  .  .  .  .  .  .  .  .  .  OpPos: examples/tsp/tsp.go:120:13
+  3235  .  .  .  .  .  .  .  .  .  .  .  Op: range
+  3236  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  3237  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  3238  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:120:19
+  3239  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  3240  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 3146)
+  3241  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3242  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  3243  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:120:24
+  3244  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  3245  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3246  .  .  .  .  .  .  .  .  .  .  .  }
+  3247  .  .  .  .  .  .  .  .  .  .  }
+  3248  .  .  .  .  .  .  .  .  .  }
+  3249  .  .  .  .  .  .  .  .  }
+  3250  .  .  .  .  .  .  .  }
+  3251  .  .  .  .  .  .  }
+  3252  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:120:10
+  3253  .  .  .  .  .  .  Tok: :=
+  3254  .  .  .  .  .  .  X: *(obj @ 3236)
+  3255  .  .  .  .  .  .  Body: *ast.BlockStmt {
+  3256  .  .  .  .  .  .  .  Lbrace: examples/tsp/tsp.go:120:28
+  3257  .  .  .  .  .  .  .  List: []ast.Stmt (len = 1) {
+  3258  .  .  .  .  .  .  .  .  0: *ast.AssignStmt {
+  3259  .  .  .  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
+  3260  .  .  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  3261  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  3262  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  3263  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:121:5
+  3264  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "k"
+  3265  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 3196)
+  3266  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3267  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  3268  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:121:7
+  3269  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  3270  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3271  .  .  .  .  .  .  .  .  .  .  .  }
+  3272  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:121:11
+  3273  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  3274  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:121:12
+  3275  .  .  .  .  .  .  .  .  .  .  .  .  Name: "el"
+  3276  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 3223)
+  3277  .  .  .  .  .  .  .  .  .  .  .  }
+  3278  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:121:14
+  3279  .  .  .  .  .  .  .  .  .  .  }
+  3280  .  .  .  .  .  .  .  .  .  }
+  3281  .  .  .  .  .  .  .  .  .  TokPos: examples/tsp/tsp.go:121:16
+  3282  .  .  .  .  .  .  .  .  .  Tok: =
+  3283  .  .  .  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
+  3284  .  .  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+  3285  .  .  .  .  .  .  .  .  .  .  .  X: *ast.SelectorExpr {
+  3286  .  .  .  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+  3287  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:121:18
+  3288  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "self"
+  3289  .  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 3146)
+  3290  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3291  .  .  .  .  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
+  3292  .  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:121:23
+  3293  .  .  .  .  .  .  .  .  .  .  .  .  .  Name: "Data"
+  3294  .  .  .  .  .  .  .  .  .  .  .  .  }
+  3295  .  .  .  .  .  .  .  .  .  .  .  }
+  3296  .  .  .  .  .  .  .  .  .  .  .  Lbrack: examples/tsp/tsp.go:121:27
+  3297  .  .  .  .  .  .  .  .  .  .  .  Index: *ast.Ident {
+  3298  .  .  .  .  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:121:28
+  3299  .  .  .  .  .  .  .  .  .  .  .  .  Name: "el"
+  3300  .  .  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 3223)
+  3301  .  .  .  .  .  .  .  .  .  .  .  }
+  3302  .  .  .  .  .  .  .  .  .  .  .  Rbrack: examples/tsp/tsp.go:121:30
+  3303  .  .  .  .  .  .  .  .  .  .  }
+  3304  .  .  .  .  .  .  .  .  .  }
+  3305  .  .  .  .  .  .  .  .  }
+  3306  .  .  .  .  .  .  .  }
+  3307  .  .  .  .  .  .  .  Rbrace: examples/tsp/tsp.go:122:3
+  3308  .  .  .  .  .  .  }
+  3309  .  .  .  .  .  }
+  3310  .  .  .  .  .  2: *ast.ReturnStmt {
+  3311  .  .  .  .  .  .  Return: examples/tsp/tsp.go:123:3
+  3312  .  .  .  .  .  .  Results: []ast.Expr (len = 1) {
+  3313  .  .  .  .  .  .  .  0: *ast.Ident {
+  3314  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:123:10
+  3315  .  .  .  .  .  .  .  .  Name: "k"
+  3316  .  .  .  .  .  .  .  .  Obj: *(obj @ 3196)
+  3317  .  .  .  .  .  .  .  }
+  3318  .  .  .  .  .  .  }
+  3319  .  .  .  .  .  }
+  3320  .  .  .  .  }
+  3321  .  .  .  .  Rbrace: examples/tsp/tsp.go:124:1
+  3322  .  .  .  }
+  3323  .  .  }
+  3324  .  .  13: *ast.FuncDecl {
+  3325  .  .  .  Recv: *ast.FieldList {
+  3326  .  .  .  .  Opening: examples/tsp/tsp.go:126:6
+  3327  .  .  .  .  List: []*ast.Field (len = 1) {
+  3328  .  .  .  .  .  0: *ast.Field {
+  3329  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  3330  .  .  .  .  .  .  .  0: *ast.Ident {
+  3331  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:126:7
+  3332  .  .  .  .  .  .  .  .  Name: "self"
+  3333  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+  3334  .  .  .  .  .  .  .  .  .  Kind: var
+  3335  .  .  .  .  .  .  .  .  .  Name: "self"
+  3336  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 3328)
+  3337  .  .  .  .  .  .  .  .  }
+  3338  .  .  .  .  .  .  .  }
+  3339  .  .  .  .  .  .  }
+  3340  .  .  .  .  .  .  Type: *ast.StarExpr {
+  3341  .  .  .  .  .  .  .  Star: examples/tsp/tsp.go:126:12
+  3342  .  .  .  .  .  .  .  X: *ast.Ident {
+  3343  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:126:13
+  3344  .  .  .  .  .  .  .  .  Name: "TSP"
+  3345  .  .  .  .  .  .  .  .  Obj: *(obj @ 182)
+  3346  .  .  .  .  .  .  .  }
+  3347  .  .  .  .  .  .  }
+  3348  .  .  .  .  .  }
+  3349  .  .  .  .  }
+  3350  .  .  .  .  Closing: examples/tsp/tsp.go:126:16
+  3351  .  .  .  }
+  3352  .  .  .  Name: *ast.Ident {
+  3353  .  .  .  .  NamePos: examples/tsp/tsp.go:126:17
+  3354  .  .  .  .  Name: "HasToMinimize"
+  3355  .  .  .  }
+  3356  .  .  .  Type: *ast.FuncType {
+  3357  .  .  .  .  Func: examples/tsp/tsp.go:126:1
+  3358  .  .  .  .  Params: *ast.FieldList {
+  3359  .  .  .  .  .  Opening: examples/tsp/tsp.go:126:30
+  3360  .  .  .  .  .  Closing: examples/tsp/tsp.go:126:31
+  3361  .  .  .  .  }
+  3362  .  .  .  .  Results: *ast.FieldList {
+  3363  .  .  .  .  .  Opening: -
+  3364  .  .  .  .  .  List: []*ast.Field (len = 1) {
+  3365  .  .  .  .  .  .  0: *ast.Field {
+  3366  .  .  .  .  .  .  .  Type: *ast.Ident {
+  3367  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:126:33
+  3368  .  .  .  .  .  .  .  .  Name: "bool"
+  3369  .  .  .  .  .  .  .  }
+  3370  .  .  .  .  .  .  }
+  3371  .  .  .  .  .  }
+  3372  .  .  .  .  .  Closing: -
+  3373  .  .  .  .  }
+  3374  .  .  .  }
+  3375  .  .  .  Body: *ast.BlockStmt {
+  3376  .  .  .  .  Lbrace: examples/tsp/tsp.go:126:37
+  3377  .  .  .  .  List: []ast.Stmt (len = 1) {
+  3378  .  .  .  .  .  0: *ast.ReturnStmt {
+  3379  .  .  .  .  .  .  Return: examples/tsp/tsp.go:127:3
+  3380  .  .  .  .  .  .  Results: []ast.Expr (len = 1) {
+  3381  .  .  .  .  .  .  .  0: *ast.Ident {
+  3382  .  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:127:10
+  3383  .  .  .  .  .  .  .  .  Name: "true"
+  3384  .  .  .  .  .  .  .  }
+  3385  .  .  .  .  .  .  }
+  3386  .  .  .  .  .  }
+  3387  .  .  .  .  }
+  3388  .  .  .  .  Rbrace: examples/tsp/tsp.go:128:1
+  3389  .  .  .  }
+  3390  .  .  }
+  3391  .  .  14: *ast.GenDecl {
+  3392  .  .  .  TokPos: examples/tsp/tsp.go:131:1
+  3393  .  .  .  Tok: var
+  3394  .  .  .  Lparen: -
+  3395  .  .  .  Specs: []ast.Spec (len = 1) {
+  3396  .  .  .  .  0: *ast.ValueSpec {
+  3397  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+  3398  .  .  .  .  .  .  0: *ast.Ident {
+  3399  .  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:131:5
+  3400  .  .  .  .  .  .  .  Name: "Definition"
+  3401  .  .  .  .  .  .  .  Obj: *ast.Object {
+  3402  .  .  .  .  .  .  .  .  Kind: var
+  3403  .  .  .  .  .  .  .  .  Name: "Definition"
+  3404  .  .  .  .  .  .  .  .  Decl: *(obj @ 3396)
+  3405  .  .  .  .  .  .  .  .  Data: 0
+  3406  .  .  .  .  .  .  .  }
+  3407  .  .  .  .  .  .  }
+  3408  .  .  .  .  .  }
+  3409  .  .  .  .  .  Type: *ast.Ident {
+  3410  .  .  .  .  .  .  NamePos: examples/tsp/tsp.go:131:16
+  3411  .  .  .  .  .  .  Name: "definition"
+  3412  .  .  .  .  .  .  Obj: *(obj @ 232)
+  3413  .  .  .  .  .  }
+  3414  .  .  .  .  }
+  3415  .  .  .  }
+  3416  .  .  .  Rparen: -
+  3417  .  .  }
+  3418  .  }
+  3419  .  Scope: *ast.Scope {
+  3420  .  .  Objects: map[string]*ast.Object (len = 6) {
+  3421  .  .  .  "problem": *(obj @ 156)
+  3422  .  .  .  "TSP": *(obj @ 182)
+  3423  .  .  .  "definition": *(obj @ 232)
+  3424  .  .  .  "build": *(obj @ 499)
+  3425  .  .  .  "Definition": *(obj @ 3401)
+  3426  .  .  .  "Problem": *(obj @ 68)
+  3427  .  .  }
+  3428  .  }
+  3429  .  Imports: []*ast.ImportSpec (len = 5) {
+  3430  .  .  0: *(obj @ 12)
+  3431  .  .  1: *(obj @ 20)
+  3432  .  .  2: *(obj @ 28)
+  3433  .  .  3: *(obj @ 36)
+  3434  .  .  4: *(obj @ 44)
+  3435  .  }
+  3436  .  Unresolved: []*ast.Ident (len = 52) {
+  3437  .  .  0: *(obj @ 92)
+  3438  .  .  1: *(obj @ 113)
+  3439  .  .  2: *(obj @ 132)
+  3440  .  .  3: *(obj @ 208)
+  3441  .  .  4: *(obj @ 239)
+  3442  .  .  5: *(obj @ 293)
+  3443  .  .  6: *(obj @ 331)
+  3444  .  .  7: *(obj @ 363)
+  3445  .  .  8: *(obj @ 373)
+  3446  .  .  9: *(obj @ 406)
+  3447  .  .  10: *(obj @ 420)
+  3448  .  .  11: *(obj @ 461)
+  3449  .  .  12: *(obj @ 471)
+  3450  .  .  13: *(obj @ 560)
+  3451  .  .  14: *(obj @ 655)
+  3452  .  .  15: *(obj @ 740)
+  3453  .  .  16: *(obj @ 823)
+  3454  .  .  17: *(obj @ 841)
+  3455  .  .  18: *(obj @ 896)
+  3456  .  .  19: *(obj @ 944)
+  3457  .  .  20: *(obj @ 1119)
+  3458  .  .  21: *(obj @ 1137)
+  3459  .  .  22: *(obj @ 1179)
+  3460  .  .  23: *(obj @ 1236)
+  3461  .  .  24: *(obj @ 1284)
+  3462  .  .  25: *(obj @ 1343)
+  3463  .  .  26: *(obj @ 1525)
+  3464  .  .  27: *(obj @ 1545)
+  3465  .  .  28: *(obj @ 1563)
+  3466  .  .  29: *(obj @ 1656)
+  3467  .  .  30: *(obj @ 1704)
+  3468  .  .  31: *(obj @ 1747)
+  3469  .  .  32: *(obj @ 1837)
+  3470  .  .  33: *(obj @ 1842)
+  3471  .  .  34: *(obj @ 1960)
+  3472  .  .  35: *(obj @ 2000)
+  3473  .  .  36: *(obj @ 2165)
+  3474  .  .  37: *(obj @ 2314)
+  3475  .  .  38: *(obj @ 2332)
+  3476  .  .  39: *(obj @ 2363)
+  3477  .  .  40: *(obj @ 2425)
+  3478  .  .  41: *(obj @ 2490)
+  3479  .  .  42: *(obj @ 2589)
+  3480  .  .  43: *(obj @ 2617)
+  3481  .  .  44: *(obj @ 2693)
+  3482  .  .  45: *(obj @ 2859)
+  3483  .  .  46: *(obj @ 2887)
+  3484  .  .  47: *(obj @ 2949)
+  3485  .  .  48: *(obj @ 2980)
+  3486  .  .  49: *(obj @ 3179)
+  3487  .  .  50: *(obj @ 3366)
+  3488  .  .  51: *(obj @ 3381)
+  3489  .  }
+  3490  }
+[42,0,4743.792975][42,10,3744.542466][42,20,3398.287911][42,30,3330.607355][42,40,3330.607355][42,50,3330.607355][42,60,3330.607355][42,70,3330.607355][42,80,3330.607355][42,90,3330.607355]Final fit: 3330.607355
+
+ config: 
+{42 100 10 405 0.06610049679351791 0.604193851558642 100 223 1 [32 75 105 104 225 9 81 190 226 33 108 15 209 254 202 25 134 252 29 179 88 19 252 44 234 213 47 238 136 116 246 34]}
+Best fitness: 3330.607355 (complex: 174.027306)

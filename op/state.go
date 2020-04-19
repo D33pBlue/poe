@@ -1,4 +1,14 @@
-// Copyright 2020 D33pBlue
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-18
+ * @Project: Proof of Evolution
+ * @Filename: state.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
 
 // Package op defines the operators the user should
 // use to define his Evaluator. When used, these operators
@@ -17,10 +27,14 @@ type State struct{
   off map[string]float64
 }
 
+// Reset the count of operations that
+// approximates the complexity of the executed code.
 func (s *State)Reset(){
   s.operations = 0
 }
 
+// Change the function's coefficients with the
+// new block hash.
 func (s *State)SetBlockHash(hash []byte){
   var prng *rand.Rand = rand.New(rand.NewSource(99))
   prng.Seed(int64(binary.BigEndian.Uint64(hash)))
@@ -70,6 +84,7 @@ func (s *State)SetBlockHash(hash []byte){
   s.off["delete"] = prng.Float64()
 }
 
+// Build a new State
 func MakeState(hash []byte) *State {
   var s *State = new(State)
   s.coeff = make(map[string]float64)
@@ -123,10 +138,13 @@ func MakeState(hash []byte) *State {
   return s
 }
 
+// Returns the approximation of the complexity
+// of the executed code.
 func (self *State) NumOperations()float64 {
   return self.operations
 }
 
+// Increase the count of operations.
 func (self *State) IncOperations(n float64) {
   if n>0{
       self.operations += n

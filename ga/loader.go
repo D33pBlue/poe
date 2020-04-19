@@ -1,3 +1,11 @@
+/**
+ * @Author: d33pblue
+ * @Date:   2020-Apr-19
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
 package ga
 
 import(
@@ -10,12 +18,17 @@ import(
   "errors"
 )
 
+// Problem defines the interface the user has to
+// implement to declare his problem.
+// Initialize method is called at the beginning, and then
+// New has to return an instance of the DNA interface.
 type Problem interface {
 	Initialize(path string)
   New()DNA
 }
 
-
+// Checks if the package is "main" in order
+// to compile the source as plugin.
 func checkPackage(f *ast.File)error{
   if f.Name.Name!="main"{
     return errors.New("The defined package is not main")
@@ -23,6 +36,7 @@ func checkPackage(f *ast.File)error{
   return nil
 }
 
+// Checks the user does not import forbidden modules.
 func checkImport(decl *ast.ImportSpec)error{
   var whitelist = []string{"math/rand","io/ioutil",
     "encoding/json","github.com/D33pBlue/poe/op",
@@ -40,17 +54,19 @@ func checkImport(decl *ast.ImportSpec)error{
       found = true
     }
   }
-  // fmt.Println(name,found)
   if !found{
     return errors.New("Imported "+name+", which is not in white list.")
   }
   return nil
 }
 
+// Checks the functions defined by the user.
 func checkFunc(decl *ast.FuncDecl)error{
+  // TODO: check for conditions at least
   return nil
 }
 
+// Checks the source defined by the user.
 func checkDeclarations(f *ast.File)error{
   for _,decl := range f.Decls{
     switch decl.(type) {
@@ -72,6 +88,7 @@ func checkDeclarations(f *ast.File)error{
   return nil
 }
 
+// Parse and inspect the source defined by the user.
 func inspect(dir,name string)error{
   fset := token.NewFileSet()
   f, err := parser.ParseFile(fset,dir+name+".go",nil, parser.AllErrors)
@@ -86,6 +103,7 @@ func inspect(dir,name string)error{
   return nil
 }
 
+// Compiles a plugin, after checking it.
 func compilePlugin(dir,name string)error{
   err := inspect(dir,name)
   if err!=nil{
@@ -103,6 +121,8 @@ func compilePlugin(dir,name string)error{
   return nil
 }
 
+// Returns a DNA after checking and compiling
+// a user-defined plugin.
 func LoadGA(plugDir,plugName,path2data string)(DNA,error){
   err := compilePlugin(plugDir,plugName)
   if err != nil { return nil,err}
@@ -118,5 +138,9 @@ func LoadGA(plugDir,plugName,path2data string)(DNA,error){
   }
   problem.Initialize(path2data)
   problDna := problem.New()
+  if problDna==nil{
+    err = errors.New("The function New defined in the module does not return a valid DNA")
+    return nil,err
+  }
   return problDna,nil
 }

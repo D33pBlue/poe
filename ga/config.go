@@ -1,4 +1,14 @@
-// Copyright 2020 D33pBlue
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-18
+ * @Project: Proof of Evolution
+ * @Filename: config.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
 
 package ga
 
@@ -6,6 +16,8 @@ import(
   "math/rand"
 )
 
+// Config collect the execution parameters
+// the miner chooses to use while executing a GA.
 type Config struct{
   Miner int64
   Gen int
@@ -19,10 +31,13 @@ type Config struct{
   BlockHash []byte
 }
 
+// Change the current block's hash (useful to
+// update the complexity accordingly).
 func (c *Config)SetBlockHash(hash []byte){
   c.BlockHash = hash
 }
 
+// Generate a Config with default parameters.
 func DefConf(x int64,gen,step int)*Config{
   conf := new(Config)
   conf.Miner = x
@@ -37,6 +52,7 @@ func DefConf(x int64,gen,step int)*Config{
   return conf
 }
 
+// Generate a Config with random parameters.
 func RandConf(x int64,gen,step int)*Config{
   var prng *rand.Rand = rand.New(rand.NewSource(99))
   prng.Seed(x)

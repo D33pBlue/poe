@@ -1,4 +1,14 @@
-// Copyright 2020 D33pBlue
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-19
+ * @Project: Proof of Evolution
+ * @Filename: poe.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
 
 package main
 

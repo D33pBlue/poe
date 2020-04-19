@@ -1,4 +1,14 @@
-// Copyright 2020 D33pBlue
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-18
+ * @Project: Proof of Evolution
+ * @Filename: ga.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
 
 // Package ga provides functions and types to define
 // and execute genetic algorithms.
@@ -24,6 +34,10 @@ func generatePopulation(n int,dna DNA,prng *rand.Rand) (pop Population){
   return
 }
 
+// Selects n individuals among pop population
+// and returns them as a new population.
+// There might be repetitions.
+// If len(pop)<=n all pop is returned.
 func selectStd(pop Population,n int) (selected Population) {
   if len(pop)<=n{
     return pop
@@ -35,6 +49,9 @@ func selectStd(pop Population,n int) (selected Population) {
   return
 }
 
+// Generate a new population of n individuals, starting
+// from pop and applying crossover and mutation with
+// pcross and pmut probabilities.
 func offspring(pop Population,n int,pcross,pmut float64,prng *rand.Rand)(off Population){
   off = append(off,pop[0])
   for i:=0;i<n;i++{
@@ -56,7 +73,7 @@ func offspring(pop Population,n int,pcross,pmut float64,prng *rand.Rand)(off Pop
   return
 }
 
-
+// Defines the standard execution of a GA
 func RunGA(dna DNA,conf *Config,chOut,chIn chan Packet){// (Population,Sol) {
   if dna.HasToMinimize(){Optimum = Minimize
   }else{Optimum = Maximize}
@@ -64,7 +81,6 @@ func RunGA(dna DNA,conf *Config,chOut,chIn chan Packet){// (Population,Sol) {
   prng.Seed(conf.Miner)
   var population Population = generatePopulation(conf.NPop,dna,prng)
   var bestOfAll Sol = population.eval(conf.BlockHash)
-  // bestOfAll.eval()
   for epoch:=0; epoch<conf.Gen; epoch++{
     population = selectStd(population,conf.Mu)
     population = offspring(population,conf.Lambda,conf.Pcross,conf.Pmut,prng)

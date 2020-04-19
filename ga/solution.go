@@ -1,9 +1,23 @@
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-18
+ * @Project: Proof of Evolution
+ * @Filename: solution.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
+
 package ga
 
 import (
   "github.com/D33pBlue/poe/op"
 )
 
+// Sol represents a possible solution to the problem
+// and an Individual.
 type Sol struct{
   Individual DNA
   Fitness float64

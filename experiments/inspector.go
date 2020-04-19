@@ -1,3 +1,16 @@
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-19
+ * @Project: Proof of Evolution
+ * @Filename: inspector.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
+
+// To test source inspection
 package main
 
 import (
@@ -21,7 +34,18 @@ func bar() {
   for i:=0;i<5;i++{
     fmt.Println(time.Now())
   }
+	var f int = 5
+	switch f{
+	case 1: fmt.Println("1")
+	case 2: fmt.Println("2")
+	default: fmt.Println("0")
+	}
   fmt.Println("End")
+	if f==5{
+		f = 0
+	}else{
+		f = 9
+	}
 }`
 
 	// Parse src but stop after processing the imports.

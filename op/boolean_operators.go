@@ -1,8 +1,21 @@
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-17
+ * @Project: Proof of Evolution
+ * @Filename: boolean_operators.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
+
 package op
 
 import(
   "fmt"
 )
+
 
 func (self *State)Eq(a,b any)bool{
   self.IncOperations(self.coeff["=="]+self.off["=="])
