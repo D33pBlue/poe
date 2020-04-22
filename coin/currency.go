@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: currency.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-Apr-22
  * @Copyright: 2020
  */
 
@@ -13,14 +13,14 @@
 // Package coin provides the type definition of the currency.
 package coin
 
-type any interface{}
+type Any interface{}
 
 // Currency is the interface to implement
 // to define a currency. This interface is
 // defined in order to make easier to change
 // how the currency is defined (e.g. with float or with int).
 type Currency interface{
-  New(any)Currency
+  New(Any)Currency
   String() string
   Check()bool
   Compare(b Currency) int
@@ -34,6 +34,6 @@ type Currency interface{
 var coin SpC
 
 // New function returns a Currency object with v as value
-func New(v any)Currency{
+func New(v Any)Currency{
   return coin.New(v)
 }

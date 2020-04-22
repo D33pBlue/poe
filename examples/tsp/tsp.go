@@ -1,3 +1,15 @@
+/**
+ * @Author: Bizzaro Francesco <d33pblue>
+ * @Date:   2020-Apr-19
+ * @Project: Proof of Evolution
+ * @Filename: tsp.go
+ * @Last modified by:   d33pblue
+ * @Last modified time: 2020-Apr-19
+ * @Copyright: 2020
+ */
+
+
+
 package main
 
 import(
@@ -7,6 +19,7 @@ import(
   "github.com/D33pBlue/poe/op"
   . "github.com/D33pBlue/poe/ga"
 )
+
 
 type Problem struct{
   TourSize int

@@ -18,7 +18,7 @@ package block
 // with a nonce and the hash-link of the previous one.
 type Block struct{
   Transactions []Transact
-  Nonce Nonce
+//  Nonce Nonce
   HashPrev []byte
 }
 

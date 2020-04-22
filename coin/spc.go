@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: spc.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-Apr-22
  * @Copyright: 2020
  */
 
@@ -22,7 +22,7 @@ type SpC struct{
   value float64
 }
 
-func (s SpC)New(v any)Currency{
+func (s SpC)New(v Any)Currency{
   c := new(SpC)
   c.value = -1.0
   switch i := v.(type) {

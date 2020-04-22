@@ -21,7 +21,7 @@ import (
 func changeBH(conf *ga.Config){
   // time.Sleep(100 * time.Millisecond)
   first := sha256.New()
-	first.Write([]byte("ojeofbjeefqbeq"))
+	first.Write([]byte("hvbhbchwbdcnjdcnjanjn"))
 	var hash []byte = first.Sum(nil)
   conf.SetBlockHash(hash)
 }
@@ -34,7 +34,6 @@ func executeGA(dna ga.DNA,chIn,chOut chan ga.Packet){
   changeBH(conf)
   ga.RunGA(dna,conf,chOut,chIn)
 }
-
 
 
 func main(){
