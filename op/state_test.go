@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: state_test.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-Apr-23
  * @Copyright: 2020
  */
 
@@ -15,10 +15,13 @@ package op
 import(
   "fmt"
   "testing"
+  "github.com/D33pBlue/poe/utils"
 )
 
 func TestOps(t *testing.T){
-  st := MakeState("")
+  hb := new(utils.HashBuilder)
+  hb.Add("data..")
+  st := MakeState(hb.GetHash())
   var a int = 5
   var b float64 = 10.5
   var c float64 = 57.66

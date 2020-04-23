@@ -8,24 +8,17 @@
  * @Copyright: 2020
  */
 
- package merkle
+package merkle
 
  import(
  	"testing"
-  "fmt"
-  "github.com/D33pBlue/poe/block"
+ //  "fmt"
+ //  "github.com/D33pBlue/poe/transact"
  )
 
- func TestMerkle(t *testing.T){
+ func TestMerkleConstruction(t *testing.T){
 	m := New()
-  fmt.Println(m.Root)
-  for i := 0; i < 3; i++ {
-    trs := block.MakeStdTransaction(i)
-    fmt.Printf("%v: %x\n",i,trs.GetHash())
-    m.Add(trs)
-  }
-  fmt.Printf("root: %x\n",m.Root.Hash)
-  fmt.Printf("root: %x\n",m.Root.L.Hash)
-  fmt.Printf("root: %x\n",m.Root.R.Hash)
-  if !m.Check(){ t.Errorf("Build invalid tree")}
+  if m==nil{t.Errorf("Merkle tree not built")}
+  if m.Root!=nil{t.Errorf("Bad root initialization")}
+  if m.Nleaves!=0{t.Errorf("Bad Nleaves initialization")}
  }

@@ -16,7 +16,6 @@ import (
   "fmt"
   "crypto/sha256"
   "github.com/D33pBlue/poe/ga"
-  "github.com/D33pBlue/poe/wallet"
 )
 
 func changeBH(conf *ga.Config){
@@ -70,6 +69,4 @@ func main(){
   fmt.Println(best_of_all.Conf)
   fmt.Printf("Best fitness: %f (complex: %f)\n",
     best_of_all.Fitness,best_of_all.Complex)
-  wallet.GenerateKey()
-  wallet.GenerateKey()
 }

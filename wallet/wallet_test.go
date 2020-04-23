@@ -13,18 +13,18 @@
 package wallet
 
 
-import(
-  "testing"
-  "fmt"
-)
-
-func TestAddress(t *testing.T){
-  var wallet *Wallet = New()
-  fmt.Println(wallet.Address)
-  fmt.Println(len(wallet.Address))
-}
-
-func TestRSA(t *testing.T){
-  GenerateKey()
-  GenerateKey()
-}
+// import(
+//   "testing"
+//   "fmt"
+// )
+//
+// func TestAddress(t *testing.T){
+//   var wallet *Wallet = New()
+//   fmt.Println(wallet.Address)
+//   fmt.Println(len(wallet.Address))
+// }
+//
+// func TestRSA(t *testing.T){
+//   GenerateKey()
+//   GenerateKey()
+// }

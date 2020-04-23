@@ -9,18 +9,17 @@
  */
 
 // Package merkle defines the Merkle tree that
-// is used to store the transactions of the blockchain
+// is used to store the transactions of the transactchain
 package merkle
 
 import(
-	"fmt"
-	"crypto/sha256"
- 	"github.com/D33pBlue/poe/block"
+	"github.com/D33pBlue/poe/utils"
+ 	"github.com/D33pBlue/poe/transact"
 )
 
 type Node struct{
 	Parent,L,R *Node
-	Transaction block.Transact
+	Transaction transact.Transaction
 	Hash []byte
 	Children int
 }
@@ -43,20 +42,20 @@ func (self *Tree)Check()bool{
 func checkSubTree(n *Node)bool{
 	if n==nil {return true}
 	if n.L==nil && n.R==nil {return true}
-	var input1 []byte = append(n.L.Hash,n.R.Hash...)
-	fmt.Printf("%x\n",input1)
-	encoder := sha256.New()
-	encoder.Write([]byte(input1))
-	var result []byte = encoder.Sum(nil)
+	hashBuilder := new(utils.HashBuilder)
+	hashBuilder.Add(n.L.Hash)
+	hashBuilder.Add(n.R.Hash)
+	var result []byte = hashBuilder.GetHash()
 	for i:=0;i<len(n.Hash);i++{
 		if n.Hash[i]!=result[i]{
 			return false
 		}
 	}
+	hashBuilder = nil
 	return checkSubTree(n.L) && checkSubTree(n.R)
 }
 
-func (self *Tree)Add(trans block.Transact){
+func (self *Tree)Add(trans transact.Transaction){
 	var n *Node = new(Node)
 	n.Transaction = trans
 	n.Hash = trans.GetHash()
@@ -119,10 +118,10 @@ func (self *Tree)insertNode(n *Node){
 
 func updateHashes(n *Node){
 	for ;n!=nil;{
-		var input1 []byte = append(n.L.Hash,n.R.Hash...)
-		encoder := sha256.New()
-		encoder.Write([]byte(input1))
-		n.Hash = encoder.Sum(nil)
+		hashBuilder := new(utils.HashBuilder)
+		hashBuilder.Add(n.L.Hash)
+		hashBuilder.Add(n.R.Hash)
+		n.Hash = hashBuilder.GetHash()
 		n.Children = n.L.Children+n.R.Children+2
 		n = n.Parent
 	}

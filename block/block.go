@@ -4,34 +4,22 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-Apr-23
  * @Copyright: 2020
  */
-
-
 
 // Package block contains the definitions
 // of blocks, transactions, nonce
 package block
 
-// A block is a collection of transactions,
-// with a nonce and the hash-link of the previous one.
+import(
+  "github.com/D33pBlue/poe/transact"
+)
+
 type Block struct{
-  Transactions []Transact
-//  Nonce Nonce
-  HashPrev []byte
+  // TODO: implement later
 }
 
-// Store a transaction inside the block, after checking
-// its validity through Transact.Check()
-func (self *Block)AddTransaction(t Transact){
-  if t.Check() {
-    self.Transactions = append(self.Transactions,t)
-  }
-}
-
-// Returns the current hash of the block (without
-// the nonce if withoutNonce==true, complete otherwise).
-func (self *Block)GetHash(withoutNonce bool)[]byte{
-  return nil
+func (self *Block)GetTransaction(hash []byte)transact.Transaction{
+  return nil // TODO: implement later
 }
