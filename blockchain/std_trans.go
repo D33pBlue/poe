@@ -8,7 +8,7 @@
  * @Copyright: 2020
  */
 
-package transact
+package blockchain
 
 import(
   "github.com/D33pBlue/poe/utils"
@@ -22,10 +22,12 @@ type StdTransaction struct{
   Signature []byte
 }
 
-func MakeStdTransaction(creator []byte,key utils.Key)
+func MakeStdTransaction(creator []byte,key utils.Key)*StdTransaction{
+  return nil // TODO: implement later
+}
 
-func (self *StdTransaction)Check(chain *blockchain.Blockchain)bool{
-
+func (self *StdTransaction)Check(chain *Blockchain)bool{
+  // TODO: implement later
   return true
 }
 
@@ -47,4 +49,8 @@ func (self *StdTransaction)GetHash()[]byte{
     hb.Add(self.Outputs[i].Value)
   }
   return hb.GetHash()
+}
+
+func (self *StdTransaction)GetType()string{
+  return TrStd
 }

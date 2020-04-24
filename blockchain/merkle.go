@@ -4,22 +4,21 @@
  * @Project: Proof of Evolution
  * @Filename: merkle.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-23
+ * @Last modified time: 2020-Apr-24
  * @Copyright: 2020
  */
 
 // Package merkle defines the Merkle tree that
 // is used to store the transactions of the transactchain
-package merkle
+package blockchain
 
 import(
 	"github.com/D33pBlue/poe/utils"
- 	"github.com/D33pBlue/poe/transact"
 )
 
 type Node struct{
 	Parent,L,R *Node
-	Transaction transact.Transaction
+	Transaction Transaction
 	Hash []byte
 	Children int
 }
@@ -55,7 +54,7 @@ func checkSubTree(n *Node)bool{
 	return checkSubTree(n.L) && checkSubTree(n.R)
 }
 
-func (self *Tree)Add(trans transact.Transaction){
+func (self *Tree)Add(trans Transaction){
 	var n *Node = new(Node)
 	n.Transaction = trans
 	n.Hash = trans.GetHash()

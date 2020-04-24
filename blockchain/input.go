@@ -4,12 +4,12 @@
  * @Project: Proof of Evolution
  * @Filename: input.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-23
+ * @Last modified time: 2020-Apr-24
  * @Copyright: 2020
  */
 
 
-package transact
+package blockchain
 
 
 type TrInput struct{

@@ -4,22 +4,22 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-23
+ * @Last modified time: 2020-Apr-24
  * @Copyright: 2020
  */
 
 // Package block contains the definitions
 // of blocks, transactions, nonce
-package block
+package blockchain
 
 import(
-  "github.com/D33pBlue/poe/transact"
+  // "github.com/D33pBlue/poe/transact"
 )
 
 type Block struct{
   // TODO: implement later
 }
 
-func (self *Block)GetTransaction(hash []byte)transact.Transaction{
+func (self *Block)GetTransaction(hash []byte)Transaction{
   return nil // TODO: implement later
 }

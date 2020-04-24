@@ -4,11 +4,11 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-23
+ * @Last modified time: 2020-Apr-24
  * @Copyright: 2020
  */
 
-package merkle
+package blockchain
 
  import(
  	"testing"

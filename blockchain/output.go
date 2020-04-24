@@ -9,7 +9,7 @@
  */
 
 
-package transact
+package blockchain
 
 import(
   "github.com/D33pBlue/poe/utils"
