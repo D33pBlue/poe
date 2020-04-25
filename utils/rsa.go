@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: rsa.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-24
+ * @Last modified time: 2020-Apr-25
  * @Copyright: 2020
  */
 
@@ -15,6 +15,7 @@ import (
     "crypto/rand"
     "crypto/rsa"
     "fmt"
+    "errors"
     "crypto/x509"
     "encoding/pem"
     "strings"
@@ -39,13 +40,38 @@ func ExportPrivateKeyAsPemStr(key Key) string {
   return privatekey_pem
 }
 
+func LoadPrivateKeyFromPemStr(pemStr []byte)(Key,error) {
+  privPem, _ := pem.Decode(pemStr)
+	if privPem.Type != "RSA PRIVATE KEY" {
+    return nil,errors.New("RSA private key is of the wrong type")
+  }
+  key, err := x509.ParsePKCS1PrivateKey(privPem.Bytes)
+	if err != nil {return nil,err}
+	return key,nil
+}
+
+func LoadPublicKeyFromPemStr(pemStr []byte)(*rsa.PublicKey,error) {
+  pubPem, _ := pem.Decode(pemStr)
+	if pubPem.Type != "RSA PUBLIC KEY" {
+    return nil,errors.New("RSA public key is of the wrong type")
+  }
+  key, err := x509.ParsePKCS1PublicKey(pubPem.Bytes)
+	if err != nil {return nil,err}
+	return key,nil
+}
+
 func GetAddr(key Key)Addr{
   lines := strings.Split(ExportPublicKeyAsPemStr(key),"\n")
   return Addr(strings.Join(lines[1:len(lines)-2],""))
 }
 
 func publicKeyFromAddr(addr Addr)*rsa.PublicKey{
-  return nil // TODO: implement later
+  var pemStr string = "-----BEGIN RSA PUBLIC KEY-----\n"
+  pemStr += string(addr)+"\n"
+  pemStr += "-----END RSA PUBLIC KEY-----"
+  pub,err := LoadPublicKeyFromPemStr([]byte(pemStr))
+  if err!=nil{fmt.Println(err)}
+  return pub
 }
 
 type SignBuilder struct{
@@ -55,6 +81,18 @@ type SignBuilder struct{
 func (self *SignBuilder)Add(data interface{}){
   var binary []byte = []byte(fmt.Sprintf("%v",data))
   self.data = append(self.data,binary...)
+}
+
+func GetSignatureFromHash(hashed []byte,key Key)[]byte{
+  var opts rsa.PSSOptions
+  opts.SaltLength = rsa.PSSSaltLengthAuto // for simple example
+  newhash := crypto.SHA256
+  signature,err := rsa.SignPSS(rand.Reader,key,newhash,hashed,&opts)
+  if err != nil {
+  		fmt.Println(err)
+      return nil
+  	}
+  return signature
 }
 
 func (self *SignBuilder)GetSignature(key Key)[]byte{

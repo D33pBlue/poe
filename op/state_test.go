@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: state_test.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-23
+ * @Last modified time: 2020-Apr-25
  * @Copyright: 2020
  */
 
@@ -13,7 +13,6 @@
 package op
 
 import(
-  "fmt"
   "testing"
   "github.com/D33pBlue/poe/utils"
 )
@@ -28,12 +27,11 @@ func TestOps(t *testing.T){
   if st.Add(b,c).(float64)!=68.16{
     t.Errorf("%f != %f\n",st.Add(b,c).(float64),68.16)
   }
-  fmt.Println(st.Add(a,4))
-  fmt.Println(st.Eq(9,9))
-  fmt.Println(st.Eq(9.1,9.10))
-  fmt.Println(st.Eq(9.1,9.11))
-  fmt.Println(st.Eq(9,-9))
-  fmt.Println(st.Eq("9","9"))
+  if st.Add(a,4)!=9 {t.Errorf("%v != %v\n",st.Add(a,4)!=9,9)}
+  if st.Eq(9,9)!=true {t.Errorf("%v != %v\n",st.Eq(9,9),true)}
+  if st.Eq(9.1,9.10)!=true {t.Errorf("%v != %v\n",st.Eq(9.1,9.10),true)}
+  if st.Eq(9.1,9.11)!=false {t.Errorf("%v != %v\n",st.Eq(9.1,9.11),false)}
+  if st.Eq(9,-9)!=false {t.Errorf("%v != %v\n",st.Eq(9,-9),false)}
   var res bool = st.And(false,st.Eq(2.0,st.Div(12.0,st.Add(1.0,5.0))))
   if res != false{
     t.Errorf("%v != %v\n",res,false)
@@ -46,6 +44,18 @@ func TestOps(t *testing.T){
     st.AppInt(&lk,a)
     st.SetInt(&a,st.Add(a,10))
   }
-  fmt.Println(b,c,st.NumOperations())
-  fmt.Println(lk)
+  if b!=57.66 {t.Errorf("%v != %v\n",b,57.66)}
+  if c!=60.66 {t.Errorf("%v != %v\n",c,60.66)}
+  ltrue := []int{2,5,15,25,35}
+  if len(lk)!=len(ltrue) {
+    t.Errorf("%v != %v\n",lk,ltrue)
+  }else{
+    diff := false
+    for i:=0;!diff && i<len(lk);i++{
+      if lk[i]!=ltrue[i]{
+        diff = true
+        t.Errorf("%v != %v\n",lk,ltrue)
+      }
+    }
+  }
 }

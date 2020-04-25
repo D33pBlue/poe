@@ -19,6 +19,7 @@ type Transaction interface{
 }
 
 const (
-  TrStd = "stdTransaction"
-  TrJob = "jobTransaction"
+  TrStd = "StdTransaction"
+  TrCoin = "CoinTransaction"
+  TrJob = "JobTransaction"
 )
