@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-26
+ * @Last modified time: 2020-Apr-27
  * @Copyright: 2020
  */
 
@@ -14,6 +14,7 @@ import(
   "fmt"
   "net"
   "sync"
+  "bufio"
   "regexp"
   "errors"
   "github.com/D33pBlue/poe/utils"
@@ -43,7 +44,7 @@ func (self *Miner)Serve(id utils.Addr)  {
   stopMining := make(chan bool)
   go self.Chain.Mine(id,stopMining)
   go self.propagateMinedBlocks(stopPropagation)
-  l,err := net.Listen("tcp4",":"+self.Port)
+  l,err := net.Listen("tcp",":"+self.Port)
   if err!=nil{
     fmt.Println(err)
     return
@@ -78,21 +79,24 @@ func (self *Miner)GetConnected()[]string{
 func (self *Miner)AddNode(ipaddress string)error{
   match, _ := regexp.MatchString("[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+",ipaddress)
   if !match{ return errors.New(ipaddress+" is not a valid address")}
-  fmt.Println("sending addr")
+  err := self.requestUpdate(ipaddress)
+  if err!=nil{ return err }
   self.addrch <- ipaddress
-  fmt.Println("sent addr")
-  // self.requestUpdate(ipaddress)
   return nil
 }
 
 func (self *Miner)handleConnection(conn net.Conn){
-
+  message, _ := bufio.NewReader(conn).ReadString('\n')
+  fmt.Printf("Received %v\n",message)
+  // TODO: process message
+  conn.Write([]byte("ack\n"))
 }
 
 // ask to another miner his current blockchain
 // and send a MexBlock through the rith channel
-func (self *Miner)requestUpdate(ipaddress string){
-
+func (self *Miner)requestUpdate(ipaddress string)error{
+  fmt.Println(ipaddress)
+  return sendMexAck(ipaddress,"update")
 }
 
 func (self *Miner)propagateMinedBlocks(close chan bool){
@@ -104,8 +108,35 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
         self.connected_lock.Lock()
         self.Connected = append(self.Connected,ipaddress)
         self.connected_lock.Unlock()
-      // case block := <-self.Chain.BlockOut:
-        // TODO: propagate..
+      case block := <-self.Chain.BlockOut:
+        self.connected_lock.Lock()
+        for i:=0;i<len(self.Connected);i++{
+          mex := fmt.Sprint(block) // TODO: implement later
+          go sendMex(self.Connected[i],mex)
+        }
+        self.connected_lock.Unlock()
     }
   }
+}
+
+
+func sendMexAck(address,mex string)error{
+  conn, err := net.Dial("tcp",address)
+  if err!=nil{ return err }
+  // send to socket
+  fmt.Fprintf(conn,mex+"\n")
+  // listen for reply
+  ack, err2 := bufio.NewReader(conn).ReadString('\n')
+  if err2!=nil{ return err2 }
+  if ack!="ack\n"{
+    return errors.New("Error in receiving ack: "+ack)
+  }
+  return nil
+}
+
+func sendMex(address,mex string){
+  conn, err := net.Dial("tcp",address)
+  if err!=nil{ return }
+  // send to socket
+  fmt.Fprintf(conn,mex+"\n")
 }
