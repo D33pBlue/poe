@@ -16,8 +16,10 @@ import (
   "flag"
   "bufio"
   "strings"
+  "strconv"
   "github.com/D33pBlue/poe/miner"
   "github.com/D33pBlue/poe/wallet"
+  "github.com/D33pBlue/poe/utils"
 )
 
 func startMining(ip,port,keypath string){
@@ -32,7 +34,7 @@ func startMining(ip,port,keypath string){
   minerNode := miner.New(port)
   fmt.Println(minerNode)
   // start go routines for mining..
-  startShell(processOnMining)
+  startShell(processOnMining,minerNode)
 }
 
 func startWallet(ip,port,keypath string){
@@ -41,19 +43,41 @@ func startWallet(ip,port,keypath string){
     fmt.Println("You can generate it with mode genkey.")
     return
   }
-  wallet := wallet.New(keypath,ip+":"+port)
-  if wallet==nil{return}
+  walletObj := wallet.New(keypath,ip+":"+port)
+  if walletObj==nil{return}
   fmt.Printf("Connecting to %v:%v\n",ip,port)
-  // start go routines for wallet..
-  startShell(processOnWallet)
+  startShell(processOnWallet,walletObj)
 }
 
-func processOnMining(cmd string,args []string)string{
-  return "ok"
+func processOnMining(cmd string,args []string,obj interface{})string{
+  return "invalid cmd"
 }
 
-func processOnWallet(cmd string,args []string)string{
-  return "ok"
+func processOnWallet(cmd string,args []string,obj interface{})string{
+  switch cmd {
+  case "public":
+    return fmt.Sprint(obj.(*wallet.Wallet).Id)
+  case "total":
+    return fmt.Sprint(obj.(*wallet.Wallet).GetTotal())
+  case "money":
+    if len(args)!=2{
+      return "invalid arguments"
+    }
+    amount,err := strconv.Atoi(args[0])
+    if err!=nil{ return fmt.Sprint(err) }
+    var receiver utils.Addr = utils.Addr(args[1])
+    err = obj.(*wallet.Wallet).SendMoney(amount,receiver)
+    if err!=nil{ return fmt.Sprint(err) }
+    return fmt.Sprintf("Sent transaction of %v to %v",amount,receiver)
+  case "job":
+    if len(args)!=1{
+      return "invalid arguments"
+    }
+    err := obj.(*wallet.Wallet).SubmitJob(args[0])
+    if err!=nil{ return fmt.Sprint(err) }
+    return "Sent Job transaction"
+  }
+  return "invalid cmd"
 }
 
 func generateKey(){
@@ -89,9 +113,9 @@ func fileExists(filename string) bool {
     return !info.IsDir()
 }
 
-type resolver func(string,[]string)string
+type resolver func(string,[]string,interface{})string
 
-func startShell(f resolver){
+func startShell(f resolver,obj interface{}){
   reader := bufio.NewReader(os.Stdin)
   fmt.Println("Accepting commands")
   fmt.Println("---------------------")
@@ -102,12 +126,12 @@ func startShell(f resolver){
     text = strings.Replace(text, "\n", "", -1)
     args := strings.Split(text," ")
     if len(args)>1{
-      fmt.Println(f(args[0],args[1:]))
+      fmt.Println(f(args[0],args[1:],obj))
     }else if len(args)==1{
       if args[0]=="close"{
         stop = true
       }else{
-        fmt.Println(f(args[0],nil))
+        fmt.Println(f(args[0],nil,obj))
       }
     }
   }

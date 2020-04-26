@@ -50,12 +50,14 @@ func (self *Wallet)GetTotal()int  {
   return 0
 }
 
-func (self *Wallet)SendMoney(amount int,receiver utils.Addr){
+func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   // TODO: implement later
+  return nil
 }
 
-func (self *Wallet)SubmitJob(job string){
+func (self *Wallet)SubmitJob(job string)error{
   // TODO: implement later
+  return nil
 }
 
 
@@ -72,8 +74,16 @@ func generateKey()(utils.Key,error){
 }
 
 func loadKey(path string)(utils.Key,error){
-  // load from files
-  return nil,nil
+  data, err := ioutil.ReadFile(path)
+  if err!=nil{ return nil,err }
+  pub,err2 := utils.LoadPublicKeyFromPemStr(data)
+  if err2!=nil { return nil,err2 }
+  data, err = ioutil.ReadFile(path+".priv")
+  if err!=nil { return nil,err }
+  priv,err3 := utils.LoadPrivateKeyFromPemStr(data)
+  if err3!=nil { return nil,err3 }
+  priv.PublicKey = *pub
+  return priv,nil
 }
 
 
