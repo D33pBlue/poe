@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-25
+ * @Last modified time: 2020-Apr-26
  * @Copyright: 2020
  */
 
@@ -15,6 +15,10 @@
 package wallet
 
 import (
+  "os"
+  "fmt"
+  "io/ioutil"
+  "strconv"
   "github.com/D33pBlue/poe/utils"
 )
 
@@ -22,6 +26,23 @@ type Wallet struct{
   Id utils.Addr
   Key utils.Key
   MinerIp string
+}
+
+func New(path,ip string)*Wallet{
+  wallet := new(Wallet)
+  wallet.MinerIp = ip
+  var err error
+  if path==""{
+    wallet.Key,err = generateKey()
+  }else{
+    wallet.Key,err = loadKey(path)
+  }
+  if err!=nil{
+    fmt.Println(err)
+    return nil
+  }
+  wallet.Id = utils.GetAddr(wallet.Key)
+  return wallet
 }
 
 func (self *Wallet)GetTotal()int  {
@@ -35,4 +56,31 @@ func (self *Wallet)SendMoney(amount int,receiver utils.Addr){
 
 func (self *Wallet)SubmitJob(job string){
   // TODO: implement later
+}
+
+
+func generateKey()(utils.Key,error){
+  key,err := utils.GenerateKey()
+  if err!=nil{ return nil,err }
+  i := 0
+  for ;fileExists("data/key"+strconv.Itoa(i)+".pem");i++{}
+  name := "data/key"+strconv.Itoa(i)+".pem"
+  err = ioutil.WriteFile(name,[]byte(utils.ExportPublicKeyAsPemStr(key)), 0644)
+  if err!=nil{ return nil,err }
+  err = ioutil.WriteFile(name+".priv",[]byte(utils.ExportPrivateKeyAsPemStr(key)), 0644)
+  return key,err
+}
+
+func loadKey(path string)(utils.Key,error){
+  // load from files
+  return nil,nil
+}
+
+
+func fileExists(filename string) bool {
+    info, err := os.Stat(filename)
+    if os.IsNotExist(err) {
+        return false
+    }
+    return !info.IsDir()
 }

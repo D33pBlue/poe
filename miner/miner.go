@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-25
+ * @Last modified time: 2020-Apr-26
  * @Copyright: 2020
  */
 
@@ -28,7 +28,7 @@ type Miner struct{
 func New(port string)*Miner{
   miner := new(Miner)
   miner.Port = port
-  miner.Blockchain = blockchain.NewBlockchain()
+  miner.Chain = blockchain.NewBlockchain()
   miner.keepServing = false
   return miner
 }
@@ -36,7 +36,7 @@ func New(port string)*Miner{
 func (self *Miner)Serve(id utils.Addr)  {
   stopPropagation := make(chan bool)
   stopMining := make(chan bool)
-  go self.Blockchain.Mine(id,stopMining)
+  go self.Chain.Mine(id,stopMining)
   go self.propagateMinedBlocks(stopPropagation)
   l,err := net.Listen("tcp4",":"+self.Port)
   if err!=nil{
@@ -80,9 +80,9 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
     select{
       case <- close:
         return
-      case addr := <-self.addrch:
+      case ipaddress := <-self.addrch:
         self.Connected = append(self.Connected,ipaddress)
-      case block := <-self.Chain.BlockOut:
+      // case block := <-self.Chain.BlockOut:
         // TODO: propagate..
     }
   }
