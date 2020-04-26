@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: rsa.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-25
+ * @Last modified time: 2020-Apr-26
  * @Copyright: 2020
  */
 
@@ -31,6 +31,11 @@ func GenerateKey()(Key,error) {
 
 func ExportPublicKeyAsPemStr(key Key) string {
   pubkey := &key.PublicKey
+  pubkey_pem := string(pem.EncodeToMemory(&pem.Block{Type:  "RSA PUBLIC KEY",Bytes: x509.MarshalPKCS1PublicKey(pubkey)}))
+  return pubkey_pem
+}
+
+func ExportPublicKeyAsPemStr2(pubkey *rsa.PublicKey) string {
   pubkey_pem := string(pem.EncodeToMemory(&pem.Block{Type:  "RSA PUBLIC KEY",Bytes: x509.MarshalPKCS1PublicKey(pubkey)}))
   return pubkey_pem
 }
@@ -62,6 +67,11 @@ func LoadPublicKeyFromPemStr(pemStr []byte)(*rsa.PublicKey,error) {
 
 func GetAddr(key Key)Addr{
   lines := strings.Split(ExportPublicKeyAsPemStr(key),"\n")
+  return Addr(strings.Join(lines[1:len(lines)-2],""))
+}
+
+func GetAddr2(key *rsa.PublicKey)Addr{
+  lines := strings.Split(ExportPublicKeyAsPemStr2(key),"\n")
   return Addr(strings.Join(lines[1:len(lines)-2],""))
 }
 

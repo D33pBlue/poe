@@ -13,6 +13,9 @@ package miner
 import(
   "fmt"
   "net"
+  "sync"
+  "regexp"
+  "errors"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/blockchain"
 )
@@ -20,7 +23,8 @@ import(
 type Miner struct{
   Chain *blockchain.Blockchain
   Port string
-  Connected []string
+  Connected []string // sinc read/write
+  connected_lock sync.Mutex
   keepServing bool
   addrch chan string
 }
@@ -30,6 +34,7 @@ func New(port string)*Miner{
   miner.Port = port
   miner.Chain = blockchain.NewBlockchain()
   miner.keepServing = false
+  miner.addrch = make(chan string)
   return miner
 }
 
@@ -60,9 +65,24 @@ func (self *Miner)Serve(id utils.Addr)  {
   }
 }
 
-func (self *Miner)AddNode(ipaddress string){
+func (self *Miner)GetConnected()[]string{
+  self.connected_lock.Lock()
+  var conn []string
+  for i:=0;i<len(self.Connected);i++{
+    conn = append(conn,self.Connected[i])
+  }
+  self.connected_lock.Unlock()
+  return conn
+}
+
+func (self *Miner)AddNode(ipaddress string)error{
+  match, _ := regexp.MatchString("[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+",ipaddress)
+  if !match{ return errors.New(ipaddress+" is not a valid address")}
+  fmt.Println("sending addr")
   self.addrch <- ipaddress
-  self.requestUpdate(ipaddress)
+  fmt.Println("sent addr")
+  // self.requestUpdate(ipaddress)
+  return nil
 }
 
 func (self *Miner)handleConnection(conn net.Conn){
@@ -81,7 +101,9 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
       case <- close:
         return
       case ipaddress := <-self.addrch:
+        self.connected_lock.Lock()
         self.Connected = append(self.Connected,ipaddress)
+        self.connected_lock.Unlock()
       // case block := <-self.Chain.BlockOut:
         // TODO: propagate..
     }

@@ -15,6 +15,7 @@ import (
   "fmt"
   "flag"
   "bufio"
+  "io/ioutil"
   "strings"
   "strconv"
   "github.com/D33pBlue/poe/miner"
@@ -23,17 +24,29 @@ import (
 )
 
 func startMining(ip,port,keypath string){
+  var publicKey utils.Addr
   if fileExists(keypath){
-    fmt.Println("key:",keypath)
+    data, err := ioutil.ReadFile(keypath)
+    if err!=nil{
+      fmt.Println(err)
+      return
+    }
+    pub,err2 := utils.LoadPublicKeyFromPemStr(data)
+    if err2!=nil {
+      fmt.Println(err2)
+      return
+    }
+    publicKey = utils.GetAddr2(pub)
   }else{
     fmt.Println("You need to link a valid public key file to start mining.")
     fmt.Println("You can generate it with mode genkey.")
     return
   }
-  fmt.Printf("Starting mining node at %v:%v\n",ip,port)
+  fmt.Println("Loaded public key:")
+  fmt.Println(publicKey)
   minerNode := miner.New(port)
-  fmt.Println(minerNode)
-  // start go routines for mining..
+  go minerNode.Serve(publicKey)
+  fmt.Printf("\nStarted mining node at port %v\n\n",port)
   startShell(processOnMining,minerNode)
 }
 
@@ -50,6 +63,19 @@ func startWallet(ip,port,keypath string){
 }
 
 func processOnMining(cmd string,args []string,obj interface{})string{
+  switch cmd {
+  case "node":
+    if len(args)!=1 {
+      return "invalid arguments"
+    }
+    err := obj.(*miner.Miner).AddNode(args[0])
+    if err!=nil { return fmt.Sprint(err) }
+    return "Added "+args[0]+" in list of miners"
+  case "nodes":
+    return strings.Join(obj.(*miner.Miner).GetConnected(),"\n")
+  case "status":
+    return "current status" // TODO:  implement later
+  }
   return "invalid cmd"
 }
 
@@ -76,6 +102,8 @@ func processOnWallet(cmd string,args []string,obj interface{})string{
     err := obj.(*wallet.Wallet).SubmitJob(args[0])
     if err!=nil{ return fmt.Sprint(err) }
     return "Sent Job transaction"
+  case "results":
+    return "results" // TODO: implement later
   }
   return "invalid cmd"
 }
@@ -88,7 +116,8 @@ func generateKey(){
 }
 
 func main()  {
-  fmt.Println("---- Proof of Evolution ----")
+  fmt.Println("\n\n---------------------------------------")
+  fmt.Println("---- Proof of Evolution Blockchain ----\n")
   mode := flag.String("mode", "", "Mode{mine|wallet|genkey}")
   ip := flag.String("ip", "127.0.0.1", "The IP address of the mining node")
   port := flag.String("port","4242","The port where the mining node start listening.")
