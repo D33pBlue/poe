@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-27
+ * @Last modified time: 2020-Apr-28
  * @Copyright: 2020
  */
 
@@ -13,8 +13,10 @@
 package blockchain
 
 import(
+  "fmt"
   "time"
   "sync"
+  "encoding/json"
   "errors"
   "github.com/D33pBlue/poe/utils"
 )
@@ -79,11 +81,52 @@ func (self *Block)Mine(){
 }
 
 func (self *Block)Serialize()[]byte{
-  return nil // TODO: implement later
+  type Block2 struct{
+    Previous []byte
+    LenSubChain int
+    Transactions *Tree
+    Timestamp time.Time
+    NumJobs int
+    Hardness int
+    NonceNoJob NonceNoJob
+    MiniBlocks []MiniBlock
+    Hash []byte
+  }
+  block := new(Block2)
+  if self.Previous!=nil{
+    block.Previous = self.Previous.Hash
+  }
+  block.LenSubChain = self.LenSubChain
+  block.Transactions = self.Transactions
+  block.Timestamp = self.Timestamp
+  block.NumJobs = self.NumJobs
+  block.Hardness = self.Hardness
+  block.NonceNoJob = self.NonceNoJob
+  block.MiniBlocks = self.MiniBlocks
+  block.Hash = self.Hash
+  data, err := json.Marshal(block)
+  if err != nil {
+    fmt.Println(err)
+  }
+  return data
 }
 
-func MarshalBlock(data []byte)*Block{
-  return nil // TODO: implement later
+// Returns a Block from json and the hash of the previous block
+func MarshalBlock(data []byte)(*Block,[]byte){
+  var objmap map[string]json.RawMessage
+  json.Unmarshal(data, &objmap)
+  var block *Block = new(Block)
+  block.checked = false
+  block.mined = true
+  json.Unmarshal(objmap["LenSubChain"],&block.LenSubChain)
+  json.Unmarshal(objmap["Timestamp"],&block.Timestamp)
+  json.Unmarshal(objmap["NumJobs"],&block.NumJobs)
+  json.Unmarshal(objmap["Hardness"],&block.Hardness)
+  json.Unmarshal(objmap["NonceNoJob"],&block.NonceNoJob)
+  json.Unmarshal(objmap["MiniBlocks"],&block.MiniBlocks)
+  json.Unmarshal(objmap["Hash"],&block.Hash)
+  block.Transactions = MarshalMerkleTree(objmap["Transactions"])
+  return block,nil
 }
 
 func (self *Block)mineWithJobs(){

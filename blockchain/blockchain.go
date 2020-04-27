@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-27
+ * @Last modified time: 2020-Apr-28
  * @Copyright: 2020
  */
 
@@ -74,8 +74,8 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
         self.BlockOut <- mex
         self.startNewMiningProcess()
       case mex := <-self.BlockIn:
-        block := MarshalBlock(mex.Data)
-        self.processIncomingBlock(block)
+        block,hashPrev := MarshalBlock(mex.Data)
+        self.processIncomingBlock(block,hashPrev)
       case mex := <-self.TransQueue:
         var transact Transaction
         switch mex.Type {
@@ -91,7 +91,7 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
   }
 }
 
-func (self *Blockchain)processIncomingBlock(block *Block)  {
+func (self *Blockchain)processIncomingBlock(block *Block,hashPrev []byte)  {
   // TODO: check the block and update the blockchain.
   // if valid restart mining
 }
