@@ -28,21 +28,23 @@ type Miner struct{
   connected_lock sync.Mutex
   keepServing bool
   addrch chan string
+  id utils.Addr
 }
 
-func New(port string)*Miner{
+func New(port string,id utils.Addr)*Miner{
   miner := new(Miner)
   miner.Port = port
-  miner.Chain = blockchain.NewBlockchain()
+  miner.id = id
+  miner.Chain = blockchain.NewBlockchain(id)
   miner.keepServing = false
   miner.addrch = make(chan string)
   return miner
 }
 
-func (self *Miner)Serve(id utils.Addr)  {
+func (self *Miner)Serve()  {
   stopPropagation := make(chan bool)
   stopMining := make(chan bool)
-  go self.Chain.Mine(id,stopMining)
+  go self.Chain.Communicate(self.id,stopMining)
   go self.propagateMinedBlocks(stopPropagation)
   l,err := net.Listen("tcp",":"+self.Port)
   if err!=nil{

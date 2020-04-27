@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: nonce.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-25
+ * @Last modified time: 2020-Apr-27
  * @Copyright: 2020
  */
 
@@ -24,4 +24,8 @@ type Nonce struct{
 
 type NonceNoJob struct{
   Value int
+}
+
+func (self *NonceNoJob)Next(){
+  self.Value++
 }

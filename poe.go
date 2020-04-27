@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: poe.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-26
+ * @Last modified time: 2020-Apr-27
  * @Copyright: 2020
  */
 
@@ -44,8 +44,8 @@ func startMining(ip,port,keypath string){
   }
   fmt.Println("Loaded public key:")
   fmt.Println(publicKey)
-  minerNode := miner.New(port)
-  go minerNode.Serve(publicKey)
+  minerNode := miner.New(port,publicKey)
+  go minerNode.Serve()
   fmt.Printf("\nStarted mining node at port %v\n\n",port)
   startShell(processOnMining,minerNode)
 }

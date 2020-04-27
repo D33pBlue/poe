@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: transaction.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-24
+ * @Last modified time: 2020-Apr-27
  * @Copyright: 2020
  */
 
@@ -15,8 +15,13 @@ type Transaction interface{
   Check(chain *Blockchain)bool
   IsSpent()bool
   GetHash()[]byte
+  GetHashCached()[]byte
   GetType()string
+  Serialize()[]byte
+  // Marshal([]byte)Transaction
 }
+
+
 
 const (
   TrStd = "StdTransaction"

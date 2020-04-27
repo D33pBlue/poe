@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-25
+ * @Last modified time: 2020-Apr-27
  * @Copyright: 2020
  */
 
@@ -19,29 +19,34 @@ type any interface{}
 
 type MexTrans struct{
   Type string
-  Data any
+  Data []byte
 }
 
 type MexBlock struct{
-  Type string
-  Data any
+  Data []byte
 }
 
 
 type Blockchain struct{
   Head *Block
   Current *Block
-  TransQueue chan MexTrans
-  BlockOut chan MexBlock
-  BlockIn chan MexBlock
-  // History map[[]byte]*Block
+  TransQueue chan MexTrans// receive transactions from miner
+  BlockOut chan MexBlock// send mined block to miner
+  BlockIn chan MexBlock// receive mined block from miner
+  internalBlock chan MexBlock// notify mined block to Communicate
+  id utils.Addr
+  // history map[[]byte]*Block
 }
 
-func NewBlockchain()*Blockchain{
+func NewBlockchain(id utils.Addr)*Blockchain{
   chain := new(Blockchain)
   chain.TransQueue = make(chan MexTrans)
   chain.BlockOut = make(chan MexBlock)
   chain.BlockIn = make(chan MexBlock)
+  chain.internalBlock = make(chan MexBlock)
+  chain.Head = BuildFirstBlock(id)
+  chain.Current = BuildBlock(id,chain.Head)
+  chain.id = id
   return chain
 }
 
@@ -49,12 +54,48 @@ func (self *Blockchain)GetBlock(hash []byte)*Block{
   return nil // TODO: implement later
 }
 
-func (self *Blockchain)Mine(id utils.Addr,stop chan bool){
+func (self *Blockchain)Mine(stop *bool){
+  // TODO: implement later
+  // ẁhen mined, send blocks to internalBlock
+}
+
+func (self *Blockchain)startNewMiningProcess(){
+  // TODO: implement later
+  // store current block, generate new current, add trandactions
+  // go self.Mine()
+}
+
+func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
   for{
     select{
       case <-stop:
         return
-        // TODO: other cases using self.<chan>
+      case mex := <-self.internalBlock:
+        self.BlockOut <- mex
+        self.startNewMiningProcess()
+      case mex := <-self.BlockIn:
+        block := MarshalBlock(mex.Data)
+        self.processIncomingBlock(block)
+      case mex := <-self.TransQueue:
+        var transact Transaction
+        switch mex.Type {
+        case TrStd:
+          transact = MarshalStdTransaction(mex.Data)
+        case TrCoin:
+          transact = MarshalCoinTransaction(mex.Data)
+        case TrJob:
+          transact = MarshalJobTransaction(mex.Data)
+        }
+        self.processIncomingTransaction(transact)
     }
   }
+}
+
+func (self *Blockchain)processIncomingBlock(block *Block)  {
+  // TODO: check the block and update the blockchain.
+  // if valid restart mining
+}
+
+func (self *Blockchain)processIncomingTransaction(transaction Transaction) {
+  // TODO: implement later
 }

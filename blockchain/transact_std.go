@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-25
+ * @Last modified time: 2020-Apr-27
  * @Copyright: 2020
  */
 
@@ -77,6 +77,18 @@ func (self *StdTransaction)GetHash()[]byte{
     hb.Add(self.Outputs[i].Value)
   }
   return hb.GetHash()
+}
+
+func (self *StdTransaction)GetHashCached()[]byte{
+  return self.Hash
+}
+
+func (self *StdTransaction)Serialize()[]byte{
+  return nil // TODO:  implement later
+}
+
+func MarshalStdTransaction([] byte)*StdTransaction{
+  return nil // TODO: implement later
 }
 
 func (self *StdTransaction)GetType()string{
