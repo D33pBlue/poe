@@ -11,7 +11,7 @@
 package blockchain
 
 import(
-  // "fmt"
+  "fmt"
   "testing"
   "github.com/D33pBlue/poe/utils"
 )
@@ -37,4 +37,6 @@ func TestSerialization(t *testing.T)  {
   if !utils.CompareHashes(block.Hash,block2.Hash){
     t.Errorf("%v != %v\n",block.Hash,block2.Hash)
   }
+  fmt.Println(block.Transactions.Root.Transaction)
+  fmt.Println(block2.Transactions.Root.Transaction)
 }
