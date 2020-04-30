@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: poe.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-28
+ * @Last modified time: 2020-Apr-29
  * @Copyright: 2020
  */
 
@@ -75,7 +75,7 @@ func processOnMining(cmd string,args []string,obj interface{})string{
   case "nodes":
     return strings.Join(obj.(*miner.Miner).GetConnected(),"\n")
   case "status":
-    return "current status" // TODO:  implement later
+    return "<current status>" // TODO:  implement later
   }
   return "invalid cmd"
 }

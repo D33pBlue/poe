@@ -4,13 +4,14 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-27
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
 package miner
 
 import(
+  "os"
   "fmt"
   "net"
   "sync"
@@ -35,7 +36,14 @@ func New(port string,id utils.Addr)*Miner{
   miner := new(Miner)
   miner.Port = port
   miner.id = id
-  miner.Chain = blockchain.NewBlockchain(id)
+  var folder string = fmt.Sprintf("data/chain%v",port)
+  // make dir if not exists
+  _, err := os.Stat(folder)
+	if os.IsNotExist(err) {
+		errDir := os.MkdirAll(folder, 0755)
+		if errDir != nil {fmt.Println(errDir)}
+	}
+  miner.Chain = blockchain.NewBlockchain(id,folder)
   miner.keepServing = false
   miner.addrch = make(chan string)
   return miner
@@ -88,17 +96,68 @@ func (self *Miner)AddNode(ipaddress string)error{
 }
 
 func (self *Miner)handleConnection(conn net.Conn){
+  self.connected_lock.Lock()
+  if len(self.Connected)<10{
+    var ipaddress = fmt.Sprint(conn.RemoteAddr())
+    found := false
+    for i:=0;i<len(self.Connected);i++{
+      if self.Connected[i]==ipaddress{
+        found = true
+        break
+      }
+    }
+    if !found{
+      self.Connected = append(self.Connected,ipaddress)
+    }
+  }
+  self.connected_lock.Unlock()
   message, _ := bufio.NewReader(conn).ReadString('\n')
   fmt.Printf("Received %v\n",message)
-  // TODO: process message
-  conn.Write([]byte("ack\n"))
+  switch message[:len(message)-1] {
+  case "update":
+    conn.Write([]byte(self.Chain.GetSerializedHead()))
+    conn.Write([]byte("\n"))
+  case "get_block":
+    hash, _ := bufio.NewReader(conn).ReadString('\n')
+    block := self.Chain.GetBlock([]byte(hash))
+    if block==nil{
+      conn.Write([]byte(nil))
+    }else{
+      conn.Write([]byte(block.Serialize()))
+    }
+    conn.Write([]byte("\n"))
+  case "chain":
+    block,err2 := bufio.NewReader(conn).ReadString('\n')
+    fmt.Println(err2)
+    fmt.Printf("Received %v\n",block)
+    if err2==nil{
+      mexBlock := new(blockchain.MexBlock)
+      mexBlock.Data = []byte(block)
+      mexBlock.IpSender = fmt.Sprint(conn.RemoteAddr())
+      self.Chain.BlockIn <- *mexBlock
+    }
+  }
+  // fmt.Println("Sent back info")
 }
 
 // ask to another miner his current blockchain
-// and send a MexBlock through the rith channel
+// and send a MexBlock through self.Chain.BlockIn channel
 func (self *Miner)requestUpdate(ipaddress string)error{
-  fmt.Println(ipaddress)
-  return sendMexAck(ipaddress,"update")
+  conn, err := net.Dial("tcp",ipaddress)
+  if err!=nil{ return err }
+  // send to socket
+  fmt.Fprintf(conn,"update\n")
+  // listen for reply
+  fmt.Println("Listening")
+  block,err2 := bufio.NewReader(conn).ReadString('\n')
+  fmt.Println(err2)
+  fmt.Printf("Received %v\n",block)
+  if err2!=nil{ return err2 }
+  mexBlock := new(blockchain.MexBlock)
+  mexBlock.Data = []byte(block)
+  mexBlock.IpSender = fmt.Sprint(conn.RemoteAddr())
+  self.Chain.BlockIn <- *mexBlock
+  return nil
 }
 
 func (self *Miner)propagateMinedBlocks(close chan bool){
@@ -110,11 +169,11 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
         self.connected_lock.Lock()
         self.Connected = append(self.Connected,ipaddress)
         self.connected_lock.Unlock()
-      case block := <-self.Chain.BlockOut:
+      case blockMex := <-self.Chain.BlockOut:
         self.connected_lock.Lock()
         for i:=0;i<len(self.Connected);i++{
-          mex := fmt.Sprint(block) // TODO: implement later
-          go sendMex(self.Connected[i],mex)
+          mex := string(blockMex.Data)
+          go sendBlockUpdate(self.Connected[i],mex)
         }
         self.connected_lock.Unlock()
     }
@@ -136,9 +195,9 @@ func sendMexAck(address,mex string)error{
   return nil
 }
 
-func sendMex(address,mex string){
+func sendBlockUpdate(address string,mex string){
   conn, err := net.Dial("tcp",address)
   if err!=nil{ return }
-  // send to socket
-  fmt.Fprintf(conn,mex+"\n")
+  conn.Write([]byte("chain\n"))
+  conn.Write([]byte(mex+"\n"))
 }

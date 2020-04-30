@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-28
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
@@ -12,6 +12,11 @@
 package blockchain
 
 import (
+  "fmt"
+  "net"
+  "sync"
+  "bufio"
+  "io/ioutil"
   "github.com/D33pBlue/poe/utils"
 )
 
@@ -24,6 +29,7 @@ type MexTrans struct{
 
 type MexBlock struct{
   Data []byte
+  IpSender string
 }
 
 
@@ -35,34 +41,71 @@ type Blockchain struct{
   BlockIn chan MexBlock// receive mined block from miner
   internalBlock chan MexBlock// notify mined block to Communicate
   id utils.Addr
-  // history map[[]byte]*Block
+  keepmining bool
+  miningstatus chan bool
+  access_data sync.Mutex
+  folder string
 }
 
-func NewBlockchain(id utils.Addr)*Blockchain{
+func NewBlockchain(id utils.Addr,folder string)*Blockchain{
   chain := new(Blockchain)
   chain.TransQueue = make(chan MexTrans)
   chain.BlockOut = make(chan MexBlock)
   chain.BlockIn = make(chan MexBlock)
   chain.internalBlock = make(chan MexBlock)
+  chain.miningstatus = make(chan bool)
   chain.Head = BuildFirstBlock(id)
+  chain.folder = folder
+  var filename string = fmt.Sprintf("%v/block%v.json",chain.folder,chain.Head.LenSubChain)
+  data := chain.Head.Serialize()
+  err := ioutil.WriteFile(filename,data, 0644)
+  if err!=nil{fmt.Println(err)}
   chain.Current = BuildBlock(id,chain.Head)
   chain.id = id
+  chain.keepmining = false
+  go chain.Mine()
   return chain
 }
 
 func (self *Blockchain)GetBlock(hash []byte)*Block{
-  return nil // TODO: implement later
+  block := self.Head
+  for{
+    if block==nil{return nil}
+    if utils.CompareHashes(block.GetHashCached(),hash){
+      return block
+    }
+    block = block.Previous
+  }
+  return nil
 }
 
-func (self *Blockchain)Mine(stop *bool){
-  // TODO: implement later
-  // ẁhen mined, send blocks to internalBlock
+func (self *Blockchain)Mine(){
+  fmt.Println("Start mining")
+  self.keepmining = true
+  self.Current.Mine(&self.keepmining)
+  // when mined, send blocks to internalBlock
+  if self.keepmining == true{
+    mex := new(MexBlock)
+    mex.Data = self.Current.Serialize()
+    self.internalBlock <- *mex
+    self.keepmining = false
+  }else{
+    self.miningstatus <- false
+  }
+  fmt.Println("Mining ended")
 }
 
+func (self *Blockchain)GetSerializedHead()[]byte{
+  self.access_data.Lock()
+  defer self.access_data.Unlock()
+  return self.Head.Serialize()
+}
+
+// Called when mining process succeed to update the blockchain
+// with the new current block, build a new one and restart mining
 func (self *Blockchain)startNewMiningProcess(){
-  // TODO: implement later
-  // store current block, generate new current, add trandactions
-  // go self.Mine()
+  self.storeCurrentBlockAndCreateNew(nil)// with nil store self.Current
+  go self.Mine()
 }
 
 func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
@@ -75,25 +118,90 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
         self.startNewMiningProcess()
       case mex := <-self.BlockIn:
         block,hashPrev := MarshalBlock(mex.Data)
-        self.processIncomingBlock(block,hashPrev)
+        self.processIncomingBlock(block,hashPrev,mex.IpSender)
       case mex := <-self.TransQueue:
         var transact Transaction
         switch mex.Type {
         case TrStd:
           transact = MarshalStdTransaction(mex.Data)
-        case TrCoin:
-          transact = MarshalCoinTransaction(mex.Data)
+        // case TrCoin:
+        //   transact = MarshalCoinTransaction(mex.Data)
         case TrJob:
           transact = MarshalJobTransaction(mex.Data)
+        default:
+          transact = nil
         }
-        self.processIncomingTransaction(transact)
+        if transact!=nil{
+          self.processIncomingTransaction(transact)
+        }
     }
   }
 }
 
-func (self *Blockchain)processIncomingBlock(block *Block,hashPrev []byte)  {
-  // TODO: check the block and update the blockchain.
-  // if valid restart mining
+func askBlock(blockHash []byte,ipaddress string)(*Block,[]byte){
+  conn, err := net.Dial("tcp",ipaddress)
+  if err!=nil{ return nil,nil }
+  fmt.Fprintf(conn,"get_block\n")
+  conn.Write(blockHash)
+  conn.Write([]byte("\n"))
+  blockRaw,err2 := bufio.NewReader(conn).ReadString('\n')
+  if err2!=nil{ return nil,nil }
+  return MarshalBlock([]byte(blockRaw))
+}
+
+// Checks the block and updates the blockchain.
+// If valid restart mining
+func (self *Blockchain)processIncomingBlock(block *Block,
+                hashPrev []byte,ipSender string)  {
+  var b *Block = block
+  var hp []byte = hashPrev
+  fmt.Println("checking incoming block")
+  for{// try to reconstruct the blockchain if valid
+    if !b.CheckStep1(hashPrev){
+      fmt.Println("check step 1 failed")
+      return
+    }
+    if len(hp)==0{break}
+    existingBlock := self.GetBlock(hashPrev)
+    if existingBlock!=nil{
+      b.Previous = existingBlock
+      break
+    }
+    b.Previous,hp = askBlock(hashPrev,ipSender)
+    b = b.Previous
+  }
+  fmt.Println("chain has succeeded check step 1")
+  if block.CheckStep2(){// the the blockchain is valid
+    self.access_data.Lock()
+    var replace bool = (block.LenSubChain>self.Head.LenSubChain)// || (
+      // block.LenSubChain==self.Head.LenSubChain && block.NumJobs>self.Head.NumJobs))
+    self.access_data.Unlock()
+    fmt.Printf("Replace: %v\n",replace)
+    if replace{
+      // stop mining
+      self.keepmining = false
+      <-self.miningstatus // wait mining ending
+      // update the blockchain with the new
+      self.storeCurrentBlockAndCreateNew(block)
+      // restart mining
+      go self.Mine()
+    }
+  }
+}
+
+func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block){
+  self.access_data.Lock()
+  if block!=nil{
+    self.Head = block
+  }else{
+    self.Head = self.Current
+  }
+  self.Current = BuildBlock(self.id,self.Head)
+  var filename string = fmt.Sprintf("%v/block%v.json",self.folder,self.Head.LenSubChain)
+  data := self.Head.Serialize()
+  err := ioutil.WriteFile(filename,data, 0644)
+  if err!=nil{fmt.Println(err)}
+  self.access_data.Unlock()
 }
 
 func (self *Blockchain)processIncomingTransaction(transaction Transaction) {

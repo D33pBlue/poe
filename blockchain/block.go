@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-28
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
@@ -48,7 +48,7 @@ func BuildFirstBlock(id utils.Addr)*Block{
   block.Transactions = BuildMerkleTree()
   transact,_ := MakeCoinTransaction(id,block.calculateMiningValue())
   block.Transactions.Add(transact)
-  block.Hash = block.GetHash()
+  block.Hash = block.GetHash(nil)
   block.checked = false
   block.mined = true
   return block
@@ -66,17 +66,19 @@ func BuildBlock(id utils.Addr,prev *Block)*Block{
   block.Transactions = BuildMerkleTree()
   transact,_ := MakeCoinTransaction(id,block.calculateMiningValue())
   block.Transactions.Add(transact)
-  block.Hash = block.GetHash()
+  block.Hash = block.GetHash(nil)
   block.checked = false
   block.mined = false
   return block
 }
 
-func (self *Block)Mine(){
+
+func (self *Block)Mine(keepmining *bool){
+  self.mined = false
   if self.NumJobs==0{
-    self.mineNoJob()
+    self.mineNoJob(keepmining)
   }else{
-    self.mineWithJobs()
+    self.mineWithJobs(keepmining)
   }
 }
 
@@ -126,21 +128,24 @@ func MarshalBlock(data []byte)(*Block,[]byte){
   json.Unmarshal(objmap["MiniBlocks"],&block.MiniBlocks)
   json.Unmarshal(objmap["Hash"],&block.Hash)
   block.Transactions = MarshalMerkleTree(objmap["Transactions"])
-  return block,nil
+  var prev []byte
+  json.Unmarshal(objmap["Previous"],&prev)
+  return block,prev
 }
 
-func (self *Block)mineWithJobs(){
+func (self *Block)mineWithJobs(keepmining *bool){
   // TODO: implement later
 }
 
-func (self *Block)mineNoJob(){
+func (self *Block)mineNoJob(keepmining *bool){
   for{
+    if !(*keepmining) {break}
     if self.mined{
       break
     }
     self.access_data.Lock()
     self.NonceNoJob.Next()
-    self.Hash = self.GetHash()
+    self.Hash = self.GetHash(nil)
     self.mined = self.checkNoJob()
     self.access_data.Unlock()
   }
@@ -168,22 +173,39 @@ func (self *Block)AddMiniBlock(miniblock *MiniBlock)error{
   return nil
 }
 
-// The Check method checks the validity of the block.
-func (self *Block)Check()bool{
+// The CheckStep1 method checks the validity of the content of
+// the block without checking Previous and its connections.
+func (self *Block)CheckStep1(hashPrev []byte)bool{
   if self.checked { return true }
-  if !utils.CompareHashes(self.Hash,self.GetHash()){ return false }
+  if !utils.CompareHashes(self.Hash,self.GetHash(hashPrev)){
+    fmt.Println("error in hash")
+    fmt.Println(string(self.Hash))
+    fmt.Println(string(self.GetHash(hashPrev)))
+    fmt.Printf("%x\n",self.Hash)
+    fmt.Printf("%x\n",self.GetHash(hashPrev))
+    return false
+  }
   if self.NumJobs==0{
-    if !self.checkNoJob() { return false }
+    if !self.checkNoJob() {
+      fmt.Println("error in checkNoJob")
+      return false }
   }else if self.NumJobs>0{
     if !self.checkJobs() { return false }
   }else{ return false }
+  return true
+}
+
+// The CheckStep2 method checks the validity of the links
+// among blocks and of the depending data.
+func (self *Block)CheckStep2()bool{
+  if self.checked { return true }
   if !self.checkNumJobs() { return false }
   if !self.checkHardness() { return false }
   if !self.checkTransactions() { return false }
   if self.LenSubChain>0{
     if self.Previous==nil { return false }
     if self.Previous.LenSubChain!=self.LenSubChain-1 { return false }
-    if !self.Previous.Check(){ return false } // TODO: remove recursion
+    if !self.Previous.CheckStep2(){ return false } // TODO: remove recursion
   }
   self.checked = true
   return true
@@ -193,7 +215,7 @@ func (self *Block)GetTransaction(hash []byte)Transaction{
   return nil // TODO: implement later
 }
 
-func (self *Block)GetHash()[]byte{
+func (self *Block)GetHash(hashPrev []byte)[]byte{
   hb := new(utils.HashBuilder)
   hb.Add(self.Timestamp)
   hb.Add(self.LenSubChain)
@@ -208,7 +230,11 @@ func (self *Block)GetHash()[]byte{
     }
   }
   if self.LenSubChain>0{
-    hb.Add(self.Previous.GetHashCached())
+    if len(hashPrev)>0{
+      hb.Add(hashPrev)
+    }else{
+      hb.Add(self.Previous.GetHashCached())
+    }
   }
   return hb.GetHash()
 }
@@ -218,8 +244,9 @@ func (self *Block)GetHashCached()[]byte{
 }
 
 func (self *Block)checkNoJob()bool{
+  hash := string(self.Hash)
   for i:=0;i<self.Hardness;i++{
-    if self.Hash[i]!=0{ return false }
+    if hash[i]!='0'{ return false }
   }
   return true
 }
@@ -245,7 +272,7 @@ func (self *Block)calculateNumJobs()int{
 }
 
 func (self *Block)calculateHardness()int{
-  return 0 // TODO: implement later
+  return 3 // TODO: implement later
 }
 
 // Returns the value in coin of mining that block.
