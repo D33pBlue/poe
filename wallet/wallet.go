@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-26
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
@@ -17,7 +17,9 @@ package wallet
 import (
   "os"
   "fmt"
+  "net"
   "io/ioutil"
+  "bufio"
   "strconv"
   "github.com/D33pBlue/poe/utils"
 )
@@ -45,9 +47,17 @@ func New(path,ip string)*Wallet{
   return wallet
 }
 
-func (self *Wallet)GetTotal()int  {
-  // TODO: implement later
-  return 0
+func (self *Wallet)GetTotal()string  {
+  conn, err := net.Dial("tcp",self.MinerIp)
+  if err!=nil{
+    fmt.Println(err)
+    return ""
+  }
+  fmt.Fprintf(conn,"get_total\n")
+  fmt.Fprintf(conn,string(self.Id)+"\n")
+  reader := bufio.NewReader(conn)
+  total, _ := reader.ReadString('\n')
+  return total[:len(total)-1]
 }
 
 func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{

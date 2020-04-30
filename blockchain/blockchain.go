@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-01
  * @Copyright: 2020
  */
 
@@ -102,6 +102,61 @@ func (self *Blockchain)GetSerializedHead()[]byte{
   return self.Head.Serialize()
 }
 
+func (self *Blockchain)GetTotal(addr utils.Addr)int{
+  total := 0
+  self.access_data.Lock()
+  b := self.Head
+  for{
+    if b==nil{break}
+    var transactions []Transaction = b.Transactions.transactions
+    for i:=0;i<len(transactions);i++{
+      total += GetTransactionMoneyForWallet(self,transactions[i],addr)
+    }
+    b = b.Previous
+  }
+  self.access_data.Unlock()
+  return total
+}
+
+// Spend an output of a transaction and returns the value.
+// To be called inside access_data lock
+func (self *Blockchain)SpendSubTransaction(inp *TrInput,wallet utils.Addr)int{
+  block := self.GetBlock(inp.Block)
+  if block==nil{return 0}
+  transact := block.GetTransaction(inp.ToSpend)
+  if transact==nil{return 0}
+  // if transact.IsSpent(){return 0}
+  switch transact.GetType() {
+  case TrCoin:
+    var tr *CoinTransaction = transact.(*CoinTransaction)
+    if tr.Output.Address==wallet{
+      tr.Output.spent = true
+      tr.spent = true
+      return tr.Output.Value
+    }
+  case TrStd:
+    var tr *StdTransaction = transact.(*StdTransaction)
+    var val int = 0
+    if tr.Outputs[inp.Index].Address==wallet{
+      tr.Outputs[inp.Index].spent = true
+      val = tr.Outputs[inp.Index].Value
+    }
+    allSpent := true
+    for i:=0;i<len(tr.Outputs);i++{
+      if !tr.Outputs[i].spent{
+        allSpent = false
+        break
+      }
+    }
+    if allSpent{
+      tr.spent = true
+    }
+    return val
+  }
+  // TODO: JobTransaction case
+  return 0
+}
+
 // Called when mining process succeed to update the blockchain
 // with the new current block, build a new one and restart mining
 func (self *Blockchain)startNewMiningProcess(){
@@ -125,8 +180,6 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
         switch mex.Type {
         case TrStd:
           transact = MarshalStdTransaction(mex.Data)
-        // case TrCoin:
-        //   transact = MarshalCoinTransaction(mex.Data)
         case TrJob:
           transact = MarshalJobTransaction(mex.Data)
         default:

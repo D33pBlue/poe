@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: poe.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-29
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
@@ -120,6 +120,7 @@ func main()  {
   fmt.Println("\n\n---------------------------------------")
   fmt.Println("---- Proof of Evolution Blockchain ----\n")
   mode := flag.String("mode", "", "Mode{mine|wallet|genkey}")
+  // init := flag.String("init", "new", "Init{new|load}")
   ip := flag.String("ip", "127.0.0.1", "The IP address of the mining node")
   port := flag.String("port","4242","The port where the mining node start listening.")
   key := flag.String("key","","Path to the public key pem file")

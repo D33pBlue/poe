@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-01
  * @Copyright: 2020
  */
 
@@ -14,6 +14,7 @@ import(
   "fmt"
   "time"
   // "errors"
+  "encoding/json"
   "github.com/D33pBlue/poe/utils"
 )
 
@@ -25,6 +26,7 @@ type JobTransaction struct{
   Prize int
   Hash string
   Signature string
+  spent bool
 }
 
 // func MakeJobTransaction(creator utils.Addr,key utils.Key,
@@ -43,8 +45,16 @@ func (self *JobTransaction)Check(chain *Blockchain)bool{
   return true // TODO: implement later
 }
 
+func (self *JobTransaction)GetCreator()utils.Addr{
+  return self.Creator
+}
+
 func (self *JobTransaction)IsSpent()bool{
   return false // TODO: implement later
+}
+
+func (self *JobTransaction)SetSpent(){
+  self.spent = true
 }
 
 func (self *JobTransaction)GetHash()string{
@@ -65,12 +75,23 @@ func (self *JobTransaction)GetHashCached()string{
   return self.Hash
 }
 
-func (self *JobTransaction)Serialize()[]byte{
-  return nil // TODO:  implement later
-}
+// func (self *JobTransaction)Serialize()[]byte{
+//   return nil // TODO:  implement later
+// }
 
-func MarshalJobTransaction([] byte)*JobTransaction{
-  return nil // TODO: implement later
+func MarshalJobTransaction(data []byte)*JobTransaction{
+  var objmap map[string]json.RawMessage
+  json.Unmarshal(data, &objmap)
+  tr := new(JobTransaction)
+  json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
+  json.Unmarshal(objmap["Inputs"],&tr.Inputs)
+  json.Unmarshal(objmap["Job"],&tr.Job)
+  json.Unmarshal(objmap["Prize"],&tr.Prize)
+  json.Unmarshal(objmap["Creator"],&tr.Creator)
+  json.Unmarshal(objmap["Hash"],&tr.Hash)
+  json.Unmarshal(objmap["Signature"],&tr.Signature)
+  tr.spent = false
+  return tr
 }
 
 func (self *JobTransaction)GetType()string{

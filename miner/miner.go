@@ -18,6 +18,7 @@ import(
   "bufio"
   "regexp"
   "strings"
+  "strconv"
   "errors"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/blockchain"
@@ -147,6 +148,11 @@ func (self *Miner)handleConnection(conn net.Conn){
       mexBlock.IpSender = ipaddress[:strings.Index(ipaddress,":")]+":"+port[:len(port)-1]
       self.Chain.BlockIn <- *mexBlock
     }
+  case "get_total":
+    publicKey,_ := reader.ReadString('\n')
+    var addr utils.Addr = utils.Addr(publicKey[:len(publicKey)-1])
+    total := self.Chain.GetTotal(addr)
+    conn.Write([]byte(strconv.Itoa(total)+"\n"))
   }
 }
 
@@ -212,6 +218,4 @@ func (self *Miner)sendBlockUpdate(address string,mex string){
   fmt.Fprintf(conn,"chain\n")
   fmt.Fprintf(conn,self.Port+"\n")
   fmt.Fprintf(conn,mex+"\n")
-  // conn.Write(mex)
-  // conn.Write([]byte("\n"))
 }
