@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miniblock.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-25
+ * @Last modified time: 2020-Apr-27
  * @Copyright: 2020
  */
 
@@ -25,4 +25,12 @@ type MiniBlock struct{
 // The Check method checks the validity of the miniblock.
 func (self *MiniBlock)Check(prevBlock *Block)bool{
   return true // TODO: implement later
+}
+
+func (self *MiniBlock)GetHash()[]byte{
+  return nil // TODO:  implement later
+}
+
+func (self *MiniBlock)GetHashCached()[]byte{
+  return self.Hash
 }

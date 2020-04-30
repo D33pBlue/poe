@@ -1,0 +1,16 @@
+[{"Previous":"EubvkUliQ6RU7stBx9R5asdAPdc8G/OXEDT9bksBsrQ=","LenSubChain":1,"Transactions":{"Root":{"Parent":null,"L":null,"R":null,"Type":"CoinTransaction","Transaction":{"Timestamp":"2020-04-28T00:03:24.225171394+02:00","Output":{"Address":"MIIBCgKCAQEApM2R99A48RbK56CSVo9VpPEz74x/EhbQk/8zt+NBiLL/oq05WcAFxnSWUgG7b5teTM2LG6qBvLOsXhP+WQLMmZq9qMRbeg9sZLFa6pCAs2hO6cdWKjFERqV8OVzvLg7rSUCHxTC43KlPVGxlQRCIahHEQYTzcu4Jp22OzGaCLFYZAm23TZhZzVDPeEBhO80PPx+bheKii/yEcyrNxCHKWOuLhIKYDOntBh2ra2/Ej6KxNQ8tbsazaAMdFsLSI2rGdyd2mlPPE4PB2ONrfVpDB+vcGRV8q/RMPjB+ViYAHroIn0sCv6t2AEvhbKN/5y5gjVvaqWmtF5jHxqIo3apG3QIDAQAB","Value":10},"Hash":"ZbQ7NUFlNyRQwG1GnocuQZKxce9EeSuUaDwQUq4WWSU="},"Hash":"ZbQ7NUFlNyRQwG1GnocuQZKxce9EeSuUaDwQUq4WWSU=","Children":0},"Nleaves":1},"Timestamp":"2020-04-28T00:03:24.225171026+02:00","NumJobs":0,"Hardness":0,"NonceNoJob":{"Value":0},"MiniBlocks":null,"Hash":"QjsWG73oRD+InGMaHxdz1SqgM4WGrgR6pRSf/ddNKhU="},
+
+{"Previous":null,
+"LenSubChain":0,
+"Transactions":{
+  "Root":{"Parent":null,"L":null,"R":null,"Transaction":{"Timestamp":"2020-04-27T21:57:33.206386717+02:00","Output":{"Address":"MIIBCgKCAQEA1+a36sU7KZFJeeKs4EFPkbEn34UmbMg4++tmoPwDA1ia6K7aQIPIcu8qaqvcu7gJWlkZuWtPCgCAxA9S4tF89GrgUSSh/ouyCv51fC7n0sjVTtI54+E1VLfUeKapCQh4MSK3iimnh5Zzt0JWd/j4hJBlu4C6VqMjZ8WOOA7e1sj29ZpukcGsvIt8Mf5ZxtUrGPePYY/DXF2pZzKQMQ4oM1yerZcleIQwNOpB9UZzaAhpvdfGx3tX+YDbiNrBEU7hAmY/1Y4Rq1j/69b8PAOzVXUa6vCOJ3f0tTtDYaSew3yUnEhmZqst4nhG2oK8UTWVnhArPH17jKV2dVwyfNqAsQIDAQAB","Value":10},
+  "Hash":"y3M25KcrzMn5/v3UuTslX7z3FcSY3mTV4KGGKevkveA="},
+  "Hash":"y3M25KcrzMn5/v3UuTslX7z3FcSY3mTV4KGGKevkveA=","Children":0},"Nleaves":1},
+"Timestamp":"2020-04-27T21:57:33.206386076+02:00",
+"NumJobs":0,
+"Hardness":0,
+"NonceNoJob":{"Value":0},
+"MiniBlocks":null,
+"Hash":"fl3Ep4b4RVbe2etMGcJXQXkHQajwcMkjZ69hhf9scik="
+}
+]

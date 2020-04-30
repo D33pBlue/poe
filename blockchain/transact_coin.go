@@ -4,13 +4,14 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-25
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
 package blockchain
 
 import(
+  "fmt"
   "time"
   // "errors"
   "github.com/D33pBlue/poe/utils"
@@ -18,41 +19,47 @@ import(
 
 type CoinTransaction struct{
   Timestamp time.Time
-  Outputs []TrOutput
-  Creator utils.Addr
-  Hash []byte
-  Signature []byte
+  Output TrOutput
+  Hash string
 }
 
-func MakeCoinTransaction(creator utils.Addr,key utils.Key,
-          outs []TrOutput)(*CoinTransaction,error){
+func MakeCoinTransaction(receiver utils.Addr,value int)(*CoinTransaction,error){
   tr := new(CoinTransaction)
   tr.Timestamp = time.Now()
-  tr.Creator = creator
-  tr.Outputs = outs
+  out := new(TrOutput)
+  out.Address = receiver
+  out.Value = value
+  tr.Output = *out
   tr.Hash = tr.GetHash()
-  tr.Signature = utils.GetSignatureFromHash(tr.Hash,key)
   return tr,nil
 }
 
 func (self *CoinTransaction)Check(chain *Blockchain)bool{
-  // TODO: implement later
-  return true
+  return utils.CompareHashes(self.Hash,self.GetHash())
 }
 
 func (self *CoinTransaction)IsSpent()bool{
   return false // TODO: implement later
 }
 
-func (self *CoinTransaction)GetHash()[]byte{
+func (self *CoinTransaction)GetHash()string{
   hb := new(utils.HashBuilder)
-  hb.Add(self.Creator)
   hb.Add(self.Timestamp)
-  for i:=0;i<len(self.Outputs);i++{
-    hb.Add(self.Outputs[i].Address)
-    hb.Add(self.Outputs[i].Value)
-  }
-  return hb.GetHash()
+  hb.Add(self.Output.Address)
+  hb.Add(self.Output.Value)
+  return fmt.Sprintf("%x",hb.GetHash())
+}
+
+func (self *CoinTransaction)GetHashCached()string{
+  return self.Hash
+}
+
+func (self *CoinTransaction)Serialize()[]byte{
+  return nil // TODO:  implement later
+}
+
+func MarshalCoinTransaction([] byte)*CoinTransaction{
+  return nil // TODO: implement later
 }
 
 func (self *CoinTransaction)GetType()string{

@@ -4,13 +4,14 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-25
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
 package blockchain
 
 import(
+  "fmt"
   "time"
   // "errors"
   "github.com/D33pBlue/poe/utils"
@@ -22,8 +23,8 @@ type JobTransaction struct{
   Creator utils.Addr
   Job string
   Prize int
-  Hash []byte
-  Signature []byte
+  Hash string
+  Signature string
 }
 
 // func MakeJobTransaction(creator utils.Addr,key utils.Key,
@@ -46,7 +47,7 @@ func (self *JobTransaction)IsSpent()bool{
   return false // TODO: implement later
 }
 
-func (self *JobTransaction)GetHash()[]byte{
+func (self *JobTransaction)GetHash()string{
   hb := new(utils.HashBuilder)
   hb.Add(self.Creator)
   hb.Add(self.Timestamp)
@@ -57,7 +58,19 @@ func (self *JobTransaction)GetHash()[]byte{
   }
   hb.Add(self.Job)
   hb.Add(self.Prize)
-  return hb.GetHash()
+  return fmt.Sprintf("%x",hb.GetHash())
+}
+
+func (self *JobTransaction)GetHashCached()string{
+  return self.Hash
+}
+
+func (self *JobTransaction)Serialize()[]byte{
+  return nil // TODO:  implement later
+}
+
+func MarshalJobTransaction([] byte)*JobTransaction{
+  return nil // TODO: implement later
 }
 
 func (self *JobTransaction)GetType()string{

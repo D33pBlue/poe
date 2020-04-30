@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: merkle.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-24
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
@@ -13,13 +13,16 @@
 package blockchain
 
 import(
+	"fmt"
+	"encoding/json"
 	"github.com/D33pBlue/poe/utils"
 )
 
 type Node struct{
-	Parent,L,R *Node
+	parent,L,R *Node
+	Type string
 	Transaction Transaction
-	Hash []byte
+	Hash string
 	Children int
 }
 
@@ -28,14 +31,87 @@ type Tree struct{
 	Nleaves int
 }
 
-func New()*Tree{
+func BuildMerkleTree()*Tree{
 	m := new(Tree)
 	m.Nleaves = 0
 	return m
 }
 
+func (self *Tree)GetHash()string{
+	if self.Root==nil{ return "" }
+	return self.Root.Hash
+}
+
 func (self *Tree)Check()bool{
 	return checkSubTree(self.Root)
+}
+
+func (self *Tree)Add(trans Transaction){
+	var n *Node = new(Node)
+	n.Transaction = trans
+	n.Type = trans.GetType()
+	n.Hash = trans.GetHashCached()
+	n.Children = 0
+	self.insertNode(n)
+}
+
+func marshalTransaction(data []byte,tp string)Transaction{
+	if len(data)<=0{ return nil }
+	var transact Transaction = nil
+	var objmap map[string]json.RawMessage
+  json.Unmarshal(data, &objmap)
+	switch tp {
+	case TrCoin:
+		tr := new(CoinTransaction)
+		json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
+		json.Unmarshal(objmap["Output"],&tr.Output)
+		json.Unmarshal(objmap["Hash"],&tr.Hash)
+		transact = tr
+	case TrStd:
+		tr := new(StdTransaction)
+		json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
+		json.Unmarshal(objmap["Inputs"],&tr.Inputs)
+		json.Unmarshal(objmap["Outputs"],&tr.Outputs)
+		json.Unmarshal(objmap["Creator"],&tr.Creator)
+		json.Unmarshal(objmap["Hash"],&tr.Hash)
+		json.Unmarshal(objmap["Signature"],&tr.Signature)
+		transact = tr
+	case TrJob:
+		tr := new(JobTransaction)
+		json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
+		json.Unmarshal(objmap["Inputs"],&tr.Inputs)
+		json.Unmarshal(objmap["Job"],&tr.Job)
+		json.Unmarshal(objmap["Prize"],&tr.Prize)
+		json.Unmarshal(objmap["Creator"],&tr.Creator)
+		json.Unmarshal(objmap["Hash"],&tr.Hash)
+		json.Unmarshal(objmap["Signature"],&tr.Signature)
+		transact = tr
+	}
+	return transact
+}
+
+func marshalMerkleNode(data []byte,parent *Node)*Node{
+	if len(data)<=0{ return nil }
+	node := new(Node)
+	var objmap map[string]json.RawMessage
+  json.Unmarshal(data, &objmap)
+	node.parent = parent
+	json.Unmarshal(objmap["Type"],&node.Type)
+	json.Unmarshal(objmap["Children"],&node.Children)
+	json.Unmarshal(objmap["Hash"],&node.Hash)
+	node.Transaction = marshalTransaction(objmap["Transaction"],node.Type)
+	node.L = marshalMerkleNode(objmap["L"],node)
+	node.R = marshalMerkleNode(objmap["R"],node)
+	return node
+}
+
+func MarshalMerkleTree(data []byte)*Tree {
+	tree := new(Tree)
+	var objmap map[string]json.RawMessage
+  json.Unmarshal(data, &objmap)
+  json.Unmarshal(objmap["Nleaves"],&tree.Nleaves)
+	tree.Root = marshalMerkleNode(objmap["Root"],nil)
+	return tree
 }
 
 func checkSubTree(n *Node)bool{
@@ -52,14 +128,6 @@ func checkSubTree(n *Node)bool{
 	}
 	hashBuilder = nil
 	return checkSubTree(n.L) && checkSubTree(n.R)
-}
-
-func (self *Tree)Add(trans Transaction){
-	var n *Node = new(Node)
-	n.Transaction = trans
-	n.Hash = trans.GetHash()
-	n.Children = 0
-	self.insertNode(n)
 }
 
 func (self *Node)isFull()bool{
@@ -79,9 +147,9 @@ func (self *Tree)insertNode(n *Node){
 	if p.L==nil{
 		self.Root = new(Node)
 		self.Root.L = p
-		p.Parent = self.Root
+		p.parent = self.Root
 		self.Root.R = n
-		n.Parent = self.Root
+		n.parent = self.Root
 		self.Root.Children = 2
 		self.Nleaves += 1
 		updateHashes(self.Root)
@@ -90,9 +158,9 @@ func (self *Tree)insertNode(n *Node){
 	if p.isFull(){
 		self.Root = new(Node)
 		self.Root.L = p
-		p.Parent = self.Root
+		p.parent = self.Root
 		self.Root.R = n
-		n.Parent = self.Root
+		n.parent = self.Root
 		self.Root.Children = self.Root.L.Children+2
 		self.Nleaves += 1
 		updateHashes(self.Root)
@@ -104,12 +172,12 @@ func (self *Tree)insertNode(n *Node){
 	x1 := p
 	x2 := n
 	p = new(Node)
-	p.Parent = x1.Parent
-	p.Parent.L = p
+	p.parent = x1.parent
+	p.parent.L = p
 	p.L = x1
-	x1.Parent = p
+	x1.parent = p
 	p.R = x2
-	x2.Parent = p
+	x2.parent = p
 	p.Children = x1.Children+x2.Children+2
 	self.Nleaves += 1
 	updateHashes(p)
@@ -120,8 +188,8 @@ func updateHashes(n *Node){
 		hashBuilder := new(utils.HashBuilder)
 		hashBuilder.Add(n.L.Hash)
 		hashBuilder.Add(n.R.Hash)
-		n.Hash = hashBuilder.GetHash()
+		n.Hash = fmt.Sprintf("%x",hashBuilder.GetHash())
 		n.Children = n.L.Children+n.R.Children+2
-		n = n.Parent
+		n = n.parent
 	}
 }
