@@ -17,6 +17,7 @@ import(
   "sync"
   "bufio"
   "regexp"
+  "strings"
   "errors"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/blockchain"
@@ -95,49 +96,58 @@ func (self *Miner)AddNode(ipaddress string)error{
   return nil
 }
 
-func (self *Miner)handleConnection(conn net.Conn){
+func (self *Miner)updateAddresses(conn net.Conn, port string){
+  var ipaddress = fmt.Sprint(conn.RemoteAddr())
+  ipaddress = ipaddress[:strings.Index(ipaddress,":")]+":"+port
   self.connected_lock.Lock()
-  if len(self.Connected)<10{
-    var ipaddress = fmt.Sprint(conn.RemoteAddr())
-    found := false
-    for i:=0;i<len(self.Connected);i++{
-      if self.Connected[i]==ipaddress{
-        found = true
-        break
-      }
-    }
-    if !found{
-      self.Connected = append(self.Connected,ipaddress)
+  found := false
+  for i:=0;i<len(self.Connected);i++{
+    if self.Connected[i]==ipaddress{
+      found = true
+      break
     }
   }
+  if !found{
+    self.Connected = append(self.Connected,ipaddress)
+    fmt.Println("Added node ",ipaddress)
+  }
   self.connected_lock.Unlock()
-  message, _ := bufio.NewReader(conn).ReadString('\n')
-  fmt.Printf("Received %v\n",message)
+}
+
+func (self *Miner)handleConnection(conn net.Conn){
+  reader := bufio.NewReader(conn)
+  message, _ := reader.ReadString('\n')
+  fmt.Printf("Received %v",message)
   switch message[:len(message)-1] {
   case "update":
+    port, _ := reader.ReadString('\n')
+    self.updateAddresses(conn,port[:len(port)-1])
     conn.Write([]byte(self.Chain.GetSerializedHead()))
     conn.Write([]byte("\n"))
   case "get_block":
-    hash, _ := bufio.NewReader(conn).ReadString('\n')
-    block := self.Chain.GetBlock([]byte(hash))
+    hash, _ := reader.ReadString('\n')
+    fmt.Printf("Requested %v\n",hash)
+    block := self.Chain.GetBlock(hash[:len(hash)-1])
+    fmt.Printf("Found %v\n",block)
     if block==nil{
-      conn.Write([]byte(nil))
+      conn.Write([]byte("\n"))
     }else{
       conn.Write([]byte(block.Serialize()))
     }
     conn.Write([]byte("\n"))
   case "chain":
-    block,err2 := bufio.NewReader(conn).ReadString('\n')
+    port,_ := reader.ReadString('\n')
+    block,err2 := reader.ReadString('\n')
     fmt.Println(err2)
-    fmt.Printf("Received %v\n",block)
+    fmt.Printf("Content of chain: %v\n",block)
     if err2==nil{
       mexBlock := new(blockchain.MexBlock)
       mexBlock.Data = []byte(block)
-      mexBlock.IpSender = fmt.Sprint(conn.RemoteAddr())
+      var ipaddress string = fmt.Sprint(conn.RemoteAddr())
+      mexBlock.IpSender = ipaddress[:strings.Index(ipaddress,":")]+":"+port[:len(port)-1]
       self.Chain.BlockIn <- *mexBlock
     }
   }
-  // fmt.Println("Sent back info")
 }
 
 // ask to another miner his current blockchain
@@ -147,6 +157,7 @@ func (self *Miner)requestUpdate(ipaddress string)error{
   if err!=nil{ return err }
   // send to socket
   fmt.Fprintf(conn,"update\n")
+  fmt.Fprintf(conn,self.Port+"\n")
   // listen for reply
   fmt.Println("Listening")
   block,err2 := bufio.NewReader(conn).ReadString('\n')
@@ -172,8 +183,8 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
       case blockMex := <-self.Chain.BlockOut:
         self.connected_lock.Lock()
         for i:=0;i<len(self.Connected);i++{
-          mex := string(blockMex.Data)
-          go sendBlockUpdate(self.Connected[i],mex)
+          fmt.Println("Send update to ",self.Connected[i])
+          go self.sendBlockUpdate(self.Connected[i],string(blockMex.Data))
         }
         self.connected_lock.Unlock()
     }
@@ -181,7 +192,7 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
 }
 
 
-func sendMexAck(address,mex string)error{
+func (self *Miner)sendMexAck(address,mex string)error{
   conn, err := net.Dial("tcp",address)
   if err!=nil{ return err }
   // send to socket
@@ -195,9 +206,12 @@ func sendMexAck(address,mex string)error{
   return nil
 }
 
-func sendBlockUpdate(address string,mex string){
+func (self *Miner)sendBlockUpdate(address string,mex string){
   conn, err := net.Dial("tcp",address)
   if err!=nil{ return }
-  conn.Write([]byte("chain\n"))
-  conn.Write([]byte(mex+"\n"))
+  fmt.Fprintf(conn,"chain\n")
+  fmt.Fprintf(conn,self.Port+"\n")
+  fmt.Fprintf(conn,mex+"\n")
+  // conn.Write(mex)
+  // conn.Write([]byte("\n"))
 }

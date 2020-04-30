@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: merkle.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-28
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
@@ -13,6 +13,7 @@
 package blockchain
 
 import(
+	"fmt"
 	"encoding/json"
 	"github.com/D33pBlue/poe/utils"
 )
@@ -21,7 +22,7 @@ type Node struct{
 	parent,L,R *Node
 	Type string
 	Transaction Transaction
-	Hash []byte
+	Hash string
 	Children int
 }
 
@@ -36,8 +37,8 @@ func BuildMerkleTree()*Tree{
 	return m
 }
 
-func (self *Tree)GetHash()[]byte{
-	if self.Root==nil{ return nil }
+func (self *Tree)GetHash()string{
+	if self.Root==nil{ return "" }
 	return self.Root.Hash
 }
 
@@ -187,7 +188,7 @@ func updateHashes(n *Node){
 		hashBuilder := new(utils.HashBuilder)
 		hashBuilder.Add(n.L.Hash)
 		hashBuilder.Add(n.R.Hash)
-		n.Hash = hashBuilder.GetHash()
+		n.Hash = fmt.Sprintf("%x",hashBuilder.GetHash())
 		n.Children = n.L.Children+n.R.Children+2
 		n = n.parent
 	}

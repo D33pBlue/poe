@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: rsa.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-26
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
@@ -93,11 +93,11 @@ func (self *SignBuilder)Add(data interface{}){
   self.data = append(self.data,binary...)
 }
 
-func GetSignatureFromHash(hashed []byte,key Key)[]byte{
+func GetSignatureFromHash(hashed string,key Key)[]byte{
   var opts rsa.PSSOptions
   opts.SaltLength = rsa.PSSSaltLengthAuto // for simple example
   newhash := crypto.SHA256
-  signature,err := rsa.SignPSS(rand.Reader,key,newhash,hashed,&opts)
+  signature,err := rsa.SignPSS(rand.Reader,key,newhash,[]byte(hashed),&opts)
   if err != nil {
   		fmt.Println(err)
       return nil
@@ -120,12 +120,12 @@ func (self *SignBuilder)GetSignature(key Key)[]byte{
   return signature
 }
 
-func CheckSignature(sign,hashed []byte,addr Addr)bool{
+func CheckSignature(sign,hashed string,addr Addr)bool{
   var opts rsa.PSSOptions
   opts.SaltLength = rsa.PSSSaltLengthAuto
   newhash := crypto.SHA256
   publicKey := publicKeyFromAddr(addr)
-  err := rsa.VerifyPSS(publicKey,newhash,hashed,sign,&opts)
+  err := rsa.VerifyPSS(publicKey,newhash,[]byte(hashed),[]byte(sign),&opts)
   if err != nil {
     return false
   }

@@ -4,13 +4,14 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-27
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
 package blockchain
 
 import(
+  "fmt"
   "time"
   // "errors"
   "github.com/D33pBlue/poe/utils"
@@ -21,8 +22,8 @@ type StdTransaction struct{
   Inputs []TrInput
   Outputs []TrOutput
   Creator utils.Addr
-  Hash []byte
-  Signature []byte
+  Hash string
+  Signature string
 }
 
 func MakeStdTransaction(creator utils.Addr,key utils.Key,
@@ -33,18 +34,19 @@ func MakeStdTransaction(creator utils.Addr,key utils.Key,
   tr.Inputs = inps
   tr.Outputs = outs
   tr.Hash = tr.GetHash()
-  tr.Signature = utils.GetSignatureFromHash(tr.Hash,key)
+  tr.Signature = fmt.Sprintf("%x",utils.GetSignatureFromHash(tr.Hash,key))
  return tr,nil
 }
 
 func (self *StdTransaction)Check(chain *Blockchain)bool{
   hash2 := self.GetHash()
-  if len(hash2)!=len(self.Hash){ return false }
-  for i:=0;i<len(hash2);i++{
-    if hash2[i]!=self.Hash[i] {
-      return false
-    }
-  }
+  if hash2!=self.Hash{return false}
+  // if len(hash2)!=len(self.Hash){ return false }
+  // for i:=0;i<len(hash2);i++{
+  //   if hash2[i]!=self.Hash[i] {
+  //     return false
+  //   }
+  // }
   if !utils.CheckSignature(self.Signature,self.Hash,self.Creator){
     return false
   }
@@ -63,7 +65,7 @@ func (self *StdTransaction)IsSpent()bool{
   return false // TODO: implement later
 }
 
-func (self *StdTransaction)GetHash()[]byte{
+func (self *StdTransaction)GetHash()string{
   hb := new(utils.HashBuilder)
   hb.Add(self.Creator)
   hb.Add(self.Timestamp)
@@ -76,10 +78,10 @@ func (self *StdTransaction)GetHash()[]byte{
     hb.Add(self.Outputs[i].Address)
     hb.Add(self.Outputs[i].Value)
   }
-  return hb.GetHash()
+  return fmt.Sprintf("%x",hb.GetHash())
 }
 
-func (self *StdTransaction)GetHashCached()[]byte{
+func (self *StdTransaction)GetHashCached()string{
   return self.Hash
 }
 

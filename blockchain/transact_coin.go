@@ -4,13 +4,14 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-28
+ * @Last modified time: 2020-Apr-30
  * @Copyright: 2020
  */
 
 package blockchain
 
 import(
+  "fmt"
   "time"
   // "errors"
   "github.com/D33pBlue/poe/utils"
@@ -19,7 +20,7 @@ import(
 type CoinTransaction struct{
   Timestamp time.Time
   Output TrOutput
-  Hash []byte
+  Hash string
 }
 
 func MakeCoinTransaction(receiver utils.Addr,value int)(*CoinTransaction,error){
@@ -41,15 +42,15 @@ func (self *CoinTransaction)IsSpent()bool{
   return false // TODO: implement later
 }
 
-func (self *CoinTransaction)GetHash()[]byte{
+func (self *CoinTransaction)GetHash()string{
   hb := new(utils.HashBuilder)
   hb.Add(self.Timestamp)
   hb.Add(self.Output.Address)
   hb.Add(self.Output.Value)
-  return hb.GetHash()
+  return fmt.Sprintf("%x",hb.GetHash())
 }
 
-func (self *CoinTransaction)GetHashCached()[]byte{
+func (self *CoinTransaction)GetHashCached()string{
   return self.Hash
 }
 

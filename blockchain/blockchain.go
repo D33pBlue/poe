@@ -67,11 +67,12 @@ func NewBlockchain(id utils.Addr,folder string)*Blockchain{
   return chain
 }
 
-func (self *Blockchain)GetBlock(hash []byte)*Block{
+func (self *Blockchain)GetBlock(hash string)*Block{
   block := self.Head
   for{
     if block==nil{return nil}
-    if utils.CompareHashes(block.GetHashCached(),hash){
+    // if utils.CompareHashes(block.GetHashCached(),hash){
+    if block.GetHashCached()==hash{
       return block
     }
     block = block.Previous
@@ -138,36 +139,43 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
   }
 }
 
-func askBlock(blockHash []byte,ipaddress string)(*Block,[]byte){
+func askBlock(blockHash string,ipaddress string)(*Block,string){
+  fmt.Println("asking for ",blockHash," to ",ipaddress)
   conn, err := net.Dial("tcp",ipaddress)
-  if err!=nil{ return nil,nil }
-  fmt.Fprintf(conn,"get_block\n")
-  conn.Write(blockHash)
-  conn.Write([]byte("\n"))
+  if err!=nil{
+    fmt.Println(err)
+    return nil,"" }
+  fmt.Fprintf(conn,"get_block\n"+blockHash+"\n")
   blockRaw,err2 := bufio.NewReader(conn).ReadString('\n')
-  if err2!=nil{ return nil,nil }
+  if err2!=nil{
+    fmt.Println(err2)
+    return nil,"" }
   return MarshalBlock([]byte(blockRaw))
 }
 
 // Checks the block and updates the blockchain.
 // If valid restart mining
 func (self *Blockchain)processIncomingBlock(block *Block,
-                hashPrev []byte,ipSender string)  {
+                hashPrev string,ipSender string)  {
   var b *Block = block
-  var hp []byte = hashPrev
+  var hp string = hashPrev
   fmt.Println("checking incoming block")
   for{// try to reconstruct the blockchain if valid
-    if !b.CheckStep1(hashPrev){
+    if b==nil{break}
+    if !b.CheckStep1(hp){
       fmt.Println("check step 1 failed")
+      fmt.Println("hhprev",hp)
       return
     }
-    if len(hp)==0{break}
-    existingBlock := self.GetBlock(hashPrev)
+    fmt.Println("step 1 parzial ok")
+    fmt.Println("hhprev",hp)
+    if hp=="" {break}
+    existingBlock := self.GetBlock(hp)
     if existingBlock!=nil{
       b.Previous = existingBlock
       break
     }
-    b.Previous,hp = askBlock(hashPrev,ipSender)
+    b.Previous,hp = askBlock(hp,ipSender)
     b = b.Previous
   }
   fmt.Println("chain has succeeded check step 1")
@@ -186,6 +194,8 @@ func (self *Blockchain)processIncomingBlock(block *Block,
       // restart mining
       go self.Mine()
     }
+  }else{
+    fmt.Println("chaind discarded in check step 2")
   }
 }
 
