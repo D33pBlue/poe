@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: poe.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-01
  * @Copyright: 2020
  */
 
@@ -26,7 +26,7 @@ import (
 
 func startMining(ip,port,keypath string){
   var publicKey utils.Addr
-  if fileExists(keypath){
+  if utils.FileExists(keypath){
     data, err := ioutil.ReadFile(keypath)
     if err!=nil{
       fmt.Println(err)
@@ -52,7 +52,7 @@ func startMining(ip,port,keypath string){
 }
 
 func startWallet(ip,port,keypath string){
-  if !fileExists(keypath){
+  if !utils.FileExists(keypath){
     fmt.Println("You need to link a valid key file.")
     fmt.Println("You can generate it with mode genkey.")
     return
@@ -134,14 +134,6 @@ func main()  {
   }else{
     fmt.Println("Choose a mode in {mine|wallet|genkey}")
   }
-}
-
-func fileExists(filename string) bool {
-    info, err := os.Stat(filename)
-    if os.IsNotExist(err) {
-        return false
-    }
-    return !info.IsDir()
 }
 
 type resolver func(string,[]string,interface{})string

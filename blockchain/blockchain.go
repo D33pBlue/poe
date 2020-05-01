@@ -47,6 +47,35 @@ type Blockchain struct{
   folder string
 }
 
+func LoadChainFromFolder(id utils.Addr,folder string)*Blockchain{
+  chain := new(Blockchain)
+  chain.TransQueue = make(chan MexTrans)
+  chain.BlockOut = make(chan MexBlock)
+  chain.BlockIn = make(chan MexBlock)
+  chain.internalBlock = make(chan MexBlock)
+  chain.miningstatus = make(chan bool)
+  chain.folder = folder
+  chain.Head = nil
+  var i int = 0
+  for{
+    var filename string = fmt.Sprintf("%v/block%v.json",chain.folder,i)
+    if !utils.FileExists(filename){break}
+    data,err := ioutil.ReadFile(filename)
+    if err!=nil{break}
+    b,hash := MarshalBlock(data)
+    if chain.Head!=nil && chain.Head.Hash!=hash{break}
+    b.Previous = chain.Head
+    chain.Head = b
+    fmt.Printf("Loaded block %v\n",filename)
+    i += 1
+  }
+  chain.Current = BuildBlock(id,chain.Head)
+  chain.id = id
+  chain.keepmining = false
+  go chain.Mine()
+  return chain
+}
+
 func NewBlockchain(id utils.Addr,folder string)*Blockchain{
   chain := new(Blockchain)
   chain.TransQueue = make(chan MexTrans)
@@ -160,7 +189,7 @@ func (self *Blockchain)SpendSubTransaction(inp *TrInput,wallet utils.Addr)int{
 // Called when mining process succeed to update the blockchain
 // with the new current block, build a new one and restart mining
 func (self *Blockchain)startNewMiningProcess(){
-  self.storeCurrentBlockAndCreateNew(nil)// with nil store self.Current
+  self.storeCurrentBlockAndCreateNew(nil,0)// with nil store self.Current
   go self.Mine()
 }
 
@@ -213,6 +242,7 @@ func (self *Blockchain)processIncomingBlock(block *Block,
   var b *Block = block
   var hp string = hashPrev
   fmt.Println("checking incoming block")
+  var savingPoint int = 0
   for{// try to reconstruct the blockchain if valid
     if b==nil{break}
     if !b.CheckStep1(hp){
@@ -230,6 +260,7 @@ func (self *Blockchain)processIncomingBlock(block *Block,
     }
     b.Previous,hp = askBlock(hp,ipSender)
     b = b.Previous
+    savingPoint += 1
   }
   fmt.Println("chain has succeeded check step 1")
   if block.CheckStep2(){// the the blockchain is valid
@@ -243,7 +274,7 @@ func (self *Blockchain)processIncomingBlock(block *Block,
       self.keepmining = false
       <-self.miningstatus // wait mining ending
       // update the blockchain with the new
-      self.storeCurrentBlockAndCreateNew(block)
+      self.storeCurrentBlockAndCreateNew(block,savingPoint)
       // restart mining
       go self.Mine()
     }
@@ -252,19 +283,24 @@ func (self *Blockchain)processIncomingBlock(block *Block,
   }
 }
 
-func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block){
+func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block,savingPoint int){
   self.access_data.Lock()
+  defer self.access_data.Unlock()
   if block!=nil{
     self.Head = block
   }else{
     self.Head = self.Current
   }
   self.Current = BuildBlock(self.id,self.Head)
-  var filename string = fmt.Sprintf("%v/block%v.json",self.folder,self.Head.LenSubChain)
-  data := self.Head.Serialize()
-  err := ioutil.WriteFile(filename,data, 0644)
-  if err!=nil{fmt.Println(err)}
-  self.access_data.Unlock()
+  b := self.Head
+  for i:=0;i<savingPoint+1;i++{
+    if b==nil{break}
+    var filename string = fmt.Sprintf("%v/block%v.json",self.folder,b.LenSubChain)
+    data := b.Serialize()
+    err := ioutil.WriteFile(filename,data, 0644)
+    if err!=nil{fmt.Println(err)}
+    b = b.Previous
+  }
 }
 
 func (self *Blockchain)processIncomingTransaction(transaction Transaction) {
