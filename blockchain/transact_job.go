@@ -57,6 +57,10 @@ func (self *JobTransaction)SetSpent(){
   self.spent = true
 }
 
+func (self *JobTransaction)GetSpendingValueFor(utils.Addr)int{
+  return 0
+}
+
 func (self *JobTransaction)GetHash()string{
   hb := new(utils.HashBuilder)
   hb.Add(self.Creator)

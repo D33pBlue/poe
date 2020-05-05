@@ -22,6 +22,7 @@ type Transaction interface{
   GetHashCached()string
   GetType()string
   GetCreator()utils.Addr
+  GetSpendingValueFor(utils.Addr)int
   // Serialize()[]byte
   // Marshal([]byte)Transaction
 }

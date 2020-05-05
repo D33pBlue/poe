@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-03
  * @Copyright: 2020
  */
 
@@ -15,13 +15,16 @@
 package wallet
 
 import (
-  "os"
+  // "os"
   "fmt"
+  "sort"
   "net"
   "io/ioutil"
   "bufio"
+  "errors"
   "strconv"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/blockchain"
 )
 
 type Wallet struct{
@@ -61,7 +64,23 @@ func (self *Wallet)GetTotal()string  {
 }
 
 func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
-  // TODO: implement later
+  total,err := strconv.Atoi(self.GetTotal())
+  if err!=nil{return err}
+  if total<amount{
+    return errors.New("You does not have enough money")
+  }
+  transactions := self.getActiveTransactions()
+  sort.SliceStable(transactions, func(i, j int) bool {
+    return transactions[i].GetSpendingValueFor(self.Id) < transactions[j].GetSpendingValueFor(self.Id)
+  })
+  var transactToSpend []blockchain.Transaction
+  var spending int = 0
+  for i:=0;spending<amount;i++{
+    transactToSpend = append(transactToSpend,transactions[i])
+    spending += transactions[i].GetSpendingValueFor(self.Id)
+  }
+  // newTransact,err2 := blockchain.MakeStdTransaction()
+  // TODO: make transaction Gheppio!z32
   return nil
 }
 
@@ -75,7 +94,7 @@ func generateKey()(utils.Key,error){
   key,err := utils.GenerateKey()
   if err!=nil{ return nil,err }
   i := 0
-  for ;fileExists("data/key"+strconv.Itoa(i)+".pem");i++{}
+  for ;utils.FileExists("data/key"+strconv.Itoa(i)+".pem");i++{}
   name := "data/key"+strconv.Itoa(i)+".pem"
   err = ioutil.WriteFile(name,[]byte(utils.ExportPublicKeyAsPemStr(key)), 0644)
   if err!=nil{ return nil,err }
@@ -96,11 +115,6 @@ func loadKey(path string)(utils.Key,error){
   return priv,nil
 }
 
-
-func fileExists(filename string) bool {
-    info, err := os.Stat(filename)
-    if os.IsNotExist(err) {
-        return false
-    }
-    return !info.IsDir()
+func (self *Wallet)getActiveTransactions()[]blockchain.Transaction{
+  return nil // TODO: implement later
 }

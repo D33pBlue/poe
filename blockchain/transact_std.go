@@ -71,6 +71,10 @@ func (self *StdTransaction)SetSpent(){
   self.spent = true
 }
 
+func (self *StdTransaction)GetSpendingValueFor(utils.Addr)int{
+  return 0 // TODO: implement later
+}
+
 func (self *StdTransaction)GetHash()string{
   hb := new(utils.HashBuilder)
   hb.Add(self.Creator)

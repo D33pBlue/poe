@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-01
  * @Copyright: 2020
  */
 
@@ -52,6 +52,10 @@ func (self *CoinTransaction)IsSpent()bool{
 
 func (self *CoinTransaction)SetSpent(){
   self.spent = true
+}
+
+func (self *CoinTransaction)GetSpendingValueFor(utils.Addr)int{
+  return 0 // TODO: implement later
 }
 
 func (self *CoinTransaction)GetHash()string{
