@@ -75,21 +75,29 @@ func LoadChainFromFolder(id utils.Addr,folder string)*Blockchain{
   chain.currentTrChanges = make(map[string]string)
   chain.Head = nil
   var i int = 0
+  fmt.Println("Loading chain from disk")
   for{
     var filename string = fmt.Sprintf("%v/block%v.json",chain.folder,i)
     if !utils.FileExists(filename){break}
     data,err := ioutil.ReadFile(filename)
-    if err!=nil{break}
+    if err!=nil{return nil}
     b,hash := MarshalBlock(data)
-    if chain.Head!=nil && chain.Head.Hash!=hash{break}
+    if chain.Head!=nil && chain.Head.Hash!=hash{return nil}
     b.Previous = chain.Head
+    if !b.CheckStep1(hash){ return nil }
     chain.Head = b
     fmt.Printf("Loaded block %v\n",filename)
     i += 1
   }
+  fmt.Println("Checking loaded chain")
+  trChanges := make(map[string]string)
+  if !chain.Head.CheckStep2(&trChanges){ return nil }
+  fmt.Println("Initializing chain")
+  chain.applyTransactionsChanges(&trChanges)
   chain.Current = BuildBlock(id,chain.Head)
   chain.id = id
   chain.keepmining = false
+  fmt.Println("The chain is ready")
   go chain.Mine()
   return chain
 }
@@ -256,7 +264,7 @@ func (self *Blockchain)processIncomingBlock(block *Block,
       go self.Mine()
     }
   }else{
-    fmt.Println("chaind discarded in check step 2")
+    fmt.Println("chain discarded in check step 2")
   }
 }
 
