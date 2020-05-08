@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: poe.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-01
+ * @Last modified time: 2020-May-08
  * @Copyright: 2020
  */
 
@@ -18,9 +18,8 @@ import (
   "bufio"
   "io/ioutil"
   "strings"
-  "strconv"
+  // "strconv"
   "github.com/D33pBlue/poe/miner"
-  "github.com/D33pBlue/poe/wallet"
   "github.com/D33pBlue/poe/utils"
 )
 
@@ -40,7 +39,7 @@ func startMining(ip,port,keypath string){
     publicKey = utils.GetAddr2(pub)
   }else{
     fmt.Println("You need to link a valid public key file to start mining.")
-    fmt.Println("You can generate it with mode genkey.")
+    fmt.Println("You can generate it with a client.")
     return
   }
   fmt.Println("Loaded public key:")
@@ -51,17 +50,6 @@ func startMining(ip,port,keypath string){
   startShell(processOnMining,minerNode)
 }
 
-func startWallet(ip,port,keypath string){
-  if !utils.FileExists(keypath){
-    fmt.Println("You need to link a valid key file.")
-    fmt.Println("You can generate it with mode genkey.")
-    return
-  }
-  walletObj := wallet.New(keypath,ip+":"+port)
-  if walletObj==nil{return}
-  fmt.Printf("Connecting to %v:%v\n",ip,port)
-  startShell(processOnWallet,walletObj)
-}
 
 func processOnMining(cmd string,args []string,obj interface{})string{
   switch cmd {
@@ -80,60 +68,14 @@ func processOnMining(cmd string,args []string,obj interface{})string{
   return "invalid cmd"
 }
 
-func processOnWallet(cmd string,args []string,obj interface{})string{
-  switch cmd {
-  case "public":
-    return fmt.Sprint(obj.(*wallet.Wallet).Id)
-  case "total":
-    return fmt.Sprint(obj.(*wallet.Wallet).GetTotal())
-  case "money":
-    if len(args)!=2{
-      return "invalid arguments"
-    }
-    amount,err := strconv.Atoi(args[0])
-    if err!=nil{ return fmt.Sprint(err) }
-    var receiver utils.Addr = utils.Addr(args[1])
-    err = obj.(*wallet.Wallet).SendMoney(amount,receiver)
-    if err!=nil{ return fmt.Sprint(err) }
-    return fmt.Sprintf("Sent transaction of %v to %v",amount,receiver)
-  case "job":
-    if len(args)!=1{
-      return "invalid arguments"
-    }
-    err := obj.(*wallet.Wallet).SubmitJob(args[0])
-    if err!=nil{ return fmt.Sprint(err) }
-    return "Sent Job transaction"
-  case "results":
-    return "results" // TODO: implement later
-  }
-  return "invalid cmd"
-}
-
-func generateKey(){
-  wallet := wallet.New("","")
-  if wallet!=nil{
-    fmt.Println("Generated public and private keys in ./data/")
-  }
-}
-
 func main()  {
   fmt.Println("\n\n---------------------------------------")
   fmt.Println("---- Proof of Evolution Blockchain ----\n")
-  mode := flag.String("mode", "", "Mode{mine|wallet|genkey}")
-  // init := flag.String("init", "new", "Init{new|load}")
   ip := flag.String("ip", "127.0.0.1", "The IP address of the mining node")
   port := flag.String("port","4242","The port where the mining node start listening.")
   key := flag.String("key","","Path to the public key pem file")
   flag.Parse()
-  if *mode=="mine"{
-    startMining(*ip,*port,*key)
-  }else if *mode=="wallet"{
-    startWallet(*ip,*port,*key)
-  }else if *mode=="genkey"{
-    generateKey()
-  }else{
-    fmt.Println("Choose a mode in {mine|wallet|genkey}")
-  }
+  startMining(*ip,*port,*key)
 }
 
 type resolver func(string,[]string,interface{})string
