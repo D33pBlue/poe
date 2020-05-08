@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-08
  * @Copyright: 2020
  */
 
@@ -82,6 +82,24 @@ func (self *Block)Mine(keepmining *bool){
   }
 }
 
+// Returns a block in the chain pointed by this block;
+// if there is no match, returns nil.
+func (self *Block)FindPrevBlock(hash string)*Block{
+  block := self
+  for{
+    if block==nil{return nil}
+    if block.GetHashCached()==hash{
+      return block
+    }
+    block = block.Previous
+  }
+  return nil
+}
+
+func (self *Block)FindTransaction(hash string)Transaction{
+  return nil // TODO: implement later.
+}
+
 func (self *Block)Serialize()[]byte{
   type Block2 struct{
     Previous string
@@ -146,7 +164,7 @@ func (self *Block)mineNoJob(keepmining *bool){
     self.access_data.Lock()
     self.NonceNoJob.Next()
     self.Hash = self.GetHash("")
-    self.mined = self.checkNoJob()
+    self.mined = self.checkNonceNoJob()
     self.access_data.Unlock()
   }
   fmt.Println("ckck",self.GetHash(""))
@@ -187,27 +205,24 @@ func (self *Block)CheckStep1(hashPrev string)bool{
     return false
   }
   if self.NumJobs==0{
-    if !self.checkNoJob() {
-      fmt.Println("error in checkNoJob")
+    if !self.checkNonceNoJob() {
+      fmt.Println("error in checkNonceNoJob")
       return false }
   }else if self.NumJobs>0{
-    if !self.checkJobs() { return false }
+    if !self.checkNonceJobs() { return false }
   }else{ return false }
   return true
 }
 
 // The CheckStep2 method checks the validity of the links
 // among blocks and of the depending data.
-func (self *Block)CheckStep2()bool{
+func (self *Block)CheckStep2(transactionChanges *map[string]string)bool{
   if self.checked { return true }
   if !self.checkNumJobs() {
     fmt.Println("fail in num jobs")
     return false }
   if !self.checkHardness() {
     fmt.Println("fail hardness")
-    return false }
-  if !self.checkTransactions() {
-    fmt.Println("fail in transactions")
     return false }
   if self.LenSubChain>0{
     if self.Previous==nil {
@@ -216,14 +231,15 @@ func (self *Block)CheckStep2()bool{
     if self.Previous.LenSubChain!=self.LenSubChain-1 {
       fmt.Println("fail in LenSubChain")
       return false }
-    if !self.Previous.CheckStep2(){ return false } // TODO: remove recursion
+    if !self.Previous.CheckStep2(transactionChanges){ return false } // TODO: remove recursion
+  }
+  // transactions are checked only if the previous blocks are valid
+  if !self.checkTransactions(transactionChanges) {
+    fmt.Println("fail in transactions")
+    return false
   }
   self.checked = true
   return true
-}
-
-func (self *Block)GetTransaction(hash string)Transaction{
-  return nil // TODO: implement later
 }
 
 func (self *Block)GetHash(hashPrev string)string{
@@ -255,7 +271,7 @@ func (self *Block)GetHashCached()string{
   return self.Hash
 }
 
-func (self *Block)checkNoJob()bool{
+func (self *Block)checkNonceNoJob()bool{
   hash := self.Hash
   // fmt.Println(hash)
   for i:=0;i<self.Hardness;i++{
@@ -264,7 +280,7 @@ func (self *Block)checkNoJob()bool{
   return true
 }
 
-func (self *Block)checkJobs()bool{
+func (self *Block)checkNonceJobs()bool{
   return true // TODO: implement later
 }
 
@@ -276,8 +292,17 @@ func (self *Block)checkHardness()bool{
   return true // TODO: implement later
 }
 
-func (self *Block)checkTransactions()bool{
-  return true // TODO: implement later
+func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
+  // check the Merkle tree hashes
+  if !self.Transactions.Check(){ return false }
+  // check all transactions in the tree
+  transactions := self.Transactions.GetTransactionArray()
+  for i:=0;i<len(transactions);i++{
+    if !transactions[i].Check(self,transactionChanges){
+      return false
+    }
+  }
+  return true
 }
 
 func (self *Block)calculateNumJobs()int{

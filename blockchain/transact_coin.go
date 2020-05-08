@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-01
+ * @Last modified time: 2020-May-08
  * @Copyright: 2020
  */
 
@@ -38,24 +38,20 @@ func MakeCoinTransaction(receiver utils.Addr,value int)(*CoinTransaction,error){
   return tr,nil
 }
 
-func (self *CoinTransaction)Check(chain *Blockchain)bool{
-  return self.Hash==self.GetHash()
+func (self *CoinTransaction)Check(block *Block,trChanges *map[string]string)bool{
+  return true // TODO: implement later
+}
+
+func (self* CoinTransaction)GetOutputAt(i int)*TrOutput{
+  return &self.Output
+}
+
+func (self *CoinTransaction)GetTimestamp()time.Time{
+  return self.Timestamp
 }
 
 func (self *CoinTransaction)GetCreator()utils.Addr{
   return self.Creator
-}
-
-func (self *CoinTransaction)IsSpent()bool{
-  return false // TODO: implement later
-}
-
-func (self *CoinTransaction)SetSpent(){
-  self.spent = true
-}
-
-func (self *CoinTransaction)GetSpendingValueFor(utils.Addr)int{
-  return 0 // TODO: implement later
 }
 
 func (self *CoinTransaction)GetHash()string{
@@ -70,10 +66,6 @@ func (self *CoinTransaction)GetHash()string{
 func (self *CoinTransaction)GetHashCached()string{
   return self.Hash
 }
-
-// func (self *CoinTransaction)Serialize()[]byte{
-//   return nil // TODO:  implement later
-// }
 
 func MarshalCoinTransaction(data []byte)*CoinTransaction{
   var objmap map[string]json.RawMessage

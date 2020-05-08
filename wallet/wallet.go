@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-03
+ * @Last modified time: 2020-May-08
  * @Copyright: 2020
  */
 
@@ -17,11 +17,11 @@ package wallet
 import (
   // "os"
   "fmt"
-  "sort"
-  "net"
+  // "sort"
+  // "net"
   "io/ioutil"
-  "bufio"
-  "errors"
+  // "bufio"
+  // "errors"
   "strconv"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/blockchain"
@@ -51,36 +51,41 @@ func New(path,ip string)*Wallet{
 }
 
 func (self *Wallet)GetTotal()string  {
-  conn, err := net.Dial("tcp",self.MinerIp)
-  if err!=nil{
-    fmt.Println(err)
-    return ""
-  }
-  fmt.Fprintf(conn,"get_total\n")
-  fmt.Fprintf(conn,string(self.Id)+"\n")
-  reader := bufio.NewReader(conn)
-  total, _ := reader.ReadString('\n')
-  return total[:len(total)-1]
+  // TODO: implement with new architecture
+
+  // conn, err := net.Dial("tcp",self.MinerIp)
+  // if err!=nil{
+  //   fmt.Println(err)
+  //   return ""
+  // }
+  // fmt.Fprintf(conn,"get_total\n")
+  // fmt.Fprintf(conn,string(self.Id)+"\n")
+  // reader := bufio.NewReader(conn)
+  // total, _ := reader.ReadString('\n')
+  // return total[:len(total)-1]
+  return ""
 }
 
 func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
-  total,err := strconv.Atoi(self.GetTotal())
-  if err!=nil{return err}
-  if total<amount{
-    return errors.New("You does not have enough money")
-  }
-  transactions := self.getActiveTransactions()
-  sort.SliceStable(transactions, func(i, j int) bool {
-    return transactions[i].GetSpendingValueFor(self.Id) < transactions[j].GetSpendingValueFor(self.Id)
-  })
-  var transactToSpend []blockchain.Transaction
-  var spending int = 0
-  for i:=0;spending<amount;i++{
-    transactToSpend = append(transactToSpend,transactions[i])
-    spending += transactions[i].GetSpendingValueFor(self.Id)
-  }
-  // newTransact,err2 := blockchain.MakeStdTransaction()
-  // TODO: make transaction Gheppio!z32
+  // TODO: implement with new architecture
+
+  // total,err := strconv.Atoi(self.GetTotal())
+  // if err!=nil{return err}
+  // if total<amount{
+  //   return errors.New("You does not have enough money")
+  // }
+  // transactions := self.getActiveTransactions()
+  // sort.SliceStable(transactions, func(i, j int) bool {
+  //   return transactions[i].GetSpendingValueFor(self.Id) < transactions[j].GetSpendingValueFor(self.Id)
+  // })
+  // var transactToSpend []blockchain.Transaction
+  // var spending int = 0
+  // for i:=0;spending<amount;i++{
+  //   transactToSpend = append(transactToSpend,transactions[i])
+  //   spending += transactions[i].GetSpendingValueFor(self.Id)
+  // }
+  // // newTransact,err2 := blockchain.MakeStdTransaction()
+  // // TODO: make transaction Gheppio!z32
   return nil
 }
 

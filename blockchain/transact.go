@@ -4,58 +4,46 @@
  * @Project: Proof of Evolution
  * @Filename: transaction.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-01
+ * @Last modified time: 2020-May-08
  * @Copyright: 2020
  */
 
 package blockchain
 
 import(
+  "time"
   "github.com/D33pBlue/poe/utils"
 )
 
+
+// Transaction is the iterface for all the transactions. Assumptions:
+// - all inputs from the same address (that signs the transactions)
+// - only one output for each address that receives money
+//
+// Check has to check the validity of the Transaction inside the chain.
+// GetHash calculates and returns the hash of the Transaction.
+// GetHashCached returns the cached hash of the Transaction.
+// GetSignature returns the signature of the Transaction.
+// GetCreator returns the public key of the creator of the Transaction.
+// GetTimestamp returns the time of creation of the Transaction.
+// GetType returns the string type of the Transaction.
+// GetOutputAt returns the TrOutput at an index, inside the Transaction.
 type Transaction interface{
-  Check(chain *Blockchain)bool
-  IsSpent()bool
-  SetSpent()
+  Check(block *Block,trChanges *map[string]string)bool
   GetHash()string
   GetHashCached()string
-  GetType()string
+  // GetSignature()string
   GetCreator()utils.Addr
-  GetSpendingValueFor(utils.Addr)int
-  // Serialize()[]byte
-  // Marshal([]byte)Transaction
+  GetTimestamp()time.Time
+  GetType()string
+  GetOutputAt(int)*TrOutput
 }
 
+// The possible types of a Transaction
 const (
   TrStd = "StdTransaction"
   TrCoin = "CoinTransaction"
   TrJob = "JobTransaction"
+  TrSol = "SolTransaction"
+  TrRes = "ResTransaction"
 )
-
-func GetTransactionMoneyForWallet(chain *Blockchain,tr Transaction,wallet utils.Addr)int{
-  switch tr.GetType() {
-  case TrCoin:
-    var transact *CoinTransaction = tr.(*CoinTransaction)
-    if transact.Output.Address==wallet{
-      return transact.Output.Value
-    }
-  case TrStd:
-    tot := 0
-    var transact *StdTransaction = tr.(*StdTransaction)
-    if transact.Creator==wallet{
-      for i:=0;i<len(transact.Inputs);i++{
-        tot -= chain.SpendSubTransaction(&transact.Inputs[i],wallet)
-      }
-    }
-    for i:=0;i<len(transact.Outputs);i++{
-      if transact.Outputs[i].Address==wallet{
-        tot += transact.Outputs[i].Value
-      }
-    }
-    return tot
-  // case TrJob:
-  //   var transact *JobTransaction = tr.(*JobTransaction)
-  }
-  return 0
-}

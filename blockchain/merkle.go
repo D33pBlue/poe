@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: merkle.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-08
  * @Copyright: 2020
  */
 
@@ -43,12 +43,14 @@ func (self *Tree)GetHash()string{
 	return self.Root.Hash
 }
 
+// Checks the hashes of the Merkle tree.
 func (self *Tree)Check()bool{
 	return checkSubTree(self.Root)
 }
 
 // Add a Transaction to the merkle tree.
-// The transaction is not checked here.
+// The transaction is not checked here: it is assumed
+// to be valid.
 func (self *Tree)Add(trans Transaction){
 	self.transactions = append(self.transactions,trans)
 	var n *Node = new(Node)
@@ -57,6 +59,11 @@ func (self *Tree)Add(trans Transaction){
 	n.Hash = trans.GetHashCached()
 	n.Children = 0
 	self.insertNode(n)
+}
+
+// Returns an array with all the Transactions inside the tree.
+func (self *Tree)GetTransactionArray()[]Transaction{
+	return self.transactions
 }
 
 func (self *Tree)PruneSpentTransactions()  {
@@ -122,13 +129,8 @@ func checkSubTree(n *Node)bool{
 	hashBuilder := new(utils.HashBuilder)
 	hashBuilder.Add(n.L.Hash)
 	hashBuilder.Add(n.R.Hash)
-	var result []byte = hashBuilder.GetHash()
-	for i:=0;i<len(n.Hash);i++{
-		if n.Hash[i]!=result[i]{
-			return false
-		}
-	}
-	hashBuilder = nil
+	result := fmt.Sprintf("%x",hashBuilder.GetHash())
+	if result!=n.Hash{return false}
 	return checkSubTree(n.L) && checkSubTree(n.R)
 }
 

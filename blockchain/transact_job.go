@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-01
+ * @Last modified time: 2020-May-08
  * @Copyright: 2020
  */
 
@@ -41,24 +41,20 @@ type JobTransaction struct{
 //  return tr,nil
 // }
 
-func (self *JobTransaction)Check(chain *Blockchain)bool{
+func (self *JobTransaction)Check(block *Block,trChanges *map[string]string)bool{
   return true // TODO: implement later
+}
+
+func (self* JobTransaction)GetOutputAt(i int)*TrOutput{
+  return nil
+}
+
+func (self *JobTransaction)GetTimestamp()time.Time{
+  return self.Timestamp
 }
 
 func (self *JobTransaction)GetCreator()utils.Addr{
   return self.Creator
-}
-
-func (self *JobTransaction)IsSpent()bool{
-  return false // TODO: implement later
-}
-
-func (self *JobTransaction)SetSpent(){
-  self.spent = true
-}
-
-func (self *JobTransaction)GetSpendingValueFor(utils.Addr)int{
-  return 0
 }
 
 func (self *JobTransaction)GetHash()string{
@@ -78,10 +74,6 @@ func (self *JobTransaction)GetHash()string{
 func (self *JobTransaction)GetHashCached()string{
   return self.Hash
 }
-
-// func (self *JobTransaction)Serialize()[]byte{
-//   return nil // TODO:  implement later
-// }
 
 func MarshalJobTransaction(data []byte)*JobTransaction{
   var objmap map[string]json.RawMessage

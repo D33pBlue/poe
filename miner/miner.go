@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-01
+ * @Last modified time: 2020-May-08
  * @Copyright: 2020
  */
 
@@ -18,7 +18,6 @@ import(
   "bufio"
   "regexp"
   "strings"
-  "strconv"
   "errors"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/blockchain"
@@ -150,11 +149,12 @@ func (self *Miner)handleConnection(conn net.Conn){
       mexBlock.IpSender = ipaddress[:strings.Index(ipaddress,":")]+":"+port[:len(port)-1]
       self.Chain.BlockIn <- *mexBlock
     }
-  case "get_total":
-    publicKey,_ := reader.ReadString('\n')
-    var addr utils.Addr = utils.Addr(publicKey[:len(publicKey)-1])
-    total := self.Chain.GetTotal(addr)
-    conn.Write([]byte(strconv.Itoa(total)+"\n"))
+    // replace get_total with get_chain_head
+  // case "get_total":
+  //   publicKey,_ := reader.ReadString('\n')
+  //   var addr utils.Addr = utils.Addr(publicKey[:len(publicKey)-1])
+  //   total := self.Chain.GetTotal(addr)
+  //   conn.Write([]byte(strconv.Itoa(total)+"\n"))
   }
 }
 
