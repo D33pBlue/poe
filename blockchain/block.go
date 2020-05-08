@@ -96,8 +96,16 @@ func (self *Block)FindPrevBlock(hash string)*Block{
   return nil
 }
 
+// TODO: improve efficiency
+// Returns (if exists) the transaction in this block with a hash, or nil
 func (self *Block)FindTransaction(hash string)Transaction{
-  return nil // TODO: implement later.
+  transacts := self.Transactions.GetTransactionArray()
+  for i:=0;i<len(transacts);i++{
+    if transacts[i].GetHashCached()==hash{
+      return transacts[i]
+    }
+  }
+  return nil
 }
 
 func (self *Block)Serialize()[]byte{
@@ -171,13 +179,16 @@ func (self *Block)mineNoJob(keepmining *bool){
   fmt.Println("ckck2",self.GetHash(self.Previous.GetHashCached()))
 }
 
-func (self *Block)AddTransaction(transact *Transaction)error{
+// Inserts a transaction in the block without checking it.
+// It is assumed that the transaction is valid.
+// Returns an error if the block is already mined.
+func (self *Block)AddTransaction(transact Transaction)error{
   self.access_data.Lock()
   if self.mined{
     self.access_data.Unlock()
     return errors.New("Tried to add transaction in block already mined")
   }
-  // TODO: implement later
+  self.Transactions.Add(transact)
   self.access_data.Unlock()
   return nil
 }

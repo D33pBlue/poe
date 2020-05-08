@@ -23,13 +23,13 @@ import (
 )
 
 
-func startWallet(ip,port,keypath string){
+func startWallet(ip,port,keypath string,trusted bool){
   if !utils.FileExists(keypath){
     fmt.Println("You need to link a valid key file.")
     fmt.Println("You can generate it with mode genkey.")
     return
   }
-  walletObj := wallet.New(keypath,ip+":"+port)
+  walletObj := wallet.New(keypath,ip+":"+port,trusted)
   if walletObj==nil{return}
   fmt.Printf("Connecting to %v:%v\n",ip,port)
   startShell(processOnWallet,walletObj)
@@ -77,11 +77,12 @@ func main()  {
   fmt.Println("------ Proof of Evolution Client ------\n")
   mode := flag.String("mode", "wallet", "Mode{wallet|genkey}")
   ip := flag.String("ip", "127.0.0.1", "The IP address of the mining node")
+  trusted := flag.Bool("trusted",true,"Set to true only if the miner is trusted")
   port := flag.String("port","4242","The port where the mining node start listening.")
   key := flag.String("key","","Path to the public key pem file")
   flag.Parse()
   if *mode=="wallet"{
-    startWallet(*ip,*port,*key)
+    startWallet(*ip,*port,*key,*trusted)
   }else if *mode=="genkey"{
     generateKey()
   }else{

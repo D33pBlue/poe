@@ -166,8 +166,12 @@ func (self *Blockchain)GetSerializedHead()[]byte{
   return self.Head.Serialize()
 }
 
-// Main loop (called by miner), that manages the communication with
+// Main loop that manages the communication with
 // the miner, reading the packets from channels and acting consequently.
+// This method handles:
+// - incoming blocks
+// - mined block propagation
+// - incoming transactions
 func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
   for{
     select{
@@ -298,7 +302,19 @@ func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block,
 // Checks the validity of a new transaction and insert it
 // in the current block, if it is valid.
 func (self *Blockchain)processIncomingTransaction(transaction Transaction) {
-  // TODO: implement later
+  trChanges := make(map[string]string)
+  if transaction.Check(self.Current,&trChanges){
+    self.access_data.Lock()
+    defer self.access_data.Unlock()
+    err := self.Current.AddTransaction(transaction)
+    if err!=nil{
+      fmt.Println(err)
+    }else{
+      for k,v := range trChanges{
+        self.currentTrChanges[k] = v
+      }
+    }
+  }
 }
 
 // Update the transaction's spending block of the transactions

@@ -126,6 +126,9 @@ func (self *Miner)handleConnection(conn net.Conn){
     self.updateAddresses(conn,port[:len(port)-1])
     conn.Write([]byte(self.Chain.GetSerializedHead()))
     conn.Write([]byte("\n"))
+  case "update_wallet":
+    conn.Write([]byte(self.Chain.GetSerializedHead()))
+    conn.Write([]byte("\n"))
   case "get_block":
     hash, _ := reader.ReadString('\n')
     fmt.Printf("Requested %v\n",hash)
