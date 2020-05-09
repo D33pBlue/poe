@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -25,6 +25,7 @@ type Block struct{
   Previous *Block
   LenSubChain int
   Transactions *Tree
+  MerkleHash string
   Timestamp time.Time
   NumJobs int
   Hardness int
@@ -46,6 +47,7 @@ func BuildFirstBlock(id utils.Addr)*Block{
   block.Hardness = 0
   block.NonceNoJob.Value = 0
   block.Transactions = BuildMerkleTree()
+  block.MerkleHash = block.Transactions.GetHash()
   transact,_ := MakeCoinTransaction(id,block.calculateMiningValue())
   block.Transactions.Add(transact)
   block.Hash = block.GetHash("")
@@ -82,11 +84,38 @@ func (self *Block)Mine(keepmining *bool){
   }
 }
 
+// Returns a block in the chain pointed by this block;
+// if there is no match, returns nil.
+func (self *Block)FindPrevBlock(hash string)*Block{
+  block := self
+  for{
+    if block==nil{return nil}
+    if block.GetHashCached()==hash{
+      return block
+    }
+    block = block.Previous
+  }
+  return nil
+}
+
+// TODO: improve efficiency
+// Returns (if exists) the transaction in this block with a hash, or nil
+func (self *Block)FindTransaction(hash string)Transaction{
+  transacts := self.Transactions.GetTransactionArray()
+  for i:=0;i<len(transacts);i++{
+    if transacts[i].GetHashCached()==hash{
+      return transacts[i]
+    }
+  }
+  return nil
+}
+
 func (self *Block)Serialize()[]byte{
   type Block2 struct{
     Previous string
     LenSubChain int
     Transactions *Tree
+    MerkleHash string
     Timestamp time.Time
     NumJobs int
     Hardness int
@@ -100,6 +129,7 @@ func (self *Block)Serialize()[]byte{
   }
   block.LenSubChain = self.LenSubChain
   block.Transactions = self.Transactions
+  block.MerkleHash = self.MerkleHash
   block.Timestamp = self.Timestamp
   block.NumJobs = self.NumJobs
   block.Hardness = self.Hardness
@@ -124,6 +154,7 @@ func MarshalBlock(data []byte)(*Block,string){
   json.Unmarshal(objmap["Timestamp"],&block.Timestamp)
   json.Unmarshal(objmap["NumJobs"],&block.NumJobs)
   json.Unmarshal(objmap["Hardness"],&block.Hardness)
+  json.Unmarshal(objmap["MerkleHash"],&block.MerkleHash)
   json.Unmarshal(objmap["NonceNoJob"],&block.NonceNoJob)
   json.Unmarshal(objmap["MiniBlocks"],&block.MiniBlocks)
   json.Unmarshal(objmap["Hash"],&block.Hash)
@@ -146,20 +177,24 @@ func (self *Block)mineNoJob(keepmining *bool){
     self.access_data.Lock()
     self.NonceNoJob.Next()
     self.Hash = self.GetHash("")
-    self.mined = self.checkNoJob()
+    self.mined = self.checkNonceNoJob()
+    self.MerkleHash = self.Transactions.GetHash()
     self.access_data.Unlock()
   }
   fmt.Println("ckck",self.GetHash(""))
   fmt.Println("ckck2",self.GetHash(self.Previous.GetHashCached()))
 }
 
-func (self *Block)AddTransaction(transact *Transaction)error{
+// Inserts a transaction in the block without checking it.
+// It is assumed that the transaction is valid.
+// Returns an error if the block is already mined.
+func (self *Block)AddTransaction(transact Transaction)error{
   self.access_data.Lock()
   if self.mined{
     self.access_data.Unlock()
     return errors.New("Tried to add transaction in block already mined")
   }
-  // TODO: implement later
+  self.Transactions.Add(transact)
   self.access_data.Unlock()
   return nil
 }
@@ -181,33 +216,32 @@ func (self *Block)CheckStep1(hashPrev string)bool{
   if self.checked { return true }
   // if !utils.CompareHashes(self.Hash,self.GetHash(hashPrev)){
   if self.Hash!=self.GetHash(hashPrev){
+    fmt.Printf("tree %v\n",self.Transactions.GetHash())
+    fmt.Printf("cach %v\n",self.MerkleHash)
     fmt.Println("error in hash")
     fmt.Println(self.Hash)
     fmt.Println(self.GetHash(hashPrev))
     return false
   }
   if self.NumJobs==0{
-    if !self.checkNoJob() {
-      fmt.Println("error in checkNoJob")
+    if !self.checkNonceNoJob() {
+      fmt.Println("error in checkNonceNoJob")
       return false }
   }else if self.NumJobs>0{
-    if !self.checkJobs() { return false }
+    if !self.checkNonceJobs() { return false }
   }else{ return false }
   return true
 }
 
 // The CheckStep2 method checks the validity of the links
 // among blocks and of the depending data.
-func (self *Block)CheckStep2()bool{
+func (self *Block)CheckStep2(transactionChanges *map[string]string)bool{
   if self.checked { return true }
   if !self.checkNumJobs() {
     fmt.Println("fail in num jobs")
     return false }
   if !self.checkHardness() {
     fmt.Println("fail hardness")
-    return false }
-  if !self.checkTransactions() {
-    fmt.Println("fail in transactions")
     return false }
   if self.LenSubChain>0{
     if self.Previous==nil {
@@ -216,14 +250,15 @@ func (self *Block)CheckStep2()bool{
     if self.Previous.LenSubChain!=self.LenSubChain-1 {
       fmt.Println("fail in LenSubChain")
       return false }
-    if !self.Previous.CheckStep2(){ return false } // TODO: remove recursion
+    if !self.Previous.CheckStep2(transactionChanges){ return false } // TODO: remove recursion
+  }
+  // transactions are checked only if the previous blocks are valid
+  if !self.checkTransactions(transactionChanges) {
+    fmt.Println("fail in transactions")
+    return false
   }
   self.checked = true
   return true
-}
-
-func (self *Block)GetTransaction(hash string)Transaction{
-  return nil // TODO: implement later
 }
 
 func (self *Block)GetHash(hashPrev string)string{
@@ -255,7 +290,7 @@ func (self *Block)GetHashCached()string{
   return self.Hash
 }
 
-func (self *Block)checkNoJob()bool{
+func (self *Block)checkNonceNoJob()bool{
   hash := self.Hash
   // fmt.Println(hash)
   for i:=0;i<self.Hardness;i++{
@@ -264,7 +299,7 @@ func (self *Block)checkNoJob()bool{
   return true
 }
 
-func (self *Block)checkJobs()bool{
+func (self *Block)checkNonceJobs()bool{
   return true // TODO: implement later
 }
 
@@ -276,8 +311,21 @@ func (self *Block)checkHardness()bool{
   return true // TODO: implement later
 }
 
-func (self *Block)checkTransactions()bool{
-  return true // TODO: implement later
+func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
+  // check the Merkle tree hashes
+  if !self.Transactions.Check(){
+    fmt.Println("Invalid merkle tree")
+    return false
+  }
+  // check all transactions in the tree
+  transactions := self.Transactions.GetTransactionArray()
+  for i:=0;i<len(transactions);i++{
+    if !transactions[i].Check(self,transactionChanges){
+      fmt.Printf("Invalid transaction %v",transactions[i])
+      return false
+    }
+  }
+  return true
 }
 
 func (self *Block)calculateNumJobs()int{

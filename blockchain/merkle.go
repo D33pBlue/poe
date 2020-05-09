@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: merkle.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -14,6 +14,7 @@ package blockchain
 
 import(
 	"fmt"
+	"sync"
 	"encoding/json"
 	"github.com/D33pBlue/poe/utils"
 )
@@ -29,6 +30,8 @@ type Node struct{
 type Tree struct{
 	Root *Node
 	Nleaves int
+	transactions []Transaction
+	access_data sync.Mutex
 }
 
 func BuildMerkleTree()*Tree{
@@ -38,15 +41,24 @@ func BuildMerkleTree()*Tree{
 }
 
 func (self *Tree)GetHash()string{
+	self.access_data.Lock()
+	defer self.access_data.Unlock()
 	if self.Root==nil{ return "" }
 	return self.Root.Hash
 }
 
+// Checks the hashes of the Merkle tree.
 func (self *Tree)Check()bool{
 	return checkSubTree(self.Root)
 }
 
+// Add a Transaction to the merkle tree.
+// The transaction is not checked here: it is assumed
+// to be valid.
 func (self *Tree)Add(trans Transaction){
+	self.access_data.Lock()
+	defer self.access_data.Unlock()
+	self.transactions = append(self.transactions,trans)
 	var n *Node = new(Node)
 	n.Transaction = trans
 	n.Type = trans.GetType()
@@ -55,54 +67,62 @@ func (self *Tree)Add(trans Transaction){
 	self.insertNode(n)
 }
 
+// Returns an array with all the Transactions inside the tree.
+func (self *Tree)GetTransactionArray()[]Transaction{
+	return self.transactions
+}
+
+func (self *Tree)PruneSpentTransactions()  {
+	// TODO: implement later
+	// remove also from self.transactions
+}
+
 func marshalTransaction(data []byte,tp string)Transaction{
 	if len(data)<=0{ return nil }
 	var transact Transaction = nil
-	var objmap map[string]json.RawMessage
-  json.Unmarshal(data, &objmap)
 	switch tp {
 	case TrCoin:
-		tr := new(CoinTransaction)
-		json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
-		json.Unmarshal(objmap["Output"],&tr.Output)
-		json.Unmarshal(objmap["Hash"],&tr.Hash)
-		transact = tr
+		transact = MarshalCoinTransaction(data)
 	case TrStd:
-		tr := new(StdTransaction)
-		json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
-		json.Unmarshal(objmap["Inputs"],&tr.Inputs)
-		json.Unmarshal(objmap["Outputs"],&tr.Outputs)
-		json.Unmarshal(objmap["Creator"],&tr.Creator)
-		json.Unmarshal(objmap["Hash"],&tr.Hash)
-		json.Unmarshal(objmap["Signature"],&tr.Signature)
-		transact = tr
+		transact = MarshalStdTransaction(data)
 	case TrJob:
-		tr := new(JobTransaction)
-		json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
-		json.Unmarshal(objmap["Inputs"],&tr.Inputs)
-		json.Unmarshal(objmap["Job"],&tr.Job)
-		json.Unmarshal(objmap["Prize"],&tr.Prize)
-		json.Unmarshal(objmap["Creator"],&tr.Creator)
-		json.Unmarshal(objmap["Hash"],&tr.Hash)
-		json.Unmarshal(objmap["Signature"],&tr.Signature)
-		transact = tr
+		transact = MarshalJobTransaction(data)
 	}
 	return transact
 }
 
-func marshalMerkleNode(data []byte,parent *Node)*Node{
-	if len(data)<=0{ return nil }
-	node := new(Node)
+func marshalMerkleNode(data []byte,parent *Node)(node *Node,transactions []Transaction){
+	// fmt.Println("Marshal merkle node")
+	if len(data)<=0{
+		// fmt.Println("Empty data!")
+		return }
+	node = new(Node)
 	var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
 	node.parent = parent
 	json.Unmarshal(objmap["Type"],&node.Type)
 	json.Unmarshal(objmap["Children"],&node.Children)
 	json.Unmarshal(objmap["Hash"],&node.Hash)
+	if len(node.Hash)<=0{ return nil,transactions}
+	// fmt.Printf("Loaded merkle node %v \n",node.Type)
 	node.Transaction = marshalTransaction(objmap["Transaction"],node.Type)
-	node.L = marshalMerkleNode(objmap["L"],node)
-	node.R = marshalMerkleNode(objmap["R"],node)
-	return node
+	if node.Transaction!=nil{
+		transactions = append(transactions,node.Transaction)
+	}
+	var trs []Transaction
+	node.L,trs = marshalMerkleNode(objmap["L"],node)
+	for i:=0;i<len(trs);i++{
+		if trs[i]!=nil{
+			transactions = append(transactions,trs[i])
+		}
+	}
+	node.R,trs = marshalMerkleNode(objmap["R"],node)
+	for i:=0;i<len(trs);i++{
+		if trs[i]!=nil{
+			transactions = append(transactions,trs[i])
+		}
+	}
+	return
 }
 
 func MarshalMerkleTree(data []byte)*Tree {
@@ -110,7 +130,7 @@ func MarshalMerkleTree(data []byte)*Tree {
 	var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
   json.Unmarshal(objmap["Nleaves"],&tree.Nleaves)
-	tree.Root = marshalMerkleNode(objmap["Root"],nil)
+	tree.Root,tree.transactions = marshalMerkleNode(objmap["Root"],nil)
 	return tree
 }
 
@@ -120,13 +140,12 @@ func checkSubTree(n *Node)bool{
 	hashBuilder := new(utils.HashBuilder)
 	hashBuilder.Add(n.L.Hash)
 	hashBuilder.Add(n.R.Hash)
-	var result []byte = hashBuilder.GetHash()
-	for i:=0;i<len(n.Hash);i++{
-		if n.Hash[i]!=result[i]{
-			return false
-		}
+	result := fmt.Sprintf("%x",hashBuilder.GetHash())
+	if result!=n.Hash{
+		fmt.Printf("%v !=\n%v\n",result,n.Hash)
+		fmt.Printf("type: %v\n",n.Type)
+		return false
 	}
-	hashBuilder = nil
 	return checkSubTree(n.L) && checkSubTree(n.R)
 }
 

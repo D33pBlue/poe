@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -43,8 +43,10 @@ func New(port string,id utils.Addr)*Miner{
 	if os.IsNotExist(err) {
 		errDir := os.MkdirAll(folder, 0755)
 		if errDir != nil {fmt.Println(errDir)}
-	}
-  miner.Chain = blockchain.NewBlockchain(id,folder)
+    miner.Chain = blockchain.NewBlockchain(id,folder)
+	}else{
+    miner.Chain = blockchain.LoadChainFromFolder(id,folder)
+  }
   miner.keepServing = false
   miner.addrch = make(chan string)
   return miner
@@ -124,6 +126,9 @@ func (self *Miner)handleConnection(conn net.Conn){
     self.updateAddresses(conn,port[:len(port)-1])
     conn.Write([]byte(self.Chain.GetSerializedHead()))
     conn.Write([]byte("\n"))
+  case "update_wallet":
+    conn.Write([]byte(self.Chain.GetSerializedHead()))
+    conn.Write([]byte("\n"))
   case "get_block":
     hash, _ := reader.ReadString('\n')
     fmt.Printf("Requested %v\n",hash)
@@ -146,6 +151,21 @@ func (self *Miner)handleConnection(conn net.Conn){
       var ipaddress string = fmt.Sprint(conn.RemoteAddr())
       mexBlock.IpSender = ipaddress[:strings.Index(ipaddress,":")]+":"+port[:len(port)-1]
       self.Chain.BlockIn <- *mexBlock
+    }
+  case "transaction":
+    transacType,err := reader.ReadString('\n')
+    if err!=nil{
+      fmt.Println(err)
+    }else{
+      data,err2 := reader.ReadString('\n')
+      if err2!=nil{
+        fmt.Println(err2)
+      }else{
+        mexTransaction := new(blockchain.MexTrans)
+        mexTransaction.Type = transacType[:len(transacType)-1]
+        mexTransaction.Data = []byte(data)
+        self.Chain.TransQueue <- *mexTransaction
+      }
     }
   }
 }
@@ -212,6 +232,4 @@ func (self *Miner)sendBlockUpdate(address string,mex string){
   fmt.Fprintf(conn,"chain\n")
   fmt.Fprintf(conn,self.Port+"\n")
   fmt.Fprintf(conn,mex+"\n")
-  // conn.Write(mex)
-  // conn.Write([]byte("\n"))
 }

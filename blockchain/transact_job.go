@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -14,6 +14,7 @@ import(
   "fmt"
   "time"
   // "errors"
+  "encoding/json"
   "github.com/D33pBlue/poe/utils"
 )
 
@@ -25,6 +26,7 @@ type JobTransaction struct{
   Prize int
   Hash string
   Signature string
+  spent bool
 }
 
 // func MakeJobTransaction(creator utils.Addr,key utils.Key,
@@ -39,12 +41,20 @@ type JobTransaction struct{
 //  return tr,nil
 // }
 
-func (self *JobTransaction)Check(chain *Blockchain)bool{
+func (self *JobTransaction)Check(block *Block,trChanges *map[string]string)bool{
   return true // TODO: implement later
 }
 
-func (self *JobTransaction)IsSpent()bool{
-  return false // TODO: implement later
+func (self* JobTransaction)GetOutputAt(i int)*TrOutput{
+  return nil
+}
+
+func (self *JobTransaction)GetTimestamp()time.Time{
+  return self.Timestamp
+}
+
+func (self *JobTransaction)GetCreator()utils.Addr{
+  return self.Creator
 }
 
 func (self *JobTransaction)GetHash()string{
@@ -66,11 +76,26 @@ func (self *JobTransaction)GetHashCached()string{
 }
 
 func (self *JobTransaction)Serialize()[]byte{
-  return nil // TODO:  implement later
+  data, err := json.Marshal(self)
+  if err != nil {
+    fmt.Println(err)
+  }
+  return data
 }
 
-func MarshalJobTransaction([] byte)*JobTransaction{
-  return nil // TODO: implement later
+func MarshalJobTransaction(data []byte)*JobTransaction{
+  var objmap map[string]json.RawMessage
+  json.Unmarshal(data, &objmap)
+  tr := new(JobTransaction)
+  json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
+  json.Unmarshal(objmap["Inputs"],&tr.Inputs)
+  json.Unmarshal(objmap["Job"],&tr.Job)
+  json.Unmarshal(objmap["Prize"],&tr.Prize)
+  json.Unmarshal(objmap["Creator"],&tr.Creator)
+  json.Unmarshal(objmap["Hash"],&tr.Hash)
+  json.Unmarshal(objmap["Signature"],&tr.Signature)
+  tr.spent = false
+  return tr
 }
 
 func (self *JobTransaction)GetType()string{

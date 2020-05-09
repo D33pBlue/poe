@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: rsa.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -18,6 +18,7 @@ import (
     "errors"
     "crypto/x509"
     "encoding/pem"
+    "encoding/hex"
     "strings"
 )
 
@@ -97,11 +98,12 @@ func GetSignatureFromHash(hashed string,key Key)[]byte{
   var opts rsa.PSSOptions
   opts.SaltLength = rsa.PSSSaltLengthAuto // for simple example
   newhash := crypto.SHA256
-  signature,err := rsa.SignPSS(rand.Reader,key,newhash,[]byte(hashed),&opts)
+  decoded_hash,_ := hex.DecodeString(hashed)
+  signature,err := rsa.SignPSS(rand.Reader,key,newhash,decoded_hash,&opts)
   if err != nil {
-  		fmt.Println(err)
-      return nil
-  	}
+  	fmt.Println(err)
+    return nil
+  }
   return signature
 }
 
@@ -121,12 +123,16 @@ func (self *SignBuilder)GetSignature(key Key)[]byte{
 }
 
 func CheckSignature(sign,hashed string,addr Addr)bool{
+  // fmt.Println("Check signature")
   var opts rsa.PSSOptions
   opts.SaltLength = rsa.PSSSaltLengthAuto
   newhash := crypto.SHA256
   publicKey := publicKeyFromAddr(addr)
-  err := rsa.VerifyPSS(publicKey,newhash,[]byte(hashed),[]byte(sign),&opts)
+  decoded_sign,_ := hex.DecodeString(sign)
+  decoded_hash,_ := hex.DecodeString(hashed)
+  err := rsa.VerifyPSS(publicKey,newhash,decoded_hash,decoded_sign,&opts)
   if err != nil {
+    fmt.Println(err)
     return false
   }
   return true
