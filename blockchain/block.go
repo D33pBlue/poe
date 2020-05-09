@@ -21,6 +21,8 @@ import(
   "github.com/D33pBlue/poe/utils"
 )
 
+// The block struct models the blocks of the blockchain. Each block,
+// except the first one, is linked to a previous one.
 type Block struct{
   Previous *Block
   LenSubChain int
@@ -56,7 +58,8 @@ func BuildFirstBlock(id utils.Addr)*Block{
   return block
 }
 
-// Make a block (except the first one).
+// Make a new block (except the first one). This block needs
+// to be mined. While the block is not mined, it can accept transactions.
 func BuildBlock(id utils.Addr,prev *Block)*Block{
   block := new(Block)
   block.Previous = prev
@@ -74,7 +77,9 @@ func BuildBlock(id utils.Addr,prev *Block)*Block{
   return block
 }
 
-
+// The function to call in order to start mining a block.
+// It should be called in a goroutine. If there are jobs,
+// this function calls mineWithJobs; otherwise mineNoJob.
 func (self *Block)Mine(keepmining *bool){
   self.mined = false
   if self.NumJobs==0{
@@ -84,8 +89,8 @@ func (self *Block)Mine(keepmining *bool){
   }
 }
 
-// Returns a block in the chain pointed by this block;
-// if there is no match, returns nil.
+// Returns a block in the chain pointed by this block,
+// searching with an hash as key; if there is no match, returns nil.
 func (self *Block)FindPrevBlock(hash string)*Block{
   block := self
   for{
@@ -99,7 +104,8 @@ func (self *Block)FindPrevBlock(hash string)*Block{
 }
 
 // TODO: improve efficiency
-// Returns (if exists) the transaction in this block with a hash, or nil
+// Returns (if exists) the transaction in this block with
+// a specific hash, or nil
 func (self *Block)FindTransaction(hash string)Transaction{
   transacts := self.Transactions.GetTransactionArray()
   for i:=0;i<len(transacts);i++{
@@ -110,6 +116,7 @@ func (self *Block)FindTransaction(hash string)Transaction{
   return nil
 }
 
+// Serializes the block returning a []byte
 func (self *Block)Serialize()[]byte{
   type Block2 struct{
     Previous string
@@ -143,7 +150,9 @@ func (self *Block)Serialize()[]byte{
   return data
 }
 
-// Returns a Block from json and the hash of the previous block
+// Returns a Block parsing the serialized json, and also
+// the hash of the previous block. The block is not linked to
+// the previous one.
 func MarshalBlock(data []byte)(*Block,string){
   var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
@@ -164,10 +173,12 @@ func MarshalBlock(data []byte)(*Block,string){
   return block,prev
 }
 
+// The mining process with jobs.
 func (self *Block)mineWithJobs(keepmining *bool){
   // TODO: implement later
 }
 
+// The mining process without jobs => PoW.
 func (self *Block)mineNoJob(keepmining *bool){
   for{
     if !(*keepmining) {break}
@@ -198,6 +209,7 @@ func (self *Block)AddTransaction(transact Transaction)error{
   self.access_data.Unlock()
   return nil
 }
+
 
 func (self *Block)AddMiniBlock(miniblock *MiniBlock)error{
   self.access_data.Lock()
@@ -261,6 +273,7 @@ func (self *Block)CheckStep2(transactionChanges *map[string]string)bool{
   return true
 }
 
+// Recalculates the hash of the block as hex string.
 func (self *Block)GetHash(hashPrev string)string{
   hb := new(utils.HashBuilder)
   hb.Add(self.Timestamp.Format("2006-01-02 15:04:05"))
@@ -286,13 +299,14 @@ func (self *Block)GetHash(hashPrev string)string{
   return fmt.Sprintf("%x",hash)
 }
 
+// Returns the cached hash of the block.
 func (self *Block)GetHashCached()string{
   return self.Hash
 }
 
+// Checks if the nonce has the required number of 0 bits.
 func (self *Block)checkNonceNoJob()bool{
   hash := self.Hash
-  // fmt.Println(hash)
   for i:=0;i<self.Hardness;i++{
     if hash[i]!='0'{ return false }
   }
@@ -311,6 +325,7 @@ func (self *Block)checkHardness()bool{
   return true // TODO: implement later
 }
 
+// Checks the consistency of the merkle tree and the transactions.
 func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
   // check the Merkle tree hashes
   if !self.Transactions.Check(){

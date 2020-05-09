@@ -11,35 +11,35 @@
 package blockchain
 
 import(
-  "fmt"
+  // "fmt"
   "testing"
   "github.com/D33pBlue/poe/utils"
 )
 
-// func TestSerialization(t *testing.T)  {
-//   key,_ := utils.GenerateKey()
-//   first := BuildFirstBlock(utils.GetAddr(key))
-//   block := BuildBlock(utils.GetAddr(key),first)
-//   ser := block.Serialize()
-//   block2,_ := MarshalBlock(ser)
-//   if block.LenSubChain!=block2.LenSubChain{
-//     t.Errorf("%v != %v\n",block.LenSubChain,block2.LenSubChain)
-//   }
-//   if block.NumJobs!=block2.NumJobs{
-//     t.Errorf("%v != %v\n",block.NumJobs,block2.NumJobs)
-//   }
-//   if block.Hardness!=block2.Hardness{
-//     t.Errorf("%v != %v\n",block.Hardness,block2.Hardness)
-//   }
-//   if !block.Timestamp.Equal(block2.Timestamp){
-//     t.Errorf("%v != %v\n",block.Timestamp,block2.Timestamp)
-//   }
-//   if !utils.CompareHashes(block.Hash,block2.Hash){
-//     t.Errorf("%v != %v\n",block.Hash,block2.Hash)
-//   }
-//   fmt.Println(block.Transactions.Root.Transaction)
-//   fmt.Println(block2.Transactions.Root.Transaction)
-// }
+func TestSerialization(t *testing.T)  {
+  key,_ := utils.GenerateKey()
+  first := BuildFirstBlock(utils.GetAddr(key))
+  block := BuildBlock(utils.GetAddr(key),first)
+  ser := block.Serialize()
+  block2,_ := MarshalBlock(ser)
+  if block.LenSubChain!=block2.LenSubChain{
+    t.Errorf("%v != %v\n",block.LenSubChain,block2.LenSubChain)
+  }
+  if block.NumJobs!=block2.NumJobs{
+    t.Errorf("%v != %v\n",block.NumJobs,block2.NumJobs)
+  }
+  if block.Hardness!=block2.Hardness{
+    t.Errorf("%v != %v\n",block.Hardness,block2.Hardness)
+  }
+  if !block.Timestamp.Equal(block2.Timestamp){
+    t.Errorf("%v != %v\n",block.Timestamp,block2.Timestamp)
+  }
+  if !utils.CompareHashes(block.Hash,block2.Hash){
+    t.Errorf("%v != %v\n",block.Hash,block2.Hash)
+  }
+  // fmt.Println(block.Transactions.Root.Transaction)
+  // fmt.Println(block2.Transactions.Root.Transaction)
+}
 
 func TestBlockHash(t *testing.T){
   key,_ := utils.GenerateKey()
@@ -62,7 +62,6 @@ func TestBlockHash(t *testing.T){
   if !block.Transactions.Check(){
     t.Error("Bug in merkle tree check or hash-update")
   }
-  fmt.Println("---")
   block2,_ := MarshalBlock(block.Serialize())
   if !block2.Transactions.Check(){
     t.Error("Bug in merkle tree check or hash-update after deserialization")

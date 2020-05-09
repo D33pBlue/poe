@@ -43,7 +43,7 @@ type MexBlock struct{
 // in the blockchain and being propagated,
 // - some channels to communicate with miner and pass data
 // - a publicKey (id) to get money from mining,
-// - a lock for sync and some booleand to manage the mining process.
+// - a lock for sync and some boolean to manage the mining process.
 // (The miner has not to give the total money of clients: it is a problem
 // of the client to imoplement this, by collecting old blocks/transactions).
 type Blockchain struct{

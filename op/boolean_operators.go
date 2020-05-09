@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: boolean_operators.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -16,7 +16,7 @@ import(
   "fmt"
 )
 
-
+// Returns a == b and updates the State.
 func (self *State)Eq(a,b any)bool{
   self.IncOperations(self.coeff["=="]+self.off["=="])
   var t string = fmt.Sprintf("%T", a)
@@ -41,6 +41,7 @@ func (self *State)Eq(a,b any)bool{
   return false
 }
 
+// Returns a <= b and updates the State.
 func (self *State)Le(a,b any)bool{
   self.IncOperations(self.coeff["<="]+self.off["<="])
   var t string = fmt.Sprintf("%T", a)
@@ -63,6 +64,7 @@ func (self *State)Le(a,b any)bool{
   return false
 }
 
+// Returns a >= b and updates the State.
 func (self *State)Ge(a,b any)bool{
   self.IncOperations(self.coeff[">="]+self.off[">="])
   var t string = fmt.Sprintf("%T", a)
@@ -85,6 +87,7 @@ func (self *State)Ge(a,b any)bool{
   return false
 }
 
+// Returns a < b and updates the State.
 func (self *State)Lt(a,b any)bool{
   self.IncOperations(self.coeff["<"]+self.off["<"])
   var t string = fmt.Sprintf("%T", a)
@@ -107,6 +110,7 @@ func (self *State)Lt(a,b any)bool{
   return false
 }
 
+// Returns a > b and updates the State.
 func (self *State)Gt(a,b any)bool{
   self.IncOperations(self.coeff[">"]+self.off[">"])
   var t string = fmt.Sprintf("%T", a)
@@ -129,6 +133,8 @@ func (self *State)Gt(a,b any)bool{
   return false
 }
 
+// Returns -a if a is a numeric variable, or !a if
+// a is a boolean variable; and updates the State.
 func (self *State)Neg(a any)any{
   self.IncOperations(self.coeff["neg"]+self.off["neg"])
   var t string = fmt.Sprintf("%T", a)
@@ -153,6 +159,8 @@ func (self *State)Neg(a any)any{
   return nil
 }
 
+// Returns a & b and updates the State. Both operands are
+// executed even if a is false.
 func (self *State)And(a,b any)bool{
   self.IncOperations(self.coeff["and"]+self.off["and"])
   var t string = fmt.Sprintf("%T", a)
@@ -163,6 +171,8 @@ func (self *State)And(a,b any)bool{
   return false
 }
 
+// Returns a | b and updates the State. Both operands are
+// executed even if a is true.
 func (self *State)Or(a,b any)bool{
   self.IncOperations(self.coeff["or"]+self.off["or"])
   var t string = fmt.Sprintf("%T", a)

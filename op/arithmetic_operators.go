@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: arithmetic_operators.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -17,6 +17,7 @@ import(
   "fmt"
 )
 
+// Performs an addition and updates the State.
 func (self *State)Add(a,b any)any{
   self.IncOperations(self.coeff["+"]+self.off["+"])
   var t string = fmt.Sprintf("%T", a)
@@ -40,6 +41,7 @@ func (self *State)Add(a,b any)any{
   return nil
 }
 
+// Performs a subtraction and updates the State.
 func (self *State)Sub(a,b any)any{
   self.IncOperations(self.coeff["-"]+self.off["-"])
   var t string = fmt.Sprintf("%T", a)
@@ -63,6 +65,7 @@ func (self *State)Sub(a,b any)any{
   return nil
 }
 
+// Performs a multiplication and updates the State.
 func (self *State)Mul(a,b any)any{
   self.IncOperations(self.coeff["*"]+self.off["*"])
   var t string = fmt.Sprintf("%T", a)
@@ -86,6 +89,7 @@ func (self *State)Mul(a,b any)any{
   return nil
 }
 
+// Performs a division and updates the State.
 func (self *State)Div(a,b any)any{
   self.IncOperations(self.coeff["/"]+self.off["/"])
   var t string = fmt.Sprintf("%T", a)
@@ -109,6 +113,7 @@ func (self *State)Div(a,b any)any{
   return nil
 }
 
+// Returns the remainder a % b and updates the State.
 func (self *State)Mod(a,b any)any{
   self.IncOperations(self.coeff["%"]+self.off["%"])
   var t string = fmt.Sprintf("%T", a)
@@ -128,6 +133,7 @@ func (self *State)Mod(a,b any)any{
   return nil
 }
 
+// Returns a number incremented by 1 and updates the State.
 func (self *State)Succ(a any)any{
   self.IncOperations(self.coeff["++"]+self.off["++"])
   var t string = fmt.Sprintf("%T", a)
@@ -151,6 +157,7 @@ func (self *State)Succ(a any)any{
   return nil
 }
 
+// Returns a number decremented by 1 and updates the State.
 func (self *State)Prec(a any)any{
   self.IncOperations(self.coeff["--"]+self.off["--"])
   var t string = fmt.Sprintf("%T", a)

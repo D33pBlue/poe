@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: utils.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-30
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -15,20 +15,26 @@ import (
   "crypto/sha256"
 )
 
+// HashBuilder can be used to collect data and obtain the
+// hash of the total bytes.
 type HashBuilder struct{
   data []byte
 }
 
+// Adds some data to the HashBuilder. The data can be of any type
+// and is read as []byte.
 func (self *HashBuilder)Add(data interface{}){
   var binary []byte = []byte(fmt.Sprintf("%v",data))
   self.data = append(self.data,binary...)
 }
 
+// Returns the hash of all the collected data of an HashBuilder.
 func (self *HashBuilder)GetHash()([]byte){
   encoder := sha256.New()
   encoder.Write(self.data)
   return encoder.Sum(nil)
 }
+
 
 func CompareHashes(h1,h2 string)bool{
   return h1==h2

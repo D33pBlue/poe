@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: state.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -21,6 +21,9 @@ import (
   "encoding/binary"
 )
 
+// The State struct keeps track of the number of operation performed,
+// in order to give an approximation of the complexity of the
+// executed algorithm.
 type State struct{
   operations float64
   coeff map[string]float64

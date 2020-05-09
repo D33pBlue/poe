@@ -15,7 +15,6 @@
 package wallet
 
 import (
-  // "os"
   "fmt"
   "sort"
   "net"
@@ -23,16 +22,22 @@ import (
   "bufio"
   "errors"
   "strconv"
-  // "encoding/hex"
   "github.com/D33pBlue/poe/utils"
   . "github.com/D33pBlue/poe/blockchain"
 )
 
+// Used to keep track of the available transactions in Wallet.
 type WalletEntry struct{
   Value int
   Spendable TrInput
 }
 
+// A Wallet collects the spendable transactions and can
+// interoperate with a miner. It can:
+// - ask the total amount of money available
+// - create a standart transaction to send money
+// - create a job transaction to submit a job
+// - ask for the best found solutions of a job
 type Wallet struct{
   Id utils.Addr
   Key utils.Key
@@ -152,18 +157,23 @@ func (self *Wallet)GetTotal()string{
   return strconv.Itoa(total)
 }
 
+// SendMoney creates a StdTransaction, after checking
+// if the balance of the wallet is big enough, and sends
+// it to the miner.
 func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   total,err := strconv.Atoi(self.GetTotal())
   if err!=nil{return err}
   if total<amount{
     return errors.New("You does not have enough money")
   }
+  // sort the available Entries by value
   sort.SliceStable(self.Entries, func(i, j int) bool {
     return self.Entries[i].Value < self.Entries[j].Value
   })
   var inputs []TrInput
   var outputs []TrOutput
   var spending int = 0
+  // collects the entries to use up to the amount
   for i:=0;spending<amount;i++{
     inputs = append(inputs,self.Entries[i].Spendable)
     spending += self.Entries[i].Value
@@ -172,12 +182,14 @@ func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   out.Address = receiver
   out.Value = amount
   outputs = append(outputs,*out)
+  // send back the remainder
   if spending-amount>0{
     remainder := new(TrOutput)
     remainder.Address = self.Id
     remainder.Value = spending-amount
     outputs = append(outputs,*remainder)
   }
+  // create the transaction
   newTransact := MakeStdTransaction(
     self.Id,
     self.Key,
@@ -189,6 +201,7 @@ func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   if newTransact==nil{
     return errors.New("Error in StdTransaction creation")
   }
+  // send the transaction to the miner
   conn, err := net.Dial("tcp",self.MinerIp)
   if err!=nil{ return err }
   fmt.Fprintf(conn,"transaction\n")
@@ -198,6 +211,8 @@ func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   return nil
 }
 
+// SubmitJob creates a JobTransaction and
+// sends it to the miner.
 func (self *Wallet)SubmitJob(job string)error{
   // TODO: implement later
   return nil
@@ -276,6 +291,8 @@ func (self *Wallet)checkReceivedBlocks(head,lastBlock *Block,lastHash string)err
   return nil
 }
 
+
+// Removes from Wallet.Entries an entry.
 func (self *Wallet)removeSpentTransaction(block,transact string,index int){
   var updatedSpedable []WalletEntry
   for i:=0;i<len(self.Entries);i++{
@@ -288,6 +305,7 @@ func (self *Wallet)removeSpentTransaction(block,transact string,index int){
   self.Entries = updatedSpedable
 }
 
+// Add an entry to Wallet.Entries.
 func (self *Wallet)addSpendableTransaction(block,transact string,index,value int){
   entry := new(WalletEntry)
   entry.Value = value

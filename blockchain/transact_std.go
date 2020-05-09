@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-10
  * @Copyright: 2020
  */
 
@@ -119,14 +119,17 @@ func (self *StdTransaction)Check(block *Block,trChanges *map[string]string)bool{
   return true
 }
 
+// Returns the public key of the creator of the transaction.
 func (self *StdTransaction)GetCreator()utils.Addr{
   return self.Creator
 }
 
+// Recalculates the hash of the transaction.
 func (self *StdTransaction)GetHash()string{
   return fmt.Sprintf("%x",self.GetHashByte())
 }
 
+// Recalculates the hash of the transaction.
 func (self *StdTransaction)GetHashByte()[]byte{
   hb := new(utils.HashBuilder)
   hb.Add(self.Creator)
@@ -143,18 +146,23 @@ func (self *StdTransaction)GetHashByte()[]byte{
   return hb.GetHash()
 }
 
+// Returns the cached hash of the transaction.
 func (self *StdTransaction)GetHashCached()string{
   return self.Hash
 }
 
+// Returns the TrOutput stored at the index i of the transaction, or nil.
 func (self* StdTransaction)GetOutputAt(i int)*TrOutput{
+  if i<0 || i>=len(self.Outputs){ return nil }
   return &self.Outputs[i]
 }
 
+// Returns the timestamp stored inside the transaction.
 func (self *StdTransaction)GetTimestamp()time.Time{
   return self.Timestamp
 }
 
+// Rebuilds the StdTransaction from its serialized data.
 func MarshalStdTransaction(data []byte)*StdTransaction{
   var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
@@ -168,6 +176,7 @@ func MarshalStdTransaction(data []byte)*StdTransaction{
   return tr
 }
 
+// Serialize the transaction and returns it as []byte.
 func (self *StdTransaction)Serialize()[]byte{
   data, err := json.Marshal(self)
   if err != nil {

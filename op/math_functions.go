@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: math_functions.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -17,6 +17,7 @@ import(
   "math"
 )
 
+// Wrapper for a unary operation.
 func wrap1(a any,f func(float64)float64)any{
   var t string = fmt.Sprintf("%T", a)
   switch t {
@@ -37,6 +38,7 @@ func wrap1(a any,f func(float64)float64)any{
   return nil
 }
 
+// Wrapper for a binary operation.
 func wrap2(a,b any,f func(float64,float64)float64)any{
   var t string = fmt.Sprintf("%T", a)
   var t2 string = fmt.Sprintf("%T", b)
@@ -74,126 +76,151 @@ func wrap2(a,b any,f func(float64,float64)float64)any{
   return nil
 }
 
+// Returns the absolute value of a numner and updates the State.
 func (self *State)Abs(a any)any{
   self.IncOperations(self.coeff["abs"]+self.off["abs"])
   return wrap1(a,math.Abs)
 }
 
+// Returns the power a^b and updates the State.
 func (self *State)Pow(a,b any)any{
   self.IncOperations(self.coeff["pow"]+self.off["pow"])
   return wrap2(a,b,math.Pow)
 }
 
+// Returns the square root of a and updates the State.
 func (self *State)Sqrt(a any)any{
   self.IncOperations(self.coeff["sqrt"]+self.off["sqrt"])
   return wrap1(a,math.Sqrt)
 }
 
+// Returns the smaller integer bigger than a and updates the State.
 func (self *State)Ceil(a any)any{
   self.IncOperations(self.coeff["ceil"]+self.off["ceil"])
   return wrap1(a,math.Ceil)
 }
 
+// Returns the biggest integer smaller than a and updates the State.
 func (self *State)Floor(a any)any{
   self.IncOperations(self.coeff["floor"]+self.off["floor"])
   return wrap1(a,math.Floor)
 }
 
+// Rounds a to the nearest integer and updates the State.
 func (self *State)Round(a any)any{
   self.IncOperations(self.coeff["round"]+self.off["round"])
   return wrap1(a,math.Round)
 }
 
+// Returns the min of a and b and updates the State.
 func (self *State)Min(a,b any)any{
   self.IncOperations(self.coeff["min"]+self.off["min"])
   return wrap2(a,b,math.Min)
 }
 
+// Returns the max of a and b and updates the State.
 func (self *State)Max(a,b any)any{
   self.IncOperations(self.coeff["max"]+self.off["max"])
   return wrap2(a,b,math.Max)
 }
 
+// Returns the sin of a and updates the State.
 func (self *State)Sin(a any)any{
   self.IncOperations(self.coeff["sin"]+self.off["sin"])
   return wrap1(a,math.Sin)
 }
 
+// Returns the cos of a and updates the State.
 func (self *State)Cos(a any)any{
   self.IncOperations(self.coeff["cos"]+self.off["cos"])
   return wrap1(a,math.Cos)
 }
 
+// Returns the asin of a and updates the State.
 func (self *State)Asin(a any)any{
   self.IncOperations(self.coeff["asin"]+self.off["asin"])
   return wrap1(a,math.Asin)
 }
 
+// Returns the acos of a and updates the State.
 func (self *State)Acos(a any)any{
   self.IncOperations(self.coeff["acos"]+self.off["acos"])
   return wrap1(a,math.Acos)
 }
 
+// Returns the tan of a and updates the State.
 func (self *State)Tan(a any)any{
   self.IncOperations(self.coeff["tan"]+self.off["tan"])
   return wrap1(a,math.Tan)
 }
 
+// Returns the atan of a and updates the State.
 func (self *State)Atan(a any)any{
   self.IncOperations(self.coeff["atan"]+self.off["atan"])
   return wrap1(a,math.Atan)
 }
 
+// Returns the sinh of a and updates the State.
 func (self *State)Sinh(a any)any{
   self.IncOperations(self.coeff["sinh"]+self.off["sinh"])
   return wrap1(a,math.Sinh)
 }
 
+// Returns the cosh of a and updates the State.
 func (self *State)Cosh(a any)any{
   self.IncOperations(self.coeff["cosh"]+self.off["cosh"])
   return wrap1(a,math.Cosh)
 }
 
+// Returns the asinh of a and updates the State.
 func (self *State)Asinh(a any)any{
   self.IncOperations(self.coeff["asinh"]+self.off["asinh"])
   return wrap1(a,math.Asinh)
 }
 
+// Returns the acosh of a and updates the State.
 func (self *State)Acosh(a any)any{
   self.IncOperations(self.coeff["acosh"]+self.off["acosh"])
   return wrap1(a,math.Acosh)
 }
 
+// Returns the tanh of a and updates the State.
 func (self *State)Tanh(a any)any{
   self.IncOperations(self.coeff["tanh"]+self.off["tanh"])
   return wrap1(a,math.Tanh)
 }
 
+// Returns the atanh of a and updates the State.
 func (self *State)Atanh(a any)any{
   self.IncOperations(self.coeff["atanh"]+self.off["atanh"])
   return wrap1(a,math.Atanh)
 }
 
+// Returns the natural logarithm of a and updates the State.
 func (self *State)Log(a any)any{
   self.IncOperations(self.coeff["log"]+self.off["log"])
   return wrap1(a,math.Log)
 }
 
+// Returns the logarithm on base 2 of a and updates the State.
 func (self *State)Log2(a any)any{
   self.IncOperations(self.coeff["log2"]+self.off["log2"])
   return wrap1(a,math.Log2)
 }
 
+// Returns the logarithm on base 10 of a and updates the State.
 func (self *State)Log10(a any)any{
   self.IncOperations(self.coeff["log10"]+self.off["log10"])
   return wrap1(a,math.Log10)
 }
 
+// Returns exp(a) and updates the State.
 func (self *State)Exp(a any)any{
   self.IncOperations(self.coeff["exp"]+self.off["exp"])
   return wrap1(a,math.Exp)
 }
 
+// Returns the power 2^a and updates the State.
 func (self *State)Exp2(a any)any{
   self.IncOperations(self.coeff["exp2"]+self.off["exp2"])
   return wrap1(a,math.Exp2)

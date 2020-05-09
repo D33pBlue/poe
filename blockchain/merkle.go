@@ -19,6 +19,8 @@ import(
 	"github.com/D33pBlue/poe/utils"
 )
 
+// A node of the merkle tree. If it is a leaf, it contains
+// a transaction. If it is an internal node, it contains only and hash.
 type Node struct{
 	parent,L,R *Node
 	Type string
@@ -27,6 +29,7 @@ type Node struct{
 	Children int
 }
 
+// Tree struct implements a Merkle tree with transactions at leaves.
 type Tree struct{
 	Root *Node
 	Nleaves int
@@ -34,12 +37,14 @@ type Tree struct{
 	access_data sync.Mutex
 }
 
+// Returns a new empty tree.
 func BuildMerkleTree()*Tree{
 	m := new(Tree)
 	m.Nleaves = 0
 	return m
 }
 
+// Returns the top hash of the tree.
 func (self *Tree)GetHash()string{
 	self.access_data.Lock()
 	defer self.access_data.Unlock()
@@ -77,6 +82,7 @@ func (self *Tree)PruneSpentTransactions()  {
 	// remove also from self.transactions
 }
 
+// Builds a transaction from its serialized data.
 func marshalTransaction(data []byte,tp string)Transaction{
 	if len(data)<=0{ return nil }
 	var transact Transaction = nil
@@ -91,6 +97,7 @@ func marshalTransaction(data []byte,tp string)Transaction{
 	return transact
 }
 
+// Builds a Node from its serialization data.
 func marshalMerkleNode(data []byte,parent *Node)(node *Node,transactions []Transaction){
 	// fmt.Println("Marshal merkle node")
 	if len(data)<=0{
@@ -125,6 +132,7 @@ func marshalMerkleNode(data []byte,parent *Node)(node *Node,transactions []Trans
 	return
 }
 
+// Builds a Tree from its serialized data.
 func MarshalMerkleTree(data []byte)*Tree {
 	tree := new(Tree)
 	var objmap map[string]json.RawMessage
@@ -134,6 +142,9 @@ func MarshalMerkleTree(data []byte)*Tree {
 	return tree
 }
 
+// Checks the consistency of the merkle tree.
+// => if the hash of each internal node matches
+// the hash of the combination of the children's hashes.
 func checkSubTree(n *Node)bool{
 	if n==nil {return true}
 	if n.L==nil && n.R==nil {return true}
@@ -149,6 +160,8 @@ func checkSubTree(n *Node)bool{
 	return checkSubTree(n.L) && checkSubTree(n.R)
 }
 
+// true <=> the #descendants of the left branch is
+// equal to the #descendants of the right branch.
 func (self *Node)isFull()bool{
 	if self.Children==0{
 		return true
@@ -156,6 +169,7 @@ func (self *Node)isFull()bool{
 	return self.L.Children==self.R.Children
 }
 
+// Inserts a node in the tree and updates the hashes.
 func (self *Tree)insertNode(n *Node){
 	if self.Root==nil{
 		self.Root = n
@@ -202,6 +216,7 @@ func (self *Tree)insertNode(n *Node){
 	updateHashes(p)
 }
 
+// Updates a single hash with the hashes of the children.
 func updateHashes(n *Node){
 	for ;n!=nil;{
 		hashBuilder := new(utils.HashBuilder)
