@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: merkle.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -14,6 +14,7 @@ package blockchain
 
 import(
 	"fmt"
+	"sync"
 	"encoding/json"
 	"github.com/D33pBlue/poe/utils"
 )
@@ -30,6 +31,7 @@ type Tree struct{
 	Root *Node
 	Nleaves int
 	transactions []Transaction
+	access_data sync.Mutex
 }
 
 func BuildMerkleTree()*Tree{
@@ -39,6 +41,8 @@ func BuildMerkleTree()*Tree{
 }
 
 func (self *Tree)GetHash()string{
+	self.access_data.Lock()
+	defer self.access_data.Unlock()
 	if self.Root==nil{ return "" }
 	return self.Root.Hash
 }
@@ -52,6 +56,8 @@ func (self *Tree)Check()bool{
 // The transaction is not checked here: it is assumed
 // to be valid.
 func (self *Tree)Add(trans Transaction){
+	self.access_data.Lock()
+	defer self.access_data.Unlock()
 	self.transactions = append(self.transactions,trans)
 	var n *Node = new(Node)
 	n.Transaction = trans
@@ -86,7 +92,10 @@ func marshalTransaction(data []byte,tp string)Transaction{
 }
 
 func marshalMerkleNode(data []byte,parent *Node)(node *Node,transactions []Transaction){
-	if len(data)<=0{ return }
+	// fmt.Println("Marshal merkle node")
+	if len(data)<=0{
+		// fmt.Println("Empty data!")
+		return }
 	node = new(Node)
 	var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
@@ -94,6 +103,8 @@ func marshalMerkleNode(data []byte,parent *Node)(node *Node,transactions []Trans
 	json.Unmarshal(objmap["Type"],&node.Type)
 	json.Unmarshal(objmap["Children"],&node.Children)
 	json.Unmarshal(objmap["Hash"],&node.Hash)
+	if len(node.Hash)<=0{ return nil,transactions}
+	// fmt.Printf("Loaded merkle node %v \n",node.Type)
 	node.Transaction = marshalTransaction(objmap["Transaction"],node.Type)
 	if node.Transaction!=nil{
 		transactions = append(transactions,node.Transaction)
@@ -130,7 +141,11 @@ func checkSubTree(n *Node)bool{
 	hashBuilder.Add(n.L.Hash)
 	hashBuilder.Add(n.R.Hash)
 	result := fmt.Sprintf("%x",hashBuilder.GetHash())
-	if result!=n.Hash{return false}
+	if result!=n.Hash{
+		fmt.Printf("%v !=\n%v\n",result,n.Hash)
+		fmt.Printf("type: %v\n",n.Type)
+		return false
+	}
 	return checkSubTree(n.L) && checkSubTree(n.R)
 }
 

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -302,6 +302,7 @@ func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block,
 // Checks the validity of a new transaction and insert it
 // in the current block, if it is valid.
 func (self *Blockchain)processIncomingTransaction(transaction Transaction) {
+  fmt.Println("Processing transaction")
   trChanges := make(map[string]string)
   if transaction.Check(self.Current,&trChanges){
     self.access_data.Lock()
@@ -310,10 +311,13 @@ func (self *Blockchain)processIncomingTransaction(transaction Transaction) {
     if err!=nil{
       fmt.Println(err)
     }else{
+      fmt.Println("Transaction inserted in current block")
       for k,v := range trChanges{
         self.currentTrChanges[k] = v
       }
     }
+  }else{
+    fmt.Println("Transaction not pass check")
   }
 }
 

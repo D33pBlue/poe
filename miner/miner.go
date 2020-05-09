@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -152,12 +152,21 @@ func (self *Miner)handleConnection(conn net.Conn){
       mexBlock.IpSender = ipaddress[:strings.Index(ipaddress,":")]+":"+port[:len(port)-1]
       self.Chain.BlockIn <- *mexBlock
     }
-    // replace get_total with get_chain_head
-  // case "get_total":
-  //   publicKey,_ := reader.ReadString('\n')
-  //   var addr utils.Addr = utils.Addr(publicKey[:len(publicKey)-1])
-  //   total := self.Chain.GetTotal(addr)
-  //   conn.Write([]byte(strconv.Itoa(total)+"\n"))
+  case "transaction":
+    transacType,err := reader.ReadString('\n')
+    if err!=nil{
+      fmt.Println(err)
+    }else{
+      data,err2 := reader.ReadString('\n')
+      if err2!=nil{
+        fmt.Println(err2)
+      }else{
+        mexTransaction := new(blockchain.MexTrans)
+        mexTransaction.Type = transacType[:len(transacType)-1]
+        mexTransaction.Data = []byte(data)
+        self.Chain.TransQueue <- *mexTransaction
+      }
+    }
   }
 }
 

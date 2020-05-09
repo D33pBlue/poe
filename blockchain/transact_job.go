@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -73,6 +73,14 @@ func (self *JobTransaction)GetHash()string{
 
 func (self *JobTransaction)GetHashCached()string{
   return self.Hash
+}
+
+func (self *JobTransaction)Serialize()[]byte{
+  data, err := json.Marshal(self)
+  if err != nil {
+    fmt.Println(err)
+  }
+  return data
 }
 
 func MarshalJobTransaction(data []byte)*JobTransaction{

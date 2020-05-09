@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -57,9 +57,14 @@ func MakeStdTransaction(creator utils.Addr,key utils.Key,
 // - all sources unspent (no double spending)
 // - the total amount of money in sources >= the total amount of money spent.
 func (self *StdTransaction)Check(block *Block,trChanges *map[string]string)bool{
+  // fmt.Println("Checking standard transaction")
   hash2 := self.GetHash()
-  if hash2!=self.Hash{return false}
+  if hash2!=self.Hash{
+    fmt.Println("The hash does not match")
+    fmt.Printf("%v !=\n%v\n",hash2,self.Hash)
+    return false}
   if !utils.CheckSignature(self.Signature,self.Hash,self.Creator){
+    fmt.Println("The signature is not valid")
     return false
   }
   var tot int = 0
@@ -67,10 +72,12 @@ func (self *StdTransaction)Check(block *Block,trChanges *map[string]string)bool{
     source := self.Inputs[i].GetSource(block)
     if source==nil{
       // the Input source does not exist in the block's chain
+      fmt.Println("Inesistend input source in transaction")
       return false
     }
     if source.Address!=self.Creator{
       // The Input source does not belong to the creator of this transaction
+      fmt.Println("The input does not belong to the creator of the transaction")
       return false
     }
     spentInBlock := source.GetSpentIn()
@@ -79,6 +86,7 @@ func (self *StdTransaction)Check(block *Block,trChanges *map[string]string)bool{
       if block.FindPrevBlock(spentInBlock)!=nil{
         // double spending: the TrOutput was spent in a block
         // that is reachable from the current block
+        fmt.Println("Double spending case 1")
         return false
       }else{
         // if block.FindPrevBlock(spentInBlock)==nil but spentInBlock!="",
@@ -90,6 +98,7 @@ func (self *StdTransaction)Check(block *Block,trChanges *map[string]string)bool{
         if _, ok := (*trChanges)[trSourceId]; ok {
           // the transaction is spent in a block of the new chain
           // => double spending
+          fmt.Println("Double spending case 2")
           return false
         }
       }
@@ -103,7 +112,11 @@ func (self *StdTransaction)Check(block *Block,trChanges *map[string]string)bool{
   for i:=0;i<len(self.Outputs);i++{
     spent += self.Outputs[i].Value
   }
-  return tot>=spent
+  if tot<spent{
+    fmt.Printf("Tot: %v, spent: %v\n",tot,spent)
+    return false
+  }
+  return true
 }
 
 func (self *StdTransaction)GetCreator()utils.Addr{
@@ -111,9 +124,13 @@ func (self *StdTransaction)GetCreator()utils.Addr{
 }
 
 func (self *StdTransaction)GetHash()string{
+  return fmt.Sprintf("%x",self.GetHashByte())
+}
+
+func (self *StdTransaction)GetHashByte()[]byte{
   hb := new(utils.HashBuilder)
   hb.Add(self.Creator)
-  hb.Add(self.Timestamp)
+  hb.Add(self.Timestamp.Format("2006-01-02 15:04:05"))
   for i:=0;i<len(self.Inputs);i++{
     hb.Add(self.Inputs[i].Block)
     hb.Add(self.Inputs[i].ToSpend)
@@ -123,7 +140,7 @@ func (self *StdTransaction)GetHash()string{
     hb.Add(self.Outputs[i].Address)
     hb.Add(self.Outputs[i].Value)
   }
-  return fmt.Sprintf("%x",hb.GetHash())
+  return hb.GetHash()
 }
 
 func (self *StdTransaction)GetHashCached()string{
@@ -149,6 +166,14 @@ func MarshalStdTransaction(data []byte)*StdTransaction{
   json.Unmarshal(objmap["Hash"],&tr.Hash)
   json.Unmarshal(objmap["Signature"],&tr.Signature)
   return tr
+}
+
+func (self *StdTransaction)Serialize()[]byte{
+  data, err := json.Marshal(self)
+  if err != nil {
+    fmt.Println(err)
+  }
+  return data
 }
 
 func (self *StdTransaction)GetType()string{

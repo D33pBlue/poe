@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: transaction.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -37,6 +37,7 @@ type Transaction interface{
   GetTimestamp()time.Time
   GetType()string
   GetOutputAt(int)*TrOutput
+  Serialize()[]byte
 }
 
 // The possible types of a Transaction

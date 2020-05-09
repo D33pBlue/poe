@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -25,6 +25,7 @@ type Block struct{
   Previous *Block
   LenSubChain int
   Transactions *Tree
+  MerkleHash string
   Timestamp time.Time
   NumJobs int
   Hardness int
@@ -46,6 +47,7 @@ func BuildFirstBlock(id utils.Addr)*Block{
   block.Hardness = 0
   block.NonceNoJob.Value = 0
   block.Transactions = BuildMerkleTree()
+  block.MerkleHash = block.Transactions.GetHash()
   transact,_ := MakeCoinTransaction(id,block.calculateMiningValue())
   block.Transactions.Add(transact)
   block.Hash = block.GetHash("")
@@ -113,6 +115,7 @@ func (self *Block)Serialize()[]byte{
     Previous string
     LenSubChain int
     Transactions *Tree
+    MerkleHash string
     Timestamp time.Time
     NumJobs int
     Hardness int
@@ -126,6 +129,7 @@ func (self *Block)Serialize()[]byte{
   }
   block.LenSubChain = self.LenSubChain
   block.Transactions = self.Transactions
+  block.MerkleHash = self.MerkleHash
   block.Timestamp = self.Timestamp
   block.NumJobs = self.NumJobs
   block.Hardness = self.Hardness
@@ -150,6 +154,7 @@ func MarshalBlock(data []byte)(*Block,string){
   json.Unmarshal(objmap["Timestamp"],&block.Timestamp)
   json.Unmarshal(objmap["NumJobs"],&block.NumJobs)
   json.Unmarshal(objmap["Hardness"],&block.Hardness)
+  json.Unmarshal(objmap["MerkleHash"],&block.MerkleHash)
   json.Unmarshal(objmap["NonceNoJob"],&block.NonceNoJob)
   json.Unmarshal(objmap["MiniBlocks"],&block.MiniBlocks)
   json.Unmarshal(objmap["Hash"],&block.Hash)
@@ -173,6 +178,7 @@ func (self *Block)mineNoJob(keepmining *bool){
     self.NonceNoJob.Next()
     self.Hash = self.GetHash("")
     self.mined = self.checkNonceNoJob()
+    self.MerkleHash = self.Transactions.GetHash()
     self.access_data.Unlock()
   }
   fmt.Println("ckck",self.GetHash(""))
@@ -210,6 +216,8 @@ func (self *Block)CheckStep1(hashPrev string)bool{
   if self.checked { return true }
   // if !utils.CompareHashes(self.Hash,self.GetHash(hashPrev)){
   if self.Hash!=self.GetHash(hashPrev){
+    fmt.Printf("tree %v\n",self.Transactions.GetHash())
+    fmt.Printf("cach %v\n",self.MerkleHash)
     fmt.Println("error in hash")
     fmt.Println(self.Hash)
     fmt.Println(self.GetHash(hashPrev))
@@ -305,11 +313,15 @@ func (self *Block)checkHardness()bool{
 
 func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
   // check the Merkle tree hashes
-  if !self.Transactions.Check(){ return false }
+  if !self.Transactions.Check(){
+    fmt.Println("Invalid merkle tree")
+    return false
+  }
   // check all transactions in the tree
   transactions := self.Transactions.GetTransactionArray()
   for i:=0;i<len(transactions);i++{
     if !transactions[i].Check(self,transactionChanges){
+      fmt.Printf("Invalid transaction %v",transactions[i])
       return false
     }
   }

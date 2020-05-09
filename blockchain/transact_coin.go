@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -56,7 +56,7 @@ func (self *CoinTransaction)GetCreator()utils.Addr{
 
 func (self *CoinTransaction)GetHash()string{
   hb := new(utils.HashBuilder)
-  hb.Add(self.Timestamp)
+  hb.Add(self.Timestamp.Format("2006-01-02 15:04:05"))
   hb.Add(self.Creator)
   hb.Add(self.Output.Address)
   hb.Add(self.Output.Value)
@@ -67,6 +67,14 @@ func (self *CoinTransaction)GetHashCached()string{
   return self.Hash
 }
 
+func (self *CoinTransaction)Serialize()[]byte{
+  data, err := json.Marshal(self)
+  if err != nil {
+    fmt.Println(err)
+  }
+  return data
+}
+
 func MarshalCoinTransaction(data []byte)*CoinTransaction{
   var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
@@ -74,6 +82,7 @@ func MarshalCoinTransaction(data []byte)*CoinTransaction{
   json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
   json.Unmarshal(objmap["Output"],&tr.Output)
   json.Unmarshal(objmap["Hash"],&tr.Hash)
+  json.Unmarshal(objmap["Creator"],&tr.Creator)
   tr.spent = false
   return tr
 }

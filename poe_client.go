@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: client.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -66,7 +66,7 @@ func processOnWallet(cmd string,args []string,obj interface{})string{
 }
 
 func generateKey(){
-  wallet := wallet.New("","")
+  wallet := wallet.New("","",true)
   if wallet!=nil{
     fmt.Println("Generated public and private keys in ./data/")
   }

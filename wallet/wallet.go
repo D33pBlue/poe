@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-09
  * @Copyright: 2020
  */
 
@@ -17,14 +17,15 @@ package wallet
 import (
   // "os"
   "fmt"
-  // "sort"
+  "sort"
   "net"
   "io/ioutil"
   "bufio"
   "errors"
   "strconv"
+  // "encoding/hex"
   "github.com/D33pBlue/poe/utils"
-  "github.com/D33pBlue/poe/blockchain"
+  . "github.com/D33pBlue/poe/blockchain"
 )
 
 type WalletEntry struct{
@@ -69,38 +70,72 @@ func (self *Wallet)Update()error {
   fmt.Fprintf(conn,"update_wallet\n")
   reader := bufio.NewReader(conn)
   data, err2 := reader.ReadString('\n')
+  fmt.Printf("Received: %v",data)
   if err2!=nil{ return err2 }
   head,prev := MarshalBlock([]byte(data))
   if head==nil{
     return errors.New("Unable to marshal block")
   }
-  if head.GetHash()==self.SeenBlocks[len(self.SeenBlocks)-1]{
+  if len(self.SeenBlocks)>0 && head.GetHash(prev)==self.SeenBlocks[len(self.SeenBlocks)-1]{
     // The blockchain is already seen => nothing to update
     return nil
   }
   // There are new blocks => ask them, up to the first known one
   hash := prev
   block := head
+  var unseenBlocks []*Block
+  unseenBlocks = append(unseenBlocks,head)
   for {
     if len(hash)<=0{break}
     if self.hasSeenBlock(hash)>=0{break}
     block.Previous,hash = self.askBlock(hash,self.MinerIp)
     block = block.Previous
+    unseenBlocks = append([]*Block{block},unseenBlocks...)
   }
   if !self.MinerTrusted{
-    // Check the received blocks
-    if block{
-      seenChainLength := self.hasSeenBlock(hash)
-      if block.LenSubChain!=seenChainLength{
-        return errors.New("Chain length mismatch")
-      }
-    }
-    // TODO: complete the check of the blocks
+    err := self.checkReceivedBlocks(head,block,hash)
+    if err!=nil{ return err }
   }
   // Update self.Entries and self.SeenBlocks
-  // TODO: ...
+  for i:=0;i<len(unseenBlocks);i++{
+    self.SeenBlocks = append(self.SeenBlocks,unseenBlocks[i].GetHashCached())
+    transactions := unseenBlocks[i].Transactions.GetTransactionArray()
+    for j:=0;j<len(transactions);j++{
+      switch transactions[j].GetType() {
+      case TrStd:
+        stdTr := transactions[j].(*StdTransaction)
+        if stdTr.GetCreator()==self.Id{
+          for k:=0;k<len(stdTr.Inputs);k++{
+            self.removeSpentTransaction(
+              stdTr.Inputs[k].Block,
+              stdTr.Inputs[k].ToSpend,
+              stdTr.Inputs[k].Index)
+          }
+        }
+        for k:=0;k<len(stdTr.Outputs);k++{
+          if stdTr.Outputs[k].Address==self.Id{
+            self.addSpendableTransaction(
+              unseenBlocks[i].GetHashCached(),
+              stdTr.GetHashCached(),
+              k,stdTr.Outputs[k].Value)
+          }
+        }
+      case TrCoin:
+        coinTr := transactions[j].(*CoinTransaction)
+        if coinTr.Output.Address==self.Id{
+          self.addSpendableTransaction(
+            unseenBlocks[i].GetHashCached(),
+            coinTr.GetHashCached(),
+            0,coinTr.Output.Value)
+        }
+      // case TrJob:
+        // ...
+      }
+    }
+  }
   return nil
 }
+
 
 // Returns the total amount of money earned, summing up all the
 // incoming unspent transactions
@@ -118,25 +153,48 @@ func (self *Wallet)GetTotal()string{
 }
 
 func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
-  // TODO: implement with new architecture
-
-  // total,err := strconv.Atoi(self.GetTotal())
-  // if err!=nil{return err}
-  // if total<amount{
-  //   return errors.New("You does not have enough money")
-  // }
-  // transactions := self.getActiveTransactions()
-  // sort.SliceStable(transactions, func(i, j int) bool {
-  //   return transactions[i].GetSpendingValueFor(self.Id) < transactions[j].GetSpendingValueFor(self.Id)
-  // })
-  // var transactToSpend []blockchain.Transaction
-  // var spending int = 0
-  // for i:=0;spending<amount;i++{
-  //   transactToSpend = append(transactToSpend,transactions[i])
-  //   spending += transactions[i].GetSpendingValueFor(self.Id)
-  // }
-  // // newTransact,err2 := blockchain.MakeStdTransaction()
-  // // TODO: make transaction
+  total,err := strconv.Atoi(self.GetTotal())
+  if err!=nil{return err}
+  if total<amount{
+    return errors.New("You does not have enough money")
+  }
+  sort.SliceStable(self.Entries, func(i, j int) bool {
+    return self.Entries[i].Value < self.Entries[j].Value
+  })
+  var inputs []TrInput
+  var outputs []TrOutput
+  var spending int = 0
+  for i:=0;spending<amount;i++{
+    inputs = append(inputs,self.Entries[i].Spendable)
+    spending += self.Entries[i].Value
+  }
+  out := new(TrOutput)
+  out.Address = receiver
+  out.Value = amount
+  outputs = append(outputs,*out)
+  if spending-amount>0{
+    remainder := new(TrOutput)
+    remainder.Address = self.Id
+    remainder.Value = spending-amount
+    outputs = append(outputs,*remainder)
+  }
+  newTransact := MakeStdTransaction(
+    self.Id,
+    self.Key,
+    inputs,
+    outputs)
+  if !utils.CheckSignature(newTransact.Signature,newTransact.Hash,newTransact.Creator){
+    return errors.New("Invalid Signature")
+  }
+  if newTransact==nil{
+    return errors.New("Error in StdTransaction creation")
+  }
+  conn, err := net.Dial("tcp",self.MinerIp)
+  if err!=nil{ return err }
+  fmt.Fprintf(conn,"transaction\n")
+  fmt.Fprintf(conn,TrStd+"\n")
+  fmt.Fprintf(conn,string(newTransact.Serialize())+"\n")
+  fmt.Println("Sent transaction request to miner")
   return nil
 }
 
@@ -201,4 +259,40 @@ func (self *Wallet)askBlock(blockHash string,ipaddress string)(*Block,string){
     fmt.Println(err2)
     return nil,"" }
   return MarshalBlock([]byte(blockRaw))
+}
+
+// Checks the received unseen blocks
+func (self *Wallet)checkReceivedBlocks(head,lastBlock *Block,lastHash string)error{
+  if lastBlock!=nil{
+    seenChainLength := self.hasSeenBlock(lastHash)
+    if lastBlock.LenSubChain!=seenChainLength{
+      return errors.New("Chain length mismatch")
+    }
+  }
+  //
+  // TODO: complete check
+  //
+  //
+  return nil
+}
+
+func (self *Wallet)removeSpentTransaction(block,transact string,index int){
+  var updatedSpedable []WalletEntry
+  for i:=0;i<len(self.Entries);i++{
+    if !(self.Entries[i].Spendable.Block==block &&
+        self.Entries[i].Spendable.ToSpend==transact &&
+        self.Entries[i].Spendable.Index==index){
+      updatedSpedable = append(updatedSpedable,self.Entries[i])
+    }
+  }
+  self.Entries = updatedSpedable
+}
+
+func (self *Wallet)addSpendableTransaction(block,transact string,index,value int){
+  entry := new(WalletEntry)
+  entry.Value = value
+  entry.Spendable.Block = block
+  entry.Spendable.ToSpend = transact
+  entry.Spendable.Index = index
+  self.Entries = append(self.Entries,*entry)
 }
