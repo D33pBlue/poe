@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-10
  * @Copyright: 2020
  */
 
@@ -23,6 +23,7 @@ import (
   "errors"
   "strconv"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/conf"
   . "github.com/D33pBlue/poe/blockchain"
 )
 
@@ -45,17 +46,20 @@ type Wallet struct{
   MinerTrusted bool
   Entries []WalletEntry // keep track of spendable transactions
   SeenBlocks []string // keep hashes of checked blocks
+  config *conf.Config
 }
 
 // Initializes a Wallet. If a non-empty path is given the public key
 // is loaded from file, otherwise a new public key is generated.
-func New(path,ip string,trust bool)*Wallet{
+func New(config *conf.Config,ip string,trust bool)*Wallet{
   wallet := new(Wallet)
   wallet.MinerIp = ip
+  wallet.config = config
   wallet.MinerTrusted = trust
   var err error
-  if path==""{
-    wallet.Key,err = generateKey()
+  var path string = config.GetKeyPath()
+  if config.Key==""{
+    wallet.Key,err = generateKey(config)
   }else{
     wallet.Key,err = loadKey(path)
   }
@@ -220,19 +224,20 @@ func (self *Wallet)SubmitJob(job string)error{
 
 // Generates a new couple of public and private keys, and stores
 // them in "./data/key<n>.pem" and "./data/key<n>.pem.priv".
-func generateKey()(utils.Key,error){
+func generateKey(config *conf.Config)(utils.Key,error){
   key,err := utils.GenerateKey()
   if err!=nil{ return nil,err }
   i := 0
-  for ;utils.FileExists("data/key"+strconv.Itoa(i)+".pem");i++{}
-  name := "data/key"+strconv.Itoa(i)+".pem"
+  for ;utils.FileExists(config.MainDataFolder+config.KeyFolder+"key"+strconv.Itoa(i)+".pem");i++{}
+  name := config.MainDataFolder+config.KeyFolder+"key"+strconv.Itoa(i)+".pem"
   err = ioutil.WriteFile(name,[]byte(utils.ExportPublicKeyAsPemStr(key)), 0644)
   if err!=nil{ return nil,err }
   err = ioutil.WriteFile(name+".priv",[]byte(utils.ExportPrivateKeyAsPemStr(key)), 0644)
   if err!=nil{
-    fmt.Println("Keys stored in "+name+" and "+name+".priv\n")
+    return key,err
   }
-  return key,err
+  fmt.Println("Keys stored in "+name+" and "+name+".priv\n")
+  return key,nil
 }
 
 // Loads from file a couple of public and private keys.

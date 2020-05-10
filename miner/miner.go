@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-10
  * @Copyright: 2020
  */
 
@@ -20,11 +20,12 @@ import(
   "strings"
   "errors"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/conf"
   "github.com/D33pBlue/poe/blockchain"
 )
 
 // The Miner struct is used to keep alive a mining node.
-// It stores the blockchain and the list of all connected miners. 
+// It stores the blockchain and the list of all connected miners.
 type Miner struct{
   Chain *blockchain.Blockchain
   Port string
@@ -33,15 +34,17 @@ type Miner struct{
   keepServing bool
   addrch chan string
   id utils.Addr
+  config *conf.Config
 }
 
 // Create a new Miner. In order to start mining you have to
 // call miner.Serve() method (possibly in a goroutine).
-func New(port string,id utils.Addr)*Miner{
+func New(port string,id utils.Addr,config *conf.Config)*Miner{
   miner := new(Miner)
   miner.Port = port
   miner.id = id
-  var folder string = fmt.Sprintf("data/chain%v",port)
+  miner.config = config
+  var folder string = config.GetChainFolder()//fmt.Sprintf("data/chain%v",port)
   // make dir if not exists
   _, err := os.Stat(folder)
 	if os.IsNotExist(err) {

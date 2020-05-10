@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: client.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-10
  * @Copyright: 2020
  */
 
@@ -20,16 +20,13 @@ import (
   "strconv"
   "github.com/D33pBlue/poe/wallet"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/conf"
 )
 
 
-func startWallet(ip,port,keypath string,trusted bool){
-  if !utils.FileExists(keypath){
-    fmt.Println("You need to link a valid key file.")
-    fmt.Println("You can generate it with mode genkey.")
-    return
-  }
-  walletObj := wallet.New(keypath,ip+":"+port,trusted)
+func startWallet(ip string,config *conf.Config,trusted bool){
+  var port string = config.GetPort()
+  walletObj := wallet.New(config,ip+":"+port,trusted)
   if walletObj==nil{return}
   fmt.Printf("Connecting to %v:%v\n",ip,port)
   startShell(processOnWallet,walletObj)
@@ -65,10 +62,10 @@ func processOnWallet(cmd string,args []string,obj interface{})string{
   return "invalid cmd"
 }
 
-func generateKey(){
-  wallet := wallet.New("","",true)
+func generateKey(config *conf.Config){
+  wallet := wallet.New(config,"",true)
   if wallet!=nil{
-    fmt.Println("Generated public and private keys in ./data/")
+    fmt.Println("Generated public and private keys")
   }
 }
 
@@ -78,13 +75,18 @@ func main()  {
   mode := flag.String("mode", "wallet", "Mode{wallet|genkey}")
   ip := flag.String("ip", "127.0.0.1", "The IP address of the mining node")
   trusted := flag.Bool("trusted",true,"Set to true only if the miner is trusted")
-  port := flag.String("port","4242","The port where the mining node start listening.")
-  key := flag.String("key","","Path to the public key pem file")
+  configFile := flag.String("conf","conf/config0.json","path to the config file")
   flag.Parse()
+  config,err := conf.LoadConfiguration(*configFile)
+  if err!=nil{
+    fmt.Println(err)
+    return
+  }
   if *mode=="wallet"{
-    startWallet(*ip,*port,*key,*trusted)
+    startWallet(*ip,config,*trusted)
   }else if *mode=="genkey"{
-    generateKey()
+    config.Key = ""
+    generateKey(config)
   }else{
     fmt.Println("Choose a mode in {wallet|genkey}")
   }
