@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-10
  * @Copyright: 2020
  */
 
@@ -349,6 +349,10 @@ func (self *Block)calculateNumJobs()int{
 
 func (self *Block)calculateHardness()int{
   return 6 // TODO: implement later
+}
+
+func (self *Block)nextSlotForJobExectution()(int,int){
+  return 0,0 // TODO: implement later
 }
 
 // Returns the value in coin of mining that block.

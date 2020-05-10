@@ -50,12 +50,20 @@ func processOnWallet(cmd string,args []string,obj interface{})string{
     if err!=nil{ return fmt.Sprint(err) }
     return fmt.Sprintf("Sent transaction of %v to %v",amount,receiver)
   case "job":
-    if len(args)!=1{
-      return "invalid arguments"
+    if len(args)!=3{
+      return "invalid arguments <path to job> <data> <prize>"
     }
-    err := obj.(*wallet.Wallet).SubmitJob(args[0])
+    prize,errc := strconv.Atoi(args[2])
+    if errc!=nil{ return fmt.Sprint(errc) }
+    err := obj.(*wallet.Wallet).SubmitJob(args[0],args[1],prize)
     if err!=nil{ return fmt.Sprint(err) }
     return "Sent Job transaction"
+  case "estimate":
+    if len(args)!=2{
+      return "invalid arguments <path to job> <data>"
+    }
+    fixedCost,advPrize := obj.(*wallet.Wallet).EstimateJobCost(args[0],args[1])
+    return fmt.Sprintf("Fixed cost: %v\nMinimal prize: %v\nMin Total: %v",fixedCost,advPrize,fixedCost+advPrize)
   case "results":
     return "results" // TODO: implement later
   }

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-10
+ * @Last modified time: 2020-May-11
  * @Copyright: 2020
  */
 
@@ -215,10 +215,111 @@ func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   return nil
 }
 
+// Returns the fixed cost to submit the job and the advised prize
+func (self *Wallet)EstimateJobCost(jobPath,dataPath string)(int,int){
+  if len(jobPath)<=0 || !utils.FileExists(jobPath){
+    fmt.Println("You must set a valid path to the job file")
+    return -1,-1
+  }
+  // load job and data
+  var data []byte
+  job,err := ioutil.ReadFile(jobPath)
+  if err != nil {
+    fmt.Println(err)
+    return -1,-1
+  }
+  var datafromUrl bool = true
+  if len(dataPath)<4 || dataPath[:4]!="http"{
+    // dataPath is not url => load data from file
+    datafromUrl = false
+    if len(dataPath)>0{
+      data,err = ioutil.ReadFile(dataPath)
+      if err != nil {
+        fmt.Println(err)
+        return -1,-1
+      }
+    }
+  }else{
+    data = utils.FetchDataFromUrl(dataPath)
+  }
+  return GetJobFixedCost(fmt.Sprintf("%x",job),fmt.Sprintf("%x",data),datafromUrl),
+    GetJobMinPrize(fmt.Sprintf("%x",job),fmt.Sprintf("%x",data))
+}
+
+
 // SubmitJob creates a JobTransaction and
-// sends it to the miner.
-func (self *Wallet)SubmitJob(job string)error{
-  // TODO: implement later
+// sends it to the miner. The job's code is loaded from file.
+// The job's data can be loaded from file or included by url.
+// If dataPath begins with "http" (like http://... or https://...)
+// it is considered a url; otherwise it is considered a local path.
+// TODO: consider DDOS attacks: the miner should check the content
+// of the url before accepting the transaction
+func (self *Wallet)SubmitJob(jobPath,dataPath string,prize int)error{
+  if len(jobPath)<=0 || !utils.FileExists(jobPath){
+    return errors.New("You must set a valid path to the job file")
+  }
+  // load job and data
+  var data []byte
+  job,err := ioutil.ReadFile(jobPath)
+  if err != nil { return err }
+  var datafromUrl bool = true
+  var dataurl string = dataPath
+  if len(dataPath)<4 || dataPath[:4]!="http"{
+    dataurl = ""
+    datafromUrl = false
+    // dataPath is not url => load data from file
+    if len(dataPath)>0{
+      data,err = ioutil.ReadFile(dataPath)
+      if err != nil { return err }
+    }
+  }else{
+    // dataPath is url => fetch data
+    data = utils.FetchDataFromUrl(dataurl)
+  }
+  blockStart,blockEnd := self.chooseWhenProcessJob()
+  // collect money
+  var amountToPay int = GetJobFixedCost(fmt.Sprintf("%x",job),
+                          fmt.Sprintf("%x",data),datafromUrl)+prize
+  total,err := strconv.Atoi(self.GetTotal())
+  if err!=nil{return err}
+  if total<amountToPay{
+    return errors.New("You does not have enough money")
+  }
+  // sort the available Entries by value
+  sort.SliceStable(self.Entries, func(i, j int) bool {
+    return self.Entries[i].Value < self.Entries[j].Value
+  })
+  var inputs []TrInput
+  var output TrOutput
+  var spending int = 0
+  // collects the entries to use up to the amount
+  for i:=0;spending<amountToPay;i++{
+    inputs = append(inputs,self.Entries[i].Spendable)
+    spending += self.Entries[i].Value
+  }
+  output.Address = self.Id
+  output.Value = spending-amountToPay
+  // build JobTransaction
+  if dataurl!=""{
+    // if the data is passed through url, clear data
+    // not to include it in the transaction.
+    data = nil
+  }
+  jobtr := MakeJobTransaction(
+    self.Id,self.Key,
+    inputs,output,
+    fmt.Sprintf("%x",job),fmt.Sprintf("%x",data),
+    dataurl,prize,
+    blockStart,blockEnd)
+  if jobtr==nil{ return errors.New("Unable to build JobTransaction") }
+  fmt.Println(jobtr.Output)
+  // send to miner
+  conn, err := net.Dial("tcp",self.MinerIp)
+  if err!=nil{ return err }
+  fmt.Fprintf(conn,"transaction\n")
+  fmt.Fprintf(conn,TrJob+"\n")
+  fmt.Fprintf(conn,string(jobtr.Serialize())+"\n")
+  fmt.Println("Sent transaction request to miner")
   return nil
 }
 
@@ -318,4 +419,12 @@ func (self *Wallet)addSpendableTransaction(block,transact string,index,value int
   entry.Spendable.ToSpend = transact
   entry.Spendable.Index = index
   self.Entries = append(self.Entries,*entry)
+}
+
+// Returns the numbers BlockStart and BlockEnd that determine when
+// the next job should be executed. These numbers are determined by
+// the current blockchain's status.
+func (self *Wallet)chooseWhenProcessJob()(int,int){
+  // obtain current head and call nextSlotForJobExectution
+  return 0,0 // TODO: implement later
 }

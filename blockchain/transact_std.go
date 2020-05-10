@@ -57,7 +57,6 @@ func MakeStdTransaction(creator utils.Addr,key utils.Key,
 // - all sources unspent (no double spending)
 // - the total amount of money in sources >= the total amount of money spent.
 func (self *StdTransaction)Check(block *Block,trChanges *map[string]string)bool{
-  // fmt.Println("Checking standard transaction")
   hash2 := self.GetHash()
   if hash2!=self.Hash{
     fmt.Println("The hash does not match")
