@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-10
+ * @Last modified time: 2020-May-13
  * @Copyright: 2020
  */
 
@@ -14,6 +14,8 @@ import(
   "fmt"
   "time"
   // "errors"
+  "io/ioutil"
+  "encoding/hex"
   "encoding/json"
   "github.com/D33pBlue/poe/utils"
 )
@@ -158,14 +160,30 @@ func (self *JobTransaction)Check(block *Block,trChanges *map[string]string)bool{
 
 // Stores the code of the Job in the file given in path.
 func (self *JobTransaction)SaveJobInFile(path string)error{
-  return nil // TODO: implement later
+  data,err := hex.DecodeString(self.Job)
+  if err!=nil{
+    return err
+  }
+  return ioutil.WriteFile(path, data, 0644)
 }
 
 // Stores the data of the job in the file given in path. If the
 // data is embedded, it is saved directly. Otherwise, the data
 // is downloaded from the given url.
 func (self *JobTransaction)SaveDataInFile(path string)error{
-  return nil // TODO: implement later
+  var data []byte
+  if len(self.DataUrl)<=0{
+    var err error
+    data,err = hex.DecodeString(self.Data)
+    if err!=nil{ return err }
+  }else{
+    //
+    //
+    // TODO: download the data from url
+    //
+    //
+  }
+  return ioutil.WriteFile(path, data, 0644)
 }
 
 // Returns always the only TrOutput stored inside the transaction.
