@@ -201,6 +201,10 @@ func (self *JobTransaction)GetCreator()utils.Addr{
   return self.Creator
 }
 
+func (self *JobTransaction)GetPeriod()(int,int){
+  return self.BlockStart,self.BlockEnd
+}
+
 // Recalculates the hash of the transaction.
 func (self *JobTransaction)GetHash()string{
   hb := new(utils.HashBuilder)

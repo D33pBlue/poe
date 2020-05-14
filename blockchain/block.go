@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-10
+ * @Last modified time: 2020-May-14
  * @Copyright: 2020
  */
 
@@ -19,6 +19,7 @@ import(
   "encoding/json"
   "errors"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/ga"
 )
 
 // The block struct models the blocks of the blockchain. Each block,
@@ -37,6 +38,9 @@ type Block struct{
   checked bool
   mined bool
   access_data sync.Mutex
+  jobs []*JobTransaction // cached list of jobs not ended
+  incomingMiniblock chan *MiniBlock // to receive a MiniBlock from others
+  minedMiniblock chan *MiniBlock // to get the output of MiniBlock mining
 }
 
 // Build the first block of the chain.
@@ -80,12 +84,12 @@ func BuildBlock(id utils.Addr,prev *Block)*Block{
 // The function to call in order to start mining a block.
 // It should be called in a goroutine. If there are jobs,
 // this function calls mineWithJobs; otherwise mineNoJob.
-func (self *Block)Mine(keepmining *bool){
+func (self *Block)Mine(keepmining *bool,executor *ga.Executor){
   self.mined = false
   if self.NumJobs==0{
     self.mineNoJob(keepmining)
   }else{
-    self.mineWithJobs(keepmining)
+    self.mineWithJobs(keepmining,executor)
   }
 }
 
@@ -173,9 +177,12 @@ func MarshalBlock(data []byte)(*Block,string){
   return block,prev
 }
 
-// The mining process with jobs.
-func (self *Block)mineWithJobs(keepmining *bool){
+// The mining process with jobs. Istantiate the right number of miniblocks
+// and call their mining method.
+func (self *Block)mineWithJobs(keepmining *bool,executor *ga.Executor){
   // TODO: implement later
+  // create a keepmining variable for each miniblock
+  // and listen for miniblock also from other miners through a channel
 }
 
 // The mining process without jobs => PoW.
@@ -240,7 +247,7 @@ func (self *Block)CheckStep1(hashPrev string)bool{
       fmt.Println("error in checkNonceNoJob")
       return false }
   }else if self.NumJobs>0{
-    if !self.checkNonceJobs() { return false }
+    if !self.checkNonceJobs(hashPrev) { return false }
   }else{ return false }
   return true
 }
@@ -304,6 +311,10 @@ func (self *Block)GetHashCached()string{
   return self.Hash
 }
 
+func (self *Block)GetBlockIndex()int{
+  return self.LenSubChain
+}
+
 // Checks if the nonce has the required number of 0 bits.
 func (self *Block)checkNonceNoJob()bool{
   hash := self.Hash
@@ -313,10 +324,26 @@ func (self *Block)checkNonceNoJob()bool{
   return true
 }
 
-func (self *Block)checkNonceJobs()bool{
-  return true // TODO: implement later
+// Checks if all the miniblocks (each one referencing a job)
+// in this block are correctly mined, but does not check their number.
+func (self *Block)checkNonceJobs(hashPrev string)bool{
+  // first check the validity of the hash of each miniblock
+  for i:=0;i<len(self.MiniBlocks);i++{
+    if !self.MiniBlocks[i].CheckStep1(hashPrev,self.Hardness){
+      return false
+    }
+  }
+  // then check the score of each miniblock's job
+  for i:=0;i<len(self.MiniBlocks);i++{
+    if !self.MiniBlocks[i].CheckStep2(self){
+      return false
+    }
+  }
+  return true
 }
 
+// Checks if the number of miniblocks (job executed)
+// is correct
 func (self *Block)checkNumJobs()bool{
   return true // TODO: implement later
 }
@@ -341,6 +368,32 @@ func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
     }
   }
   return true
+}
+
+// Returns the list of not ended jobs (JobTransaction)
+// that are stored in the chain starting from the previous block.
+func (self *Block)getOpenJobs()[]*JobTransaction{
+  if len(self.jobs)>0{
+    return self.jobs // cached information
+  }
+  if self.Previous == nil{ return nil }
+  // get the jobs from Previous.Previous
+  previous := self.Previous.getOpenJobs()
+  // add the ones of Previous
+  transacts := self.Previous.Transactions.GetTransactionArray()
+  for i:=0;i<len(transacts);i++{
+    if transacts[i].GetType()==TrJob{
+      previous = append(previous,transacts[i].(*JobTransaction))
+    }
+  }
+  // add the not ended ones to self.jobs
+  for i:=0;i<len(previous);i++{
+    _,end := previous[i].GetPeriod()
+    if end>=self.GetBlockIndex(){
+      self.jobs = append(self.jobs,previous[i])
+    }
+  }
+  return self.jobs
 }
 
 func (self *Block)calculateNumJobs()int{

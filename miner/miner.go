@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-10
+ * @Last modified time: 2020-May-14
  * @Copyright: 2020
  */
 
@@ -184,6 +184,8 @@ func (self *Miner)handleConnection(conn net.Conn){
         self.Chain.TransQueue <- *mexTransaction
       }
     }
+  case "miniblock":
+    // TODO: process and send miniblock to self.Chain.MiniBlockIn
   }
 }
 
@@ -228,6 +230,8 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
           go self.sendBlockUpdate(self.Connected[i],string(blockMex.Data))
         }
         self.connected_lock.Unlock()
+      // case mex := <-self.Chain.MiniBlockOut:
+        // TODO: propagate miniblock
     }
   }
 }

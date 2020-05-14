@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-14
  * @Copyright: 2020
  */
 
@@ -20,6 +20,7 @@ import (
   "strings"
   "io/ioutil"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/ga"
 )
 
 // match any type
@@ -52,13 +53,17 @@ type Blockchain struct{
   TransQueue chan MexTrans// receive transactions from miner
   BlockOut chan MexBlock// send mined block to miner
   BlockIn chan MexBlock// receive mined block from miner
+  MiniBlockOut chan MexBlock// send mined miniblock to miner
+  MiniBlockIn chan MexBlock// receive mined miniblock from miner
   internalBlock chan MexBlock// notify mined block to Communicate
+  internalMiniBlock chan MexBlock// notify mined miniblock to Communicate (don't send the last one)
   id utils.Addr
   keepmining bool
   miningstatus chan bool
   access_data sync.Mutex
   folder string
   currentTrChanges map[string]string
+  executor *ga.Executor
 }
 
 // This method load a serialized blockchain from file.
@@ -69,7 +74,10 @@ func LoadChainFromFolder(id utils.Addr,folder string)*Blockchain{
   chain.TransQueue = make(chan MexTrans)
   chain.BlockOut = make(chan MexBlock)
   chain.BlockIn = make(chan MexBlock)
+  chain.MiniBlockOut = make(chan MexBlock)
+  chain.MiniBlockIn = make(chan MexBlock)
   chain.internalBlock = make(chan MexBlock)
+  chain.internalMiniBlock = make(chan MexBlock)
   chain.miningstatus = make(chan bool)
   chain.folder = folder
   chain.currentTrChanges = make(map[string]string)
@@ -109,7 +117,10 @@ func NewBlockchain(id utils.Addr,folder string)*Blockchain{
   chain.TransQueue = make(chan MexTrans)
   chain.BlockOut = make(chan MexBlock)
   chain.BlockIn = make(chan MexBlock)
+  chain.MiniBlockOut = make(chan MexBlock)
+  chain.MiniBlockIn = make(chan MexBlock)
   chain.internalBlock = make(chan MexBlock)
+  chain.internalMiniBlock = make(chan MexBlock)
   chain.miningstatus = make(chan bool)
   chain.Head = BuildFirstBlock(id)
   chain.folder = folder
@@ -146,7 +157,7 @@ func (self *Blockchain)GetBlock(hash string)*Block{
 func (self *Blockchain)Mine(){
   fmt.Println("Start mining")
   self.keepmining = true
-  self.Current.Mine(&self.keepmining)
+  self.Current.Mine(&self.keepmining,self.executor)
   // when mined, send blocks to internalBlock
   if self.keepmining == true{
     mex := new(MexBlock)
@@ -190,12 +201,22 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
           transact = MarshalStdTransaction(mex.Data)
         case TrJob:
           transact = MarshalJobTransaction(mex.Data)
+        // case TrSol:
+          // transact = MarshalSolTransaction(mex.Data)
+        // case TrRes:
+          // transact = MarshalResTransaction(mex.Data)
         default:
           transact = nil
         }
         if transact!=nil{
           self.processIncomingTransaction(transact)
         }
+      case mex := <- self.internalMiniBlock:
+        // propagate self mined miniblock to other miners
+        // do not propagate the last one: it is already in the block
+        self.MiniBlockOut <- mex
+      // case mex := <- self.MiniBlockIn:
+        // TODO: implement later
     }
   }
 }
