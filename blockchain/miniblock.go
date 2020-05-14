@@ -26,13 +26,14 @@ type MiniBlock struct{
   Nonce Nonce
 }
 
-func BuildMiniBlock()*MiniBlock{
+// Creates a new MiniBlock and initialize its channels.
+func BuildMiniBlock(chNonce chan ga.Sol)*MiniBlock{
   return nil // TODO: implement later
 }
 
-// When this miniblock is mined it is sent to ch.
+// When this miniblock is mined it is sent to chOut.
 // If stopMining==true the mining should stop and send nil to ch.
-func Mine(stopMining bool,ch chan *MiniBlock,chNonce chan ga.Sol){
+func Mine(hardness int,stopMining bool,chOut chan *MiniBlock){
   // TODO: implement later
 }
 
@@ -48,7 +49,11 @@ func (self *MiniBlock)CheckStep1(hashPrev string,hardness int)bool{
   if self.GetHash()!=self.GetHashCached(){
     return false
   }
-  // check hardness
+  return self.checkHashPuzzle(hardness)
+}
+
+// Given an hardness, checks the validity of the hash of this MiniBlock.
+func (self *MiniBlock)checkHashPuzzle(hardness int)bool {
   for i:=0;i<hardness;i++{
     if self.Hash[i]!='0'{
       return false
@@ -57,11 +62,14 @@ func (self *MiniBlock)CheckStep1(hashPrev string,hardness int)bool{
   return true
 }
 
-// Complete the check evaluating the stored solution
+// Complete the check evaluating the stored solution.
+// The block given must be the head of the complete chain in
+// order to load the JobTransaction.
 func (self *MiniBlock)CheckStep2(block *Block)bool{
   return true // TODO: implement later
 }
 
+// Recalculates and returns the hash of the MiniBlock.
 func (self *MiniBlock)GetHash()string{
   hb := new(utils.HashBuilder)
   hb.Add(self.HashPrevBlock)
@@ -75,6 +83,7 @@ func (self *MiniBlock)GetHash()string{
   return fmt.Sprintf("%x",hash)
 }
 
+// Returns the cached hash of the MiniBlock.
 func (self *MiniBlock)GetHashCached()string{
   return self.Hash
 }

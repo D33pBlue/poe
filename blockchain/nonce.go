@@ -23,7 +23,10 @@ type Nonce struct{
 
 // Reads a new Nonce from candidates and change the stored values.
 func (self *Nonce)Next(){
-
+  result := <-self.candidates
+  self.Solution = result.Individual
+  self.Evaluation = result.Fitness
+  self.Complexity = result.Complex
 }
 
 type NonceNoJob struct{

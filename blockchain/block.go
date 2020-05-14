@@ -247,7 +247,7 @@ func (self *Block)CheckStep1(hashPrev string)bool{
       fmt.Println("error in checkNonceNoJob")
       return false }
   }else if self.NumJobs>0{
-    if !self.checkNonceJobs(hashPrev) { return false }
+    if !self.checkNonceJobsStep1(hashPrev) { return false }
   }else{ return false }
   return true
 }
@@ -256,11 +256,17 @@ func (self *Block)CheckStep1(hashPrev string)bool{
 // among blocks and of the depending data.
 func (self *Block)CheckStep2(transactionChanges *map[string]string)bool{
   if self.checked { return true }
+  if self.NumJobs>0{
+    if !self.checkNonceJobsStep2(){
+      return false
+    }
+  }
   if !self.checkNumJobs() {
     fmt.Println("fail in num jobs")
     return false }
   if !self.checkHardness() {
     fmt.Println("fail hardness")
+    fmt.Println(self.GetBlockIndex(),self.Hardness,self.calculateHardness())
     return false }
   if self.LenSubChain>0{
     if self.Previous==nil {
@@ -324,16 +330,20 @@ func (self *Block)checkNonceNoJob()bool{
   return true
 }
 
-// Checks if all the miniblocks (each one referencing a job)
-// in this block are correctly mined, but does not check their number.
-func (self *Block)checkNonceJobs(hashPrev string)bool{
-  // first check the validity of the hash of each miniblock
+// Checks the validity of the hash of each miniblock (without
+// checking their job's solution score).
+func (self *Block)checkNonceJobsStep1(hashPrev string)bool{
   for i:=0;i<len(self.MiniBlocks);i++{
     if !self.MiniBlocks[i].CheckStep1(hashPrev,self.Hardness){
       return false
     }
   }
-  // then check the score of each miniblock's job
+  return true
+}
+
+// Complete the check of the validity of each MiniBlock
+// evaluating the given solutions.
+func (self *Block)checkNonceJobsStep2()bool{
   for i:=0;i<len(self.MiniBlocks);i++{
     if !self.MiniBlocks[i].CheckStep2(self){
       return false
@@ -345,11 +355,13 @@ func (self *Block)checkNonceJobs(hashPrev string)bool{
 // Checks if the number of miniblocks (job executed)
 // is correct
 func (self *Block)checkNumJobs()bool{
-  return true // TODO: implement later
+  return self.calculateNumJobs()==self.NumJobs
 }
 
+// Checks if the Hardness in the block matches the real one,
+// recalculating it.
 func (self *Block)checkHardness()bool{
-  return true // TODO: implement later
+  return self.calculateHardness()==self.Hardness
 }
 
 // Checks the consistency of the merkle tree and the transactions.
@@ -363,7 +375,6 @@ func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
   transactions := self.Transactions.GetTransactionArray()
   for i:=0;i<len(transactions);i++{
     if !transactions[i].Check(self,transactionChanges){
-      fmt.Printf("Invalid transaction %v",transactions[i])
       return false
     }
   }
@@ -396,16 +407,33 @@ func (self *Block)getOpenJobs()[]*JobTransaction{
   return self.jobs
 }
 
+func (self *Block)getJobsForThisBlock()[]*JobTransaction{
+  jobtrans := self.getOpenJobs()
+  var jobs []*JobTransaction
+  for i:=0;i<len(jobtrans);i++{
+    start,end := jobtrans[i].GetPeriod()
+    index := self.GetBlockIndex()
+    if index>=start && index<=end{
+      jobs = append(jobs,jobtrans[i])
+    }
+  }
+  return jobs
+}
+
 func (self *Block)calculateNumJobs()int{
-  return 0 // TODO: implement later
+  return len(self.getJobsForThisBlock())
 }
 
 func (self *Block)calculateHardness()int{
-  return 6 // TODO: implement later
+  if self.GetBlockIndex()==0{
+    return 0
+  }
+  return 6 // TODO: tune with NumJobs, mining time and complexity
 }
 
-func (self *Block)nextSlotForJobExectution()(int,int){
-  return 0,0 // TODO: implement later
+func (self *Block)NextSlotForJobExectution()(int,int){
+  index := self.GetBlockIndex()
+  return index+1,index+5 // TODO: tune with complexity and number of open jobs
 }
 
 // Returns the value in coin of mining that block.

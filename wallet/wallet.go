@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-11
+ * @Last modified time: 2020-May-14
  * @Copyright: 2020
  */
 
@@ -425,6 +425,6 @@ func (self *Wallet)addSpendableTransaction(block,transact string,index,value int
 // the next job should be executed. These numbers are determined by
 // the current blockchain's status.
 func (self *Wallet)chooseWhenProcessJob()(int,int){
-  // obtain current head and call nextSlotForJobExectution
+  // obtain current head and call NextSlotForJobExectution
   return 0,0 // TODO: implement later
 }

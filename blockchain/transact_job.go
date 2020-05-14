@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-13
+ * @Last modified time: 2020-May-14
  * @Copyright: 2020
  */
 
@@ -81,7 +81,7 @@ func GetJobMinPrize(job,data string)int{
 // - the fixed cost calculated with GetJobFixedCost paid
 // - a prize >= GetJobMinPrize paid
 // - the BlockStart, BlockEnd slot that matches the one obtained with
-// block.nextSlotForJobExectution on the previous block
+// block.NextSlotForJobExectution on the previous block
 func (self *JobTransaction)Check(block *Block,trChanges *map[string]string)bool{
   hash2 := self.GetHash()
   if hash2!=self.Hash{
@@ -150,7 +150,7 @@ func (self *JobTransaction)Check(block *Block,trChanges *map[string]string)bool{
     fmt.Printf("Tot: %v, spent: %v\n",tot,spent)
     return false
   }
-  bk1,bk2 := block.Previous.nextSlotForJobExectution()
+  bk1,bk2 := block.Previous.NextSlotForJobExectution()
   if bk1!=self.BlockStart || bk2!=self.BlockEnd{
     fmt.Println("Invalid execution slot")
     return false
