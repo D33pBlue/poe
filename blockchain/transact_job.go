@@ -14,6 +14,7 @@ import(
   "fmt"
   "time"
   // "errors"
+  "math"
   "io/ioutil"
   "encoding/hex"
   "encoding/json"
@@ -61,12 +62,23 @@ func MakeJobTransaction(creator utils.Addr,key utils.Key,
  return tr
 }
 
+// Returns the costs to store a job in the Blockchain, relative
+// to the amount of data and the use of external providers.
 func GetJobFixedCost(job,data string,url bool)int{
-  return 0 // TODO: implement later
+  var jobcoeff float64 = 0.01
+  var datacoeff float64 = jobcoeff*2
+  var urlcoeff float64 = 0
+  if url{
+    datacoeff = datacoeff*0.5
+    urlcoeff = 10
+  }
+  tot := jobcoeff*float64(len(job))+datacoeff*float64(len(data))+urlcoeff
+  return int(math.Round(tot))
 }
 
+
 func GetJobMinPrize(job,data string)int{
-  return 0 // TODO: implement later
+  return 10 // TODO: implement later
 }
 
 // Check validate the transaction and update trChanges. The parameter block
@@ -197,11 +209,12 @@ func (self *JobTransaction)GetTimestamp()time.Time{
   return self.Timestamp
 }
 
-// Returns the public key of creator of the transaction
+// Returns the public key of the creator of the transaction
 func (self *JobTransaction)GetCreator()utils.Addr{
   return self.Creator
 }
 
+// Returns the execution period stored in the transaction
 func (self *JobTransaction)GetPeriod()(int,int){
   return self.BlockStart,self.BlockEnd
 }

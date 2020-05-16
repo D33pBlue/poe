@@ -239,10 +239,15 @@ func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
         if MBkeepalive[MBkeepaliveIndex[mb.JobTrans]]{
           MBkeepalive[MBkeepaliveIndex[mb.JobTrans]] = false
           self.storeMiniblockInBlock(mb)
-          mex := new(MexBlock)
-          mex.Data = mb.Serialize()
-          mex.IpSender = string(id)
-          miniblockout <- (*mex)
+          if remaining>1{
+            // send the mined MiniBlocks to the others, but
+            // do not propagate the last MiniBlock: it is
+            // propagated with the full Block
+            mex := new(MexBlock)
+            mex.Data = mb.Serialize()
+            mex.IpSender = string(id)
+            miniblockout <- (*mex)
+          }
         }
       }
       remaining -= 1

@@ -185,7 +185,13 @@ func (self *Miner)handleConnection(conn net.Conn){
       }
     }
   case "miniblock":
-    // TODO: process and send miniblock to self.Chain.MiniBlockIn
+    // send miniblock to self.Chain.MiniBlockIn
+    miniblock,err := reader.ReadString('\n')
+    if err==nil{
+      mexBlock := new(blockchain.MexBlock)
+      mexBlock.Data = []byte(miniblock)
+      self.Chain.MiniBlockIn <- *mexBlock
+    }
   }
 }
 
@@ -230,8 +236,13 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
           go self.sendBlockUpdate(self.Connected[i],string(blockMex.Data))
         }
         self.connected_lock.Unlock()
-      // case mex := <-self.Chain.MiniBlockOut:
-        // TODO: propagate miniblock
+      case mex := <-self.Chain.MiniBlockOut:
+        self.connected_lock.Lock()
+        for i:=0;i<len(self.Connected);i++{
+          fmt.Println("Send miniblock update to ",self.Connected[i])
+          go self.sendMiniBlockUpdate(self.Connected[i],string(mex.Data))
+        }
+        self.connected_lock.Unlock()
     }
   }
 }
@@ -258,5 +269,13 @@ func (self *Miner)sendBlockUpdate(address string,mex string){
   if err!=nil{ return }
   fmt.Fprintf(conn,"chain\n")
   fmt.Fprintf(conn,self.Port+"\n")
+  fmt.Fprintf(conn,mex+"\n")
+}
+
+// Sends a miniblock to a miner.
+func (self *Miner)sendMiniBlockUpdate(address string,mex string){
+  conn, err := net.Dial("tcp",address)
+  if err!=nil{ return }
+  fmt.Fprintf(conn,"miniblock\n")
   fmt.Fprintf(conn,mex+"\n")
 }

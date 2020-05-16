@@ -12,6 +12,7 @@ package blockchain
 
 import(
   "fmt"
+  "encoding/json"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/ga"
 )
@@ -104,11 +105,25 @@ func (self *MiniBlock)GetHashCached()string{
   return self.Hash
 }
 
+// Serializes the MiniBlock and returns it as []byte.
 func (self *MiniBlock)Serialize()[]byte{
-  return nil // TODO: implement later
+  data, err := json.Marshal(self)
+  if err != nil {
+    fmt.Println(err)
+  }
+  return data
 }
 
-// Builds a MiniBlock from its byte array.
+// Builds a MiniBlock from its serialization.
 func MarshalMiniBlock(data []byte)*MiniBlock{
-  return nil // TODO: implement later
+  var objmap map[string]json.RawMessage
+  json.Unmarshal(data, &objmap)
+  mb := new(MiniBlock)
+  json.Unmarshal(objmap["HashPrevBlock"],&mb.HashPrevBlock)
+  json.Unmarshal(objmap["Miner"],&mb.Miner)
+  json.Unmarshal(objmap["JobBlock"],&mb.JobBlock)
+  json.Unmarshal(objmap["JobTrans"],&mb.JobTrans)
+  json.Unmarshal(objmap["Hash"],&mb.Hash)
+  json.Unmarshal(objmap["Nonce"],&mb.Nonce)
+  return mb
 }
