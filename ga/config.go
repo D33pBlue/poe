@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: config.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-16
  * @Copyright: 2020
  */
 
@@ -13,7 +13,9 @@
 package ga
 
 import(
+  "fmt"
   "math/rand"
+  "encoding/binary"
 )
 
 // Config collect the execution parameters
@@ -29,6 +31,17 @@ type Config struct{
   Lambda int
   Verbose int
   BlockHash []byte
+  keepmining *bool
+}
+
+
+func BuildBlockchainGAConfig(hash []byte,keepmining *bool,step int)*Config{
+  fmt.Println("hash len:",len(hash))
+  x := int64(binary.BigEndian.Uint64(hash[:8]))
+  conf := RandConf(x,0,step)
+  conf.keepmining = keepmining
+  conf.BlockHash = hash
+  return conf
 }
 
 // Change the current block's hash (useful to

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-14
+ * @Last modified time: 2020-May-15
  * @Copyright: 2020
  */
 
@@ -59,6 +59,8 @@ func BuildFirstBlock(id utils.Addr)*Block{
   block.Hash = block.GetHash("")
   block.checked = false
   block.mined = true
+  // block.incomingMiniblock = make(chan *MiniBlock)
+  // block.minedMiniblock = make(chan *MiniBlock)
   return block
 }
 
@@ -78,18 +80,21 @@ func BuildBlock(id utils.Addr,prev *Block)*Block{
   block.Hash = block.GetHash("")
   block.checked = false
   block.mined = false
+  block.incomingMiniblock = make(chan *MiniBlock)
+  block.minedMiniblock = make(chan *MiniBlock)
   return block
 }
 
 // The function to call in order to start mining a block.
 // It should be called in a goroutine. If there are jobs,
 // this function calls mineWithJobs; otherwise mineNoJob.
-func (self *Block)Mine(keepmining *bool,executor *ga.Executor){
+// Miniblocks are sent to miniblockout whenever mined.
+func (self *Block)Mine(keepmining *bool,miniblockout chan MexBlock,executor *ga.Executor){
   self.mined = false
   if self.NumJobs==0{
     self.mineNoJob(keepmining)
   }else{
-    self.mineWithJobs(keepmining,executor)
+    self.mineWithJobs(keepmining,miniblockout,executor)
   }
 }
 
@@ -179,10 +184,16 @@ func MarshalBlock(data []byte)(*Block,string){
 
 // The mining process with jobs. Istantiate the right number of miniblocks
 // and call their mining method.
-func (self *Block)mineWithJobs(keepmining *bool,executor *ga.Executor){
+func (self *Block)mineWithJobs(keepmining *bool,
+          miniblockout chan MexBlock,executor *ga.Executor){
   // TODO: implement later
-  // create a keepmining variable for each miniblock
-  // and listen for miniblock also from other miners through a channel
+  // - create a keepmining variable for each miniblock,
+  // - create or retrieve jobs in executor,
+  // - initialize the miniblocks and start mining them,
+  // - listen for mined miniblock in return through minedMiniblock
+  // and propagate when received through miniblockout (except the last one),
+  // - listen also for miniblock from other miners through incomingMiniblock
+  // and eventually stop current miniblock's mining process.
 }
 
 // The mining process without jobs => PoW.
@@ -218,15 +229,16 @@ func (self *Block)AddTransaction(transact Transaction)error{
 }
 
 
-func (self *Block)AddMiniBlock(miniblock *MiniBlock)error{
-  self.access_data.Lock()
-  if self.mined{
-    self.access_data.Unlock()
-    return errors.New("Tried to add miniblock in block already mined")
-  }
-  // TODO: implement later
-  self.access_data.Unlock()
-  return nil
+func (self *Block)AddMiniBlock(miniblock *MiniBlock){//error{
+  // self.access_data.Lock()
+  // if self.mined{
+  //   self.access_data.Unlock()
+  //   return errors.New("Tried to add miniblock in block already mined")
+  // }
+  // // TODO: implement later
+  // self.access_data.Unlock()
+  // return nil
+  self.incomingMiniblock <- miniblock
 }
 
 // The CheckStep1 method checks the validity of the content of
@@ -419,6 +431,7 @@ func (self *Block)getJobsForThisBlock()[]*JobTransaction{
   }
   return jobs
 }
+
 
 func (self *Block)calculateNumJobs()int{
   return len(self.getJobsForThisBlock())

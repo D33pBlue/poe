@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-14
+ * @Last modified time: 2020-May-15
  * @Copyright: 2020
  */
 
@@ -157,7 +157,7 @@ func (self *Blockchain)GetBlock(hash string)*Block{
 func (self *Blockchain)Mine(){
   fmt.Println("Start mining")
   self.keepmining = true
-  self.Current.Mine(&self.keepmining,self.executor)
+  self.Current.Mine(&self.keepmining,self.internalMiniBlock,self.executor)
   // when mined, send blocks to internalBlock
   if self.keepmining == true{
     mex := new(MexBlock)

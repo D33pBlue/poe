@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: population.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-15
  * @Copyright: 2020
  */
 
@@ -38,11 +38,15 @@ func (a Population) Less(i, j int) bool {
   return Optimum(a[i].Fitness,a[j].Fitness)
 }
 
-func (pop Population)eval(blockHash []byte) Sol  {
+func (pop Population)eval(blockHash []byte,chNonce chan Sol) Sol  {
   st := op.MakeState(blockHash)
   best := pop[0]
   for i:=0;i<pop.Len();i++{
     pop[i].eval(st)
+    select{
+    case chNonce <- pop[i]:
+    default:
+    }
     if Optimum(pop[i].Fitness,best.Fitness){
       best = pop[i]
     }
