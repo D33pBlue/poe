@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: conf.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-10
+ * @Last modified time: 2020-May-16
  * @Copyright: 2020
  */
 
@@ -56,6 +56,13 @@ func (self *Config)GetKeyPath()string{
     return ""
   }
   return path
+}
+
+// Returns two paths, one to store the job and one to store its data.
+func (self *Config)GetSuitablePathForJob(hash string)(string,string){
+  jobPath := self.MainDataFolder+self.JobFolder+hash+".go"
+  dataPath := self.MainDataFolder+self.JobFolder+hash+"_data.json"
+  return jobPath,dataPath
 }
 
 func (self *Config)GetPublicKey()utils.Addr{

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-14
+ * @Last modified time: 2020-May-16
  * @Copyright: 2020
  */
 
@@ -35,6 +35,7 @@ type JobTransaction struct{
   Signature string
   spent bool // A job transaction is "spent" when closed
   fetched string
+  blockContainer string // setted in Block.getJobsForThisBlock, used in Block.mineWithJobs
 }
 
 // Builds a new JobTransaction and signs it. This method does not check

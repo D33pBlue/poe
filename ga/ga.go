@@ -103,7 +103,10 @@ func RunGA(dna DNA,conf *Config,chOut,chIn,chNonce chan Sol){
       }
       bestOfAll.Conf = *conf
       bestOfAll.Gen = epoch
-      chOut <- bestOfAll
+      select{
+      case chOut <- bestOfAll:
+      default:
+      }
       done := false
       for ;!done; {
         select{

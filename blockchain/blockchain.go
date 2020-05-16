@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-15
+ * @Last modified time: 2020-May-16
  * @Copyright: 2020
  */
 
@@ -21,6 +21,7 @@ import (
   "io/ioutil"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/ga"
+  "github.com/D33pBlue/poe/conf"
 )
 
 // match any type
@@ -64,12 +65,13 @@ type Blockchain struct{
   folder string
   currentTrChanges map[string]string
   executor *ga.Executor
+  config *conf.Config
 }
 
 // This method load a serialized blockchain from file.
 // (Each time a block is added to the blockchain, in fact, it is
 // saved in a file with its index as name).
-func LoadChainFromFolder(id utils.Addr,folder string)*Blockchain{
+func LoadChainFromFolder(id utils.Addr,folder string,config *conf.Config)*Blockchain{
   chain := new(Blockchain)
   chain.TransQueue = make(chan MexTrans)
   chain.BlockOut = make(chan MexBlock)
@@ -82,6 +84,8 @@ func LoadChainFromFolder(id utils.Addr,folder string)*Blockchain{
   chain.folder = folder
   chain.currentTrChanges = make(map[string]string)
   chain.Head = nil
+  chain.executor = ga.BuildExecutor()
+  chain.config = config
   var i int = 0
   fmt.Println("Loading chain from disk")
   for{
@@ -112,7 +116,7 @@ func LoadChainFromFolder(id utils.Addr,folder string)*Blockchain{
 
 // Create a new Blockchain (the first block) and initialize it.
 // This method also start mining by calling Mine() in a goroutine.
-func NewBlockchain(id utils.Addr,folder string)*Blockchain{
+func NewBlockchain(id utils.Addr,folder string,config *conf.Config)*Blockchain{
   chain := new(Blockchain)
   chain.TransQueue = make(chan MexTrans)
   chain.BlockOut = make(chan MexBlock)
@@ -123,6 +127,8 @@ func NewBlockchain(id utils.Addr,folder string)*Blockchain{
   chain.internalMiniBlock = make(chan MexBlock)
   chain.miningstatus = make(chan bool)
   chain.Head = BuildFirstBlock(id)
+  chain.executor = ga.BuildExecutor()
+  chain.config = config
   chain.folder = folder
   chain.currentTrChanges = make(map[string]string)
   var filename string = fmt.Sprintf("%v/block%v.json",chain.folder,chain.Head.LenSubChain)
@@ -157,7 +163,8 @@ func (self *Blockchain)GetBlock(hash string)*Block{
 func (self *Blockchain)Mine(){
   fmt.Println("Start mining")
   self.keepmining = true
-  self.Current.Mine(&self.keepmining,self.internalMiniBlock,self.executor)
+  self.Current.Mine(self.id,&self.keepmining,self.internalMiniBlock,
+    self.executor,self.config)
   // when mined, send blocks to internalBlock
   if self.keepmining == true{
     mex := new(MexBlock)
@@ -215,8 +222,14 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
         // propagate self mined miniblock to other miners
         // do not propagate the last one: it is already in the block
         self.MiniBlockOut <- mex
-      // case mex := <- self.MiniBlockIn:
-        // TODO: implement later
+      case mex := <- self.MiniBlockIn:
+        miniblock := MarshalMiniBlock(mex.Data)
+        if miniblock!=nil{
+          self.access_data.Lock()
+          block := self.Current
+          self.access_data.Unlock()
+          block.AddMiniBlock(miniblock)
+        }
     }
   }
 }

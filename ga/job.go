@@ -27,7 +27,7 @@ func BuildJob(jobpath,datapath string)*Job{
   job := new(Job)
   job.ChNonce = make(chan Sol,1000)
   job.ChUpdateIn = make(chan Sol,100)
-  job.ChUpdateOut = make(chan Sol, 10)
+  job.ChUpdateOut = make(chan Sol,100)
   // compile and load DNA
   var err error
   job.dna,err = LoadGA(jobpath,datapath)

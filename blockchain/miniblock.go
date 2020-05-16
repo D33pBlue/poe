@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miniblock.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-14
+ * @Last modified time: 2020-May-16
  * @Copyright: 2020
  */
 
@@ -27,14 +27,30 @@ type MiniBlock struct{
 }
 
 // Creates a new MiniBlock and initialize its channels.
-func BuildMiniBlock(chNonce chan ga.Sol)*MiniBlock{
-  return nil // TODO: implement later
+func BuildMiniBlock(hashPrev,hashJobBlock,hashJobTr string,
+      publicKey utils.Addr,chNonce chan ga.Sol)*MiniBlock{
+  miniblock := new(MiniBlock)
+  miniblock.HashPrevBlock = hashPrev
+  miniblock.Miner = publicKey
+  miniblock.JobBlock = hashJobBlock
+  miniblock.JobTrans = hashJobTr
+  miniblock.Nonce.candidates = chNonce
+  return miniblock
 }
 
 // When this miniblock is mined it is sent to chOut.
-// If stopMining==true the mining should stop and send nil to ch.
-func Mine(hardness int,stopMining bool,chOut chan *MiniBlock){
-  // TODO: implement later
+// If keepmining==false the mining should stop and send nil to ch.
+func (self *MiniBlock)Mine(hardness int,keepmining *bool,chOut chan *MiniBlock){
+  for {
+    if !(*keepmining){ break }
+    if self.checkHashPuzzle(hardness){ break }
+    self.Nonce.Next()
+  }
+  if (*keepmining){
+    chOut <- self
+  }else{
+    chOut <- nil
+  }
 }
 
 // Checks the validity of the hash of the nonce in relation
@@ -86,4 +102,13 @@ func (self *MiniBlock)GetHash()string{
 // Returns the cached hash of the MiniBlock.
 func (self *MiniBlock)GetHashCached()string{
   return self.Hash
+}
+
+func (self *MiniBlock)Serialize()[]byte{
+  return nil // TODO: implement later
+}
+
+// Builds a MiniBlock from its byte array.
+func MarshalMiniBlock(data []byte)*MiniBlock{
+  return nil // TODO: implement later
 }

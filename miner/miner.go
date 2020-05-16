@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-14
+ * @Last modified time: 2020-May-16
  * @Copyright: 2020
  */
 
@@ -50,9 +50,9 @@ func New(port string,id utils.Addr,config *conf.Config)*Miner{
 	if os.IsNotExist(err) {
 		errDir := os.MkdirAll(folder, 0755)
 		if errDir != nil {fmt.Println(errDir)}
-    miner.Chain = blockchain.NewBlockchain(id,folder)
+    miner.Chain = blockchain.NewBlockchain(id,folder,config)
 	}else{
-    miner.Chain = blockchain.LoadChainFromFolder(id,folder)
+    miner.Chain = blockchain.LoadChainFromFolder(id,folder,config)
   }
   miner.keepServing = false
   miner.addrch = make(chan string)
