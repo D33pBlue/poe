@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: poe.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-08
+ * @Last modified time: 2020-May-10
  * @Copyright: 2020
  */
 
@@ -16,41 +16,30 @@ import (
   "fmt"
   "flag"
   "bufio"
-  "io/ioutil"
   "strings"
-  // "strconv"
   "github.com/D33pBlue/poe/miner"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/conf"
 )
 
-func startMining(ip,port,keypath string){
-  var publicKey utils.Addr
-  if utils.FileExists(keypath){
-    data, err := ioutil.ReadFile(keypath)
-    if err!=nil{
-      fmt.Println(err)
-      return
-    }
-    pub,err2 := utils.LoadPublicKeyFromPemStr(data)
-    if err2!=nil {
-      fmt.Println(err2)
-      return
-    }
-    publicKey = utils.GetAddr2(pub)
-  }else{
-    fmt.Println("You need to link a valid public key file to start mining.")
-    fmt.Println("You can generate it with a client.")
-    return
-  }
+func startMining(config *conf.Config){
+  var publicKey utils.Addr = config.GetPublicKey()
   fmt.Println("Loaded public key:")
   fmt.Println(publicKey)
-  minerNode := miner.New(port,publicKey)
-  go minerNode.Serve()
+  var port string = config.GetPort()
+  minerNode := miner.New(port,publicKey,config)
+  go minerNode.Serve()// start serving in a goroutine
   fmt.Printf("\nStarted mining node at port %v\n\n",port)
+  // add linked miners and request updates
+  linkedMinersIp := config.GetLinkedMinersIp()
+  for i:=0;i<len(linkedMinersIp);i++{
+    processOnMining("node",[]string{linkedMinersIp[i]},minerNode)
+  }
+  // start a shell for user inputs
   startShell(processOnMining,minerNode)
 }
 
-
+// Maps user inputs to actions. This is a resolver.
 func processOnMining(cmd string,args []string,obj interface{})string{
   switch cmd {
   case "node":
@@ -71,15 +60,19 @@ func processOnMining(cmd string,args []string,obj interface{})string{
 func main()  {
   fmt.Println("\n\n---------------------------------------")
   fmt.Println("---- Proof of Evolution Blockchain ----\n")
-  ip := flag.String("ip", "127.0.0.1", "The IP address of the mining node")
-  port := flag.String("port","4242","The port where the mining node start listening.")
-  key := flag.String("key","","Path to the public key pem file")
+  configFile := flag.String("conf","conf/config0.json","path to the config file")
   flag.Parse()
-  startMining(*ip,*port,*key)
+  config,err := conf.LoadConfiguration(*configFile)
+  if err!=nil{
+    fmt.Println(err)
+    return
+  }
+  startMining(config)
 }
 
 type resolver func(string,[]string,interface{})string
 
+// Reads user inputs and calls a resolver to process them.
 func startShell(f resolver,obj interface{}){
   reader := bufio.NewReader(os.Stdin)
   fmt.Println("Accepting commands")

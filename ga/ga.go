@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: ga.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-16
  * @Copyright: 2020
  */
 
@@ -74,22 +74,27 @@ func offspring(pop Population,n int,pcross,pmut float64,prng *rand.Rand)(off Pop
 }
 
 // Defines the standard execution of a GA
-func RunGA(dna DNA,conf *Config,chOut,chIn chan Packet){// (Population,Sol) {
+func RunGA(dna DNA,conf *Config,chOut,chIn,chNonce chan Sol){
   if dna.HasToMinimize(){Optimum = Minimize
   }else{Optimum = Maximize}
   var prng *rand.Rand = rand.New(rand.NewSource(99))
   prng.Seed(conf.Miner)
   var population Population = generatePopulation(conf.NPop,dna,prng)
-  var bestOfAll Sol = population.eval(conf.BlockHash)
-  for epoch:=0; epoch<conf.Gen; epoch++{
+  var bestOfAll Sol = population.eval(conf.BlockHash,chNonce)
+  for epoch:=0; ;epoch++{
+    if conf.keepmining==nil{
+      if epoch>=conf.Gen{ break }
+    }else{
+      if !(*conf.keepmining){ break }
+    }
     population = selectStd(population,conf.Mu)
     population = offspring(population,conf.Lambda,conf.Pcross,conf.Pmut,prng)
     population.reset()
-    best := population.eval(conf.BlockHash)
+    best := population.eval(conf.BlockHash,chNonce)
     if Optimum(best.Fitness,bestOfAll.Fitness){
       bestOfAll = best
     }
-    if conf.Verbose==2 {
+    if conf.Verbose>=2 {
       fmt.Printf("[%d]gen %d best fit: %f\n",conf.Miner,epoch,best.Fitness)
     }
     if epoch%conf.Step==0{
@@ -98,23 +103,19 @@ func RunGA(dna DNA,conf *Config,chOut,chIn chan Packet){// (Population,Sol) {
       }
       bestOfAll.Conf = *conf
       bestOfAll.Gen = epoch
-      pk := new(Packet)
-      pk.Solution = bestOfAll
-      pk.End = false
-      chOut <- *pk
-      pk2 := <- chIn
-      for ii:=0;ii<len(pk2.Shared);ii++{
-        ss := pk2.Shared[ii]
-        ss.Conf = *conf
-        population = append(population,ss)
+      select{
+      case chOut <- bestOfAll:
+      default:
+      }
+      done := false
+      for ;!done; {
+        select{
+        case pk2 := <- chIn:
+          population = append(population,pk2)
+        default:
+          done = true
+        }
       }
     }
   }
-  // sort.Sort(population)
-  bestOfAll.Conf = *conf
-  bestOfAll.Gen = conf.Gen
-  pk := new(Packet)
-  pk.Solution = bestOfAll
-  pk.End = true
-  chOut <- *pk
 }

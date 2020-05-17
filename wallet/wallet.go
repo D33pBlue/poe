@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -15,7 +15,6 @@
 package wallet
 
 import (
-  // "os"
   "fmt"
   "sort"
   "net"
@@ -23,16 +22,23 @@ import (
   "bufio"
   "errors"
   "strconv"
-  // "encoding/hex"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/conf"
   . "github.com/D33pBlue/poe/blockchain"
 )
 
+// Used to keep track of the available transactions in Wallet.
 type WalletEntry struct{
   Value int
   Spendable TrInput
 }
 
+// A Wallet collects the spendable transactions and can
+// interoperate with a miner. It can:
+// - ask the total amount of money available
+// - create a standart transaction to send money
+// - create a job transaction to submit a job
+// - ask for the best found solutions of a job
 type Wallet struct{
   Id utils.Addr
   Key utils.Key
@@ -40,17 +46,20 @@ type Wallet struct{
   MinerTrusted bool
   Entries []WalletEntry // keep track of spendable transactions
   SeenBlocks []string // keep hashes of checked blocks
+  config *conf.Config
 }
 
 // Initializes a Wallet. If a non-empty path is given the public key
 // is loaded from file, otherwise a new public key is generated.
-func New(path,ip string,trust bool)*Wallet{
+func New(config *conf.Config,ip string,trust bool)*Wallet{
   wallet := new(Wallet)
   wallet.MinerIp = ip
+  wallet.config = config
   wallet.MinerTrusted = trust
   var err error
-  if path==""{
-    wallet.Key,err = generateKey()
+  var path string = config.GetKeyPath()
+  if config.Key==""{
+    wallet.Key,err = generateKey(config)
   }else{
     wallet.Key,err = loadKey(path)
   }
@@ -152,18 +161,23 @@ func (self *Wallet)GetTotal()string{
   return strconv.Itoa(total)
 }
 
+// SendMoney creates a StdTransaction, after checking
+// if the balance of the wallet is big enough, and sends
+// it to the miner.
 func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   total,err := strconv.Atoi(self.GetTotal())
   if err!=nil{return err}
   if total<amount{
     return errors.New("You does not have enough money")
   }
+  // sort the available Entries by value
   sort.SliceStable(self.Entries, func(i, j int) bool {
     return self.Entries[i].Value < self.Entries[j].Value
   })
   var inputs []TrInput
   var outputs []TrOutput
   var spending int = 0
+  // collects the entries to use up to the amount
   for i:=0;spending<amount;i++{
     inputs = append(inputs,self.Entries[i].Spendable)
     spending += self.Entries[i].Value
@@ -172,12 +186,14 @@ func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   out.Address = receiver
   out.Value = amount
   outputs = append(outputs,*out)
+  // send back the remainder
   if spending-amount>0{
     remainder := new(TrOutput)
     remainder.Address = self.Id
     remainder.Value = spending-amount
     outputs = append(outputs,*remainder)
   }
+  // create the transaction
   newTransact := MakeStdTransaction(
     self.Id,
     self.Key,
@@ -189,6 +205,7 @@ func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   if newTransact==nil{
     return errors.New("Error in StdTransaction creation")
   }
+  // send the transaction to the miner
   conn, err := net.Dial("tcp",self.MinerIp)
   if err!=nil{ return err }
   fmt.Fprintf(conn,"transaction\n")
@@ -198,26 +215,131 @@ func (self *Wallet)SendMoney(amount int,receiver utils.Addr)error{
   return nil
 }
 
-func (self *Wallet)SubmitJob(job string)error{
-  // TODO: implement later
+// Returns the fixed cost to submit the job and the advised prize
+func (self *Wallet)EstimateJobCost(jobPath,dataPath string)(int,int){
+  if len(jobPath)<=0 || !utils.FileExists(jobPath){
+    fmt.Println("You must set a valid path to the job file")
+    return -1,-1
+  }
+  // load job and data
+  var data []byte
+  job,err := ioutil.ReadFile(jobPath)
+  if err != nil {
+    fmt.Println(err)
+    return -1,-1
+  }
+  var datafromUrl bool = true
+  if len(dataPath)<4 || dataPath[:4]!="http"{
+    // dataPath is not url => load data from file
+    datafromUrl = false
+    if len(dataPath)>0{
+      data,err = ioutil.ReadFile(dataPath)
+      if err != nil {
+        fmt.Println(err)
+        return -1,-1
+      }
+    }
+  }else{
+    data = utils.FetchDataFromUrl(dataPath)
+  }
+  return GetJobFixedCost(fmt.Sprintf("%x",job),fmt.Sprintf("%x",data),datafromUrl),
+    GetJobMinPrize(fmt.Sprintf("%x",job),fmt.Sprintf("%x",data))
+}
+
+
+// SubmitJob creates a JobTransaction and
+// sends it to the miner. The job's code is loaded from file.
+// The job's data can be loaded from file or included by url.
+// If dataPath begins with "http" (like http://... or https://...)
+// it is considered a url; otherwise it is considered a local path.
+// TODO: consider DDOS attacks: the miner should check the content
+// of the url before accepting the transaction
+func (self *Wallet)SubmitJob(jobPath,dataPath string,prize int)error{
+  if len(jobPath)<=0 || !utils.FileExists(jobPath){
+    return errors.New("You must set a valid path to the job file")
+  }
+  // load job and data
+  var data []byte
+  job,err := ioutil.ReadFile(jobPath)
+  if err != nil { return err }
+  var datafromUrl bool = true
+  var dataurl string = dataPath
+  if len(dataPath)<4 || dataPath[:4]!="http"{
+    dataurl = ""
+    datafromUrl = false
+    // dataPath is not url => load data from file
+    if len(dataPath)>0{
+      data,err = ioutil.ReadFile(dataPath)
+      if err != nil { return err }
+    }
+  }else{
+    // dataPath is url => fetch data
+    data = utils.FetchDataFromUrl(dataurl)
+  }
+  blockStart,blockEnd := self.chooseWhenProcessJob()
+  // collect money
+  var amountToPay int = GetJobFixedCost(fmt.Sprintf("%x",job),
+                          fmt.Sprintf("%x",data),datafromUrl)+prize
+  total,err := strconv.Atoi(self.GetTotal())
+  if err!=nil{return err}
+  if total<amountToPay{
+    // fmt.Printf("You want to pay %v for a job that requires at least %v\n",total,amountToPay)
+    return errors.New("You does not have enough money")
+  }
+  // sort the available Entries by value
+  sort.SliceStable(self.Entries, func(i, j int) bool {
+    return self.Entries[i].Value < self.Entries[j].Value
+  })
+  var inputs []TrInput
+  var output TrOutput
+  var spending int = 0
+  // collects the entries to use up to the amount
+  for i:=0;spending<amountToPay;i++{
+    inputs = append(inputs,self.Entries[i].Spendable)
+    spending += self.Entries[i].Value
+  }
+  output.Address = self.Id
+  output.Value = spending-amountToPay
+  // build JobTransaction
+  if dataurl!=""{
+    // if the data is passed through url, clear data
+    // not to include it in the transaction.
+    data = nil
+  }
+  jobtr := MakeJobTransaction(
+    self.Id,self.Key,
+    inputs,output,
+    fmt.Sprintf("%x",job),fmt.Sprintf("%x",data),
+    dataurl,prize,
+    blockStart,blockEnd)
+  if jobtr==nil{ return errors.New("Unable to build JobTransaction") }
+  fmt.Println(jobtr.Output)
+  // send to miner
+  conn, err := net.Dial("tcp",self.MinerIp)
+  if err!=nil{ return err }
+  fmt.Fprintf(conn,"transaction\n")
+  fmt.Fprintf(conn,TrJob+"\n")
+  fmt.Fprintf(conn,string(jobtr.Serialize())+"\n")
+  fmt.Println("Sent transaction request to miner")
   return nil
 }
 
 // Generates a new couple of public and private keys, and stores
 // them in "./data/key<n>.pem" and "./data/key<n>.pem.priv".
-func generateKey()(utils.Key,error){
+func generateKey(config *conf.Config)(utils.Key,error){
   key,err := utils.GenerateKey()
   if err!=nil{ return nil,err }
   i := 0
-  for ;utils.FileExists("data/key"+strconv.Itoa(i)+".pem");i++{}
-  name := "data/key"+strconv.Itoa(i)+".pem"
+  for ;utils.FileExists(config.MainDataFolder+config.KeyFolder+"key"+strconv.Itoa(i)+".pem");i++{}
+  name := config.MainDataFolder+config.KeyFolder+"key"+strconv.Itoa(i)+".pem"
   err = ioutil.WriteFile(name,[]byte(utils.ExportPublicKeyAsPemStr(key)), 0644)
   if err!=nil{ return nil,err }
   err = ioutil.WriteFile(name+".priv",[]byte(utils.ExportPrivateKeyAsPemStr(key)), 0644)
   if err!=nil{
-    fmt.Println("Keys stored in "+name+" and "+name+".priv\n")
+    return key,err
   }
-  return key,err
+  fmt.Println("Keys stored in "+name+" and "+name+".priv\n")
+  return key,nil
 }
 
 // Loads from file a couple of public and private keys.
@@ -276,6 +398,8 @@ func (self *Wallet)checkReceivedBlocks(head,lastBlock *Block,lastHash string)err
   return nil
 }
 
+
+// Removes from Wallet.Entries an entry.
 func (self *Wallet)removeSpentTransaction(block,transact string,index int){
   var updatedSpedable []WalletEntry
   for i:=0;i<len(self.Entries);i++{
@@ -288,6 +412,7 @@ func (self *Wallet)removeSpentTransaction(block,transact string,index int){
   self.Entries = updatedSpedable
 }
 
+// Add an entry to Wallet.Entries.
 func (self *Wallet)addSpendableTransaction(block,transact string,index,value int){
   entry := new(WalletEntry)
   entry.Value = value
@@ -295,4 +420,29 @@ func (self *Wallet)addSpendableTransaction(block,transact string,index,value int
   entry.Spendable.ToSpend = transact
   entry.Spendable.Index = index
   self.Entries = append(self.Entries,*entry)
+}
+
+// Returns the numbers BlockStart and BlockEnd that determine when
+// the next job should be executed. These numbers are determined by
+// the current blockchain's status.
+func (self *Wallet)chooseWhenProcessJob()(int,int){
+  conn, err := net.Dial("tcp",self.MinerIp)
+  if err!=nil{
+    fmt.Println(err)
+    return 0,0
+  }
+  fmt.Fprintf(conn,"job_next_slot\n")
+  reader := bufio.NewReader(conn)
+  startbk,err4 := reader.ReadString('\n')
+  endbk,err5 := reader.ReadString('\n')
+  if err4!=nil || err5!=nil || len(startbk)<=0 || len(endbk)<=0 {
+    return 0,0
+  }
+  bk1,err2 := strconv.Atoi(startbk[:len(startbk)-1])
+  bk2,err3 := strconv.Atoi(endbk[:len(endbk)-1])
+  if err2!=nil || err3!=nil {
+    fmt.Println(err2,err3)
+    return 0,0
+  }
+  return bk1,bk2
 }

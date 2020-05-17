@@ -2,7 +2,7 @@
  * @Author: d33pblue
  * @Date:   2020-Apr-19
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-16
  * @Copyright: 2020
  */
 
@@ -16,6 +16,7 @@ import(
   "go/token"
   "go/parser"
   "errors"
+  "strings"
 )
 
 // Problem defines the interface the user has to
@@ -123,7 +124,13 @@ func compilePlugin(dir,name string)error{
 
 // Returns a DNA after checking and compiling
 // a user-defined plugin.
-func LoadGA(plugDir,plugName,path2data string)(DNA,error){
+func LoadGA(path2job,path2data string)(DNA,error){
+  index := strings.LastIndex(path2job,"/")
+  plugDir := path2job[:index+1]
+  plugName := path2job[index+1:]
+  index = strings.LastIndex(plugName,".")
+  plugName = plugName[:index]
+  fmt.Println(plugDir,plugName)
   err := compilePlugin(plugDir,plugName)
   if err != nil { return nil,err}
   plug, err := plugin.Open(plugDir+plugName+".so")

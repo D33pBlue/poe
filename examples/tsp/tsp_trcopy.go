@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: tsp.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-17
+ * @Last modified time: 2020-Apr-19
  * @Copyright: 2020
  */
 
@@ -138,17 +138,6 @@ func (self *TSP)DeepCopy() DNA{
 
 func (self *TSP)HasToMinimize() bool{
   return true
-}
-
-func (self *TSP)Serialize()[]byte{
-  data,_ := json.Marshal(self)
-  return data
-}
-
-func (self *TSP)LoadFromSerialization(data []byte){
-  var objmap map[string]json.RawMessage
-  json.Unmarshal(data, &objmap)
-  json.Unmarshal(objmap["Data"],&self.Data)
 }
 
 

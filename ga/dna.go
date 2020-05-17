@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: dna.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -26,4 +26,6 @@ type DNA interface {
   Evaluate(st *op.State) float64
   DeepCopy() DNA
   HasToMinimize() bool
+  Serialize()[]byte
+  LoadFromSerialization([]byte)
 }

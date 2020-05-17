@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -19,8 +19,12 @@ import(
   "encoding/json"
   "errors"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/ga"
+  "github.com/D33pBlue/poe/conf"
 )
 
+// The block struct models the blocks of the blockchain. Each block,
+// except the first one, is linked to a previous one.
 type Block struct{
   Previous *Block
   LenSubChain int
@@ -35,6 +39,8 @@ type Block struct{
   checked bool
   mined bool
   access_data sync.Mutex
+  jobs []*JobTransaction // cached list of jobs not ended
+  incomingMiniblock chan *MiniBlock // to receive a MiniBlock from others
 }
 
 // Build the first block of the chain.
@@ -53,10 +59,12 @@ func BuildFirstBlock(id utils.Addr)*Block{
   block.Hash = block.GetHash("")
   block.checked = false
   block.mined = true
+  // block.incomingMiniblock = make(chan *MiniBlock)
   return block
 }
 
-// Make a block (except the first one).
+// Make a new block (except the first one). This block needs
+// to be mined. While the block is not mined, it can accept transactions.
 func BuildBlock(id utils.Addr,prev *Block)*Block{
   block := new(Block)
   block.Previous = prev
@@ -71,21 +79,26 @@ func BuildBlock(id utils.Addr,prev *Block)*Block{
   block.Hash = block.GetHash("")
   block.checked = false
   block.mined = false
+  block.incomingMiniblock = make(chan *MiniBlock,10)
   return block
 }
 
-
-func (self *Block)Mine(keepmining *bool){
+// The function to call in order to start mining a block.
+// It should be called in a goroutine. If there are jobs,
+// this function calls mineWithJobs; otherwise mineNoJob.
+// Miniblocks are sent to miniblockout whenever mined.
+func (self *Block)Mine(id utils.Addr,keepmining *bool,
+      miniblockout chan MexBlock,executor *ga.Executor,config *conf.Config){
   self.mined = false
   if self.NumJobs==0{
     self.mineNoJob(keepmining)
   }else{
-    self.mineWithJobs(keepmining)
+    self.mineWithJobs(id,keepmining,miniblockout,executor,config)
   }
 }
 
-// Returns a block in the chain pointed by this block;
-// if there is no match, returns nil.
+// Returns a block in the chain pointed by this block,
+// searching with an hash as key; if there is no match, returns nil.
 func (self *Block)FindPrevBlock(hash string)*Block{
   block := self
   for{
@@ -99,7 +112,8 @@ func (self *Block)FindPrevBlock(hash string)*Block{
 }
 
 // TODO: improve efficiency
-// Returns (if exists) the transaction in this block with a hash, or nil
+// Returns (if exists) the transaction in this block with
+// a specific hash, or nil
 func (self *Block)FindTransaction(hash string)Transaction{
   transacts := self.Transactions.GetTransactionArray()
   for i:=0;i<len(transacts);i++{
@@ -110,6 +124,7 @@ func (self *Block)FindTransaction(hash string)Transaction{
   return nil
 }
 
+// Serializes the block returning a []byte
 func (self *Block)Serialize()[]byte{
   type Block2 struct{
     Previous string
@@ -143,7 +158,9 @@ func (self *Block)Serialize()[]byte{
   return data
 }
 
-// Returns a Block from json and the hash of the previous block
+// Returns a Block parsing the serialized json, and also
+// the hash of the previous block. The block is not linked to
+// the previous one.
 func MarshalBlock(data []byte)(*Block,string){
   var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
@@ -164,10 +181,100 @@ func MarshalBlock(data []byte)(*Block,string){
   return block,prev
 }
 
-func (self *Block)mineWithJobs(keepmining *bool){
-  // TODO: implement later
+// The mining process with jobs. Istantiate the right number of miniblocks
+// and call their mining method.
+func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
+          miniblockout chan MexBlock,executor *ga.Executor,config *conf.Config){
+  MBkeepaliveIndex := make(map[string]int)
+  var MBkeepalive []bool
+  MBminedChan := make(chan *MiniBlock)
+  jobtransactions := self.getJobsForThisBlock()
+  remaining := 0
+  for i:=0;i<len(jobtransactions);i++{
+    transact := jobtransactions[i]
+    hash := transact.GetHashCached()
+    // create or retrieve job channels through executor
+    var jobchs *ga.JobChannels
+    if executor.IsExecutingJob(hash){
+      jobchs = executor.GetChannels(hash)
+      executor.ChangeBlockHashInJob(hash,self.Previous.GetHashCached())
+    }else{
+      jobPath,dataPath := config.GetSuitablePathForJob(hash)
+      err := transact.SaveJobInFile(jobPath)
+      err2 := transact.SaveDataInFile(dataPath)
+      if err==nil && err2==nil{
+        jobchs = executor.StartJob(hash,string(id),jobPath,dataPath)
+      }else{
+        fmt.Println(err,err2)
+      }
+    }
+    if jobchs!=nil{
+      // create a keepmining variable for each miniblock
+      MBkeepaliveIndex[hash] = len(MBkeepalive)
+      MBkeepalive = append(MBkeepalive,true)
+      remaining += 1
+      // initialize the miniblocks and start mining them
+      miniblock := BuildMiniBlock(self.Previous.GetHashCached(),
+        transact.blockContainer,hash,id,jobchs.ChNonce)
+      go miniblock.Mine(self.Hardness,&MBkeepalive[MBkeepaliveIndex[hash]],MBminedChan)
+    }
+  }
+  // listen for mined miniblock in return through MBminedChan
+  // and propagate when received through miniblockout (except the last one),
+  // listen also for miniblock from other miners through incomingMiniblock
+  // and eventually stop current miniblock's mining process.
+  for {
+    // remaining is decreased each time a MiniBlock is mined by someone
+    if remaining<=0{
+      break
+    }
+    if !(*keepmining){
+      // stop all miniblock's mining processes
+      for i:=0;i<len(MBkeepalive);i++{
+        MBkeepalive[i] = false
+      }
+    }
+    select{
+    case mb := <- MBminedChan:
+      // insert miniblock and propagate through miniblockout
+      if mb!=nil{
+        if MBkeepalive[MBkeepaliveIndex[mb.JobTrans]]{
+          MBkeepalive[MBkeepaliveIndex[mb.JobTrans]] = false
+          self.storeMiniblockInBlock(mb)
+          if remaining>1{
+            // send the mined MiniBlocks to the others, but
+            // do not propagate the last MiniBlock: it is
+            // propagated with the full Block
+            mex := new(MexBlock)
+            mex.Data = mb.Serialize()
+            mex.IpSender = string(id)
+            miniblockout <- (*mex)
+          }else{
+            // last MiniBlock mined
+            self.access_data.Lock()
+            self.MerkleHash = self.Transactions.GetHash()
+            self.Hash = self.GetHash("")
+            self.mined = true
+            self.access_data.Unlock()
+          }
+        }
+      }
+      remaining -= 1
+    case mb := <- self.incomingMiniblock:
+      // insert miniblock and stop its mining
+      if index, ok := MBkeepaliveIndex[mb.JobTrans]; ok {
+        if MBkeepalive[index]{
+          MBkeepalive[index] = false
+          self.storeMiniblockInBlock(mb)
+        }
+      }
+    }
+  }
+  //
+  // where to stop jobs from executor when the slot expires??
 }
 
+// The mining process without jobs => PoW.
 func (self *Block)mineNoJob(keepmining *bool){
   for{
     if !(*keepmining) {break}
@@ -176,9 +283,9 @@ func (self *Block)mineNoJob(keepmining *bool){
     }
     self.access_data.Lock()
     self.NonceNoJob.Next()
+    self.MerkleHash = self.Transactions.GetHash()
     self.Hash = self.GetHash("")
     self.mined = self.checkNonceNoJob()
-    self.MerkleHash = self.Transactions.GetHash()
     self.access_data.Unlock()
   }
   fmt.Println("ckck",self.GetHash(""))
@@ -199,15 +306,24 @@ func (self *Block)AddTransaction(transact Transaction)error{
   return nil
 }
 
-func (self *Block)AddMiniBlock(miniblock *MiniBlock)error{
+
+func (self *Block)AddMiniBlock(miniblock *MiniBlock){
+  //
+  //
+  // check MiniBlock
+  //
+  //
+  self.incomingMiniblock <- miniblock
+}
+
+func (self *Block)storeMiniblockInBlock(miniblock *MiniBlock){
   self.access_data.Lock()
   if self.mined{
     self.access_data.Unlock()
-    return errors.New("Tried to add miniblock in block already mined")
+    return
   }
-  // TODO: implement later
+  self.MiniBlocks = append(self.MiniBlocks,*miniblock)
   self.access_data.Unlock()
-  return nil
 }
 
 // The CheckStep1 method checks the validity of the content of
@@ -228,7 +344,10 @@ func (self *Block)CheckStep1(hashPrev string)bool{
       fmt.Println("error in checkNonceNoJob")
       return false }
   }else if self.NumJobs>0{
-    if !self.checkNonceJobs() { return false }
+    if !self.checkNonceJobsStep1(hashPrev) {
+      fmt.Println("error in checkNonceJobsStep1")
+      return false
+    }
   }else{ return false }
   return true
 }
@@ -237,11 +356,17 @@ func (self *Block)CheckStep1(hashPrev string)bool{
 // among blocks and of the depending data.
 func (self *Block)CheckStep2(transactionChanges *map[string]string)bool{
   if self.checked { return true }
+  if self.NumJobs>0{
+    if !self.checkNonceJobsStep2(){
+      return false
+    }
+  }
   if !self.checkNumJobs() {
     fmt.Println("fail in num jobs")
     return false }
   if !self.checkHardness() {
     fmt.Println("fail hardness")
+    fmt.Println(self.GetBlockIndex(),self.Hardness,self.calculateHardness())
     return false }
   if self.LenSubChain>0{
     if self.Previous==nil {
@@ -261,6 +386,7 @@ func (self *Block)CheckStep2(transactionChanges *map[string]string)bool{
   return true
 }
 
+// Recalculates the hash of the block as hex string.
 func (self *Block)GetHash(hashPrev string)string{
   hb := new(utils.HashBuilder)
   hb.Add(self.Timestamp.Format("2006-01-02 15:04:05"))
@@ -286,31 +412,59 @@ func (self *Block)GetHash(hashPrev string)string{
   return fmt.Sprintf("%x",hash)
 }
 
+// Returns the cached hash of the block.
 func (self *Block)GetHashCached()string{
   return self.Hash
 }
 
+func (self *Block)GetBlockIndex()int{
+  return self.LenSubChain
+}
+
+// Checks if the nonce has the required number of 0 bits.
 func (self *Block)checkNonceNoJob()bool{
   hash := self.Hash
-  // fmt.Println(hash)
   for i:=0;i<self.Hardness;i++{
     if hash[i]!='0'{ return false }
   }
   return true
 }
 
-func (self *Block)checkNonceJobs()bool{
-  return true // TODO: implement later
+// Checks the validity of the hash of each miniblock (without
+// checking their job's solution score).
+func (self *Block)checkNonceJobsStep1(hashPrev string)bool{
+  for i:=0;i<len(self.MiniBlocks);i++{
+    if !self.MiniBlocks[i].CheckStep1(hashPrev,self.Hardness){
+      return false
+    }
+  }
+  return true
 }
 
+// Complete the check of the validity of each MiniBlock
+// evaluating the given solutions.
+func (self *Block)checkNonceJobsStep2()bool{
+  for i:=0;i<len(self.MiniBlocks);i++{
+    if !self.MiniBlocks[i].CheckStep2(self){
+      return false
+    }
+  }
+  return true
+}
+
+// Checks if the number of miniblocks (job executed)
+// is correct
 func (self *Block)checkNumJobs()bool{
-  return true // TODO: implement later
+  return self.calculateNumJobs()==self.NumJobs
 }
 
+// Checks if the Hardness in the block matches the real one,
+// recalculating it.
 func (self *Block)checkHardness()bool{
-  return true // TODO: implement later
+  return self.calculateHardness()==self.Hardness
 }
 
+// Checks the consistency of the merkle tree and the transactions.
 func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
   // check the Merkle tree hashes
   if !self.Transactions.Check(){
@@ -321,19 +475,73 @@ func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
   transactions := self.Transactions.GetTransactionArray()
   for i:=0;i<len(transactions);i++{
     if !transactions[i].Check(self,transactionChanges){
-      fmt.Printf("Invalid transaction %v",transactions[i])
       return false
     }
   }
   return true
 }
 
+// Returns the list of not ended jobs (JobTransaction)
+// that are stored in the chain starting from the previous block.
+func (self *Block)getOpenJobs()[]*JobTransaction{
+  if len(self.jobs)>0{
+    return self.jobs // cached information
+  }
+  if self.Previous == nil{ return nil }
+  // get the jobs from Previous.Previous
+  previous := self.Previous.getOpenJobs()
+  // add the ones of Previous
+  transacts := self.Previous.Transactions.GetTransactionArray()
+  hashcontainer := self.Previous.GetHashCached()
+  for i:=0;i<len(transacts);i++{
+    if transacts[i].GetType()==TrJob{
+      jobtr := transacts[i].(*JobTransaction)
+      jobtr.blockContainer = hashcontainer
+      previous = append(previous,jobtr)
+    }
+  }
+  // add the not ended ones to self.jobs
+  for i:=0;i<len(previous);i++{
+    _,end := previous[i].GetPeriod()
+    if end>=self.GetBlockIndex(){
+      self.jobs = append(self.jobs,previous[i])
+    }
+  }
+  return self.jobs
+}
+
+func (self *Block)getJobsForThisBlock()[]*JobTransaction{
+  jobtrans := self.getOpenJobs()
+  var jobs []*JobTransaction
+  for i:=0;i<len(jobtrans);i++{
+    start,end := jobtrans[i].GetPeriod()
+    index := self.GetBlockIndex()
+    if index>=start && index<=end{
+      jobs = append(jobs,jobtrans[i])
+    }
+  }
+  return jobs
+}
+
+
 func (self *Block)calculateNumJobs()int{
-  return 0 // TODO: implement later
+  return len(self.getJobsForThisBlock())
 }
 
 func (self *Block)calculateHardness()int{
-  return 6 // TODO: implement later
+  if self.GetBlockIndex()==0{
+    return 0
+  }
+  // TODO: tune with NumJobs, mining time and complexity
+  if self.calculateNumJobs()>0{
+    return 4
+  }
+  return 6
+}
+
+func (self *Block)NextSlotForJobExectution()(int,int){
+  index := self.GetBlockIndex()
+  return index+1,index+5 // TODO: tune with complexity and number of open jobs
 }
 
 // Returns the value in coin of mining that block.

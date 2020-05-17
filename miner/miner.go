@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -18,11 +18,15 @@ import(
   "bufio"
   "regexp"
   "strings"
+  "strconv"
   "errors"
   "github.com/D33pBlue/poe/utils"
+  "github.com/D33pBlue/poe/conf"
   "github.com/D33pBlue/poe/blockchain"
 )
 
+// The Miner struct is used to keep alive a mining node.
+// It stores the blockchain and the list of all connected miners.
 type Miner struct{
   Chain *blockchain.Blockchain
   Port string
@@ -31,30 +35,39 @@ type Miner struct{
   keepServing bool
   addrch chan string
   id utils.Addr
+  config *conf.Config
 }
 
-func New(port string,id utils.Addr)*Miner{
+// Create a new Miner. In order to start mining you have to
+// call miner.Serve() method (possibly in a goroutine).
+func New(port string,id utils.Addr,config *conf.Config)*Miner{
   miner := new(Miner)
   miner.Port = port
   miner.id = id
-  var folder string = fmt.Sprintf("data/chain%v",port)
+  miner.config = config
+  var folder string = config.GetChainFolder()//fmt.Sprintf("data/chain%v",port)
   // make dir if not exists
   _, err := os.Stat(folder)
 	if os.IsNotExist(err) {
 		errDir := os.MkdirAll(folder, 0755)
 		if errDir != nil {fmt.Println(errDir)}
-    miner.Chain = blockchain.NewBlockchain(id,folder)
+    miner.Chain = blockchain.NewBlockchain(id,folder,config)
 	}else{
-    miner.Chain = blockchain.LoadChainFromFolder(id,folder)
+    miner.Chain = blockchain.LoadChainFromFolder(id,folder,config)
   }
   miner.keepServing = false
   miner.addrch = make(chan string)
   return miner
 }
 
+// This is the main loop that keeps alive a mining node
+// and manages its connections calling handleConnection.
 func (self *Miner)Serve()  {
   stopPropagation := make(chan bool)
   stopMining := make(chan bool)
+  if self.Chain==nil{
+    fmt.Println("Fail loading chain")
+  }
   go self.Chain.Communicate(self.id,stopMining)
   go self.propagateMinedBlocks(stopPropagation)
   l,err := net.Listen("tcp",":"+self.Port)
@@ -79,6 +92,7 @@ func (self *Miner)Serve()  {
   }
 }
 
+// Returns the list of the addresses of linked miners
 func (self *Miner)GetConnected()[]string{
   self.connected_lock.Lock()
   var conn []string
@@ -89,6 +103,8 @@ func (self *Miner)GetConnected()[]string{
   return conn
 }
 
+// This functions can be used to connect the miner to
+// another one and update the blockchain with him.
 func (self *Miner)AddNode(ipaddress string)error{
   match, _ := regexp.MatchString("[0-9]+.[0-9]+.[0-9]+.[0-9]+:[0-9]+",ipaddress)
   if !match{ return errors.New(ipaddress+" is not a valid address")}
@@ -98,6 +114,7 @@ func (self *Miner)AddNode(ipaddress string)error{
   return nil
 }
 
+// Keeps track of the address of another miner if it is new.
 func (self *Miner)updateAddresses(conn net.Conn, port string){
   var ipaddress = fmt.Sprint(conn.RemoteAddr())
   ipaddress = ipaddress[:strings.Index(ipaddress,":")]+":"+port
@@ -116,6 +133,10 @@ func (self *Miner)updateAddresses(conn net.Conn, port string){
   self.connected_lock.Unlock()
 }
 
+
+// handleConnection is the main function for connections:
+// it reads a command from the socket and acts accordingly,
+// managing an open connection untill it is closed.
 func (self *Miner)handleConnection(conn net.Conn){
   reader := bufio.NewReader(conn)
   message, _ := reader.ReadString('\n')
@@ -167,11 +188,23 @@ func (self *Miner)handleConnection(conn net.Conn){
         self.Chain.TransQueue <- *mexTransaction
       }
     }
+  case "miniblock":
+    // send miniblock to self.Chain.MiniBlockIn
+    miniblock,err := reader.ReadString('\n')
+    if err==nil{
+      mexBlock := new(blockchain.MexBlock)
+      mexBlock.Data = []byte(miniblock)
+      self.Chain.MiniBlockIn <- *mexBlock
+    }
+  case "job_next_slot":
+    bk1,bk2 := self.Chain.GetNextSlotForJob()
+    conn.Write([]byte(strconv.Itoa(bk1)+"\n"))
+    conn.Write([]byte(strconv.Itoa(bk2)+"\n"))
   }
 }
 
-// ask to another miner his current blockchain
-// and send a MexBlock through self.Chain.BlockIn channel
+// Asks to another miner his current blockchain
+// and send a MexBlock through self.Chain.BlockIn channel.
 func (self *Miner)requestUpdate(ipaddress string)error{
   conn, err := net.Dial("tcp",ipaddress)
   if err!=nil{ return err }
@@ -191,6 +224,10 @@ func (self *Miner)requestUpdate(ipaddress string)error{
   return nil
 }
 
+// Whenever it receives from self.Chain.BlockOut a mined block,
+// this method sends the block to all the linked miners.
+// Also update the list of linked miners reading new IPs
+// from self.addrch channel.
 func (self *Miner)propagateMinedBlocks(close chan bool){
   for{
     select{
@@ -207,11 +244,19 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
           go self.sendBlockUpdate(self.Connected[i],string(blockMex.Data))
         }
         self.connected_lock.Unlock()
+      case mex := <-self.Chain.MiniBlockOut:
+        self.connected_lock.Lock()
+        for i:=0;i<len(self.Connected);i++{
+          fmt.Println("Send miniblock update to ",self.Connected[i])
+          go self.sendMiniBlockUpdate(self.Connected[i],string(mex.Data))
+        }
+        self.connected_lock.Unlock()
     }
   }
 }
 
 
+// Sends a message and wait for ack.
 func (self *Miner)sendMexAck(address,mex string)error{
   conn, err := net.Dial("tcp",address)
   if err!=nil{ return err }
@@ -226,10 +271,19 @@ func (self *Miner)sendMexAck(address,mex string)error{
   return nil
 }
 
+// Sends a block to a miner.
 func (self *Miner)sendBlockUpdate(address string,mex string){
   conn, err := net.Dial("tcp",address)
   if err!=nil{ return }
   fmt.Fprintf(conn,"chain\n")
   fmt.Fprintf(conn,self.Port+"\n")
+  fmt.Fprintf(conn,mex+"\n")
+}
+
+// Sends a miniblock to a miner.
+func (self *Miner)sendMiniBlockUpdate(address string,mex string){
+  conn, err := net.Dial("tcp",address)
+  if err!=nil{ return }
+  fmt.Fprintf(conn,"miniblock\n")
   fmt.Fprintf(conn,mex+"\n")
 }

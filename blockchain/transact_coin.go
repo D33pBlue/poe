@@ -17,6 +17,8 @@ import(
   "github.com/D33pBlue/poe/utils"
 )
 
+// A CoinTransaction is the transaction miners can use to earn some
+// money when they successfully complete the minig process.
 type CoinTransaction struct{
   Timestamp time.Time
   Output TrOutput
@@ -25,6 +27,7 @@ type CoinTransaction struct{
   spent bool
 }
 
+// Instantiates a new CoinTransaction.
 func MakeCoinTransaction(receiver utils.Addr,value int)(*CoinTransaction,error){
   tr := new(CoinTransaction)
   tr.Timestamp = time.Now()
@@ -38,22 +41,27 @@ func MakeCoinTransaction(receiver utils.Addr,value int)(*CoinTransaction,error){
   return tr,nil
 }
 
+
 func (self *CoinTransaction)Check(block *Block,trChanges *map[string]string)bool{
   return true // TODO: implement later
 }
 
+//Returns always the only TrOutput it stores.
 func (self* CoinTransaction)GetOutputAt(i int)*TrOutput{
   return &self.Output
 }
 
+// Returns the timestamp stored in the transaction.
 func (self *CoinTransaction)GetTimestamp()time.Time{
   return self.Timestamp
 }
 
+// Returns the public key of the creator of the transaction.
 func (self *CoinTransaction)GetCreator()utils.Addr{
   return self.Creator
 }
 
+// Recalculates the hash of the transaction.
 func (self *CoinTransaction)GetHash()string{
   hb := new(utils.HashBuilder)
   hb.Add(self.Timestamp.Format("2006-01-02 15:04:05"))
@@ -63,10 +71,12 @@ func (self *CoinTransaction)GetHash()string{
   return fmt.Sprintf("%x",hb.GetHash())
 }
 
+// Returns the cached hash of the transaction.
 func (self *CoinTransaction)GetHashCached()string{
   return self.Hash
 }
 
+// Serializes the transaction and returns it as []byte
 func (self *CoinTransaction)Serialize()[]byte{
   data, err := json.Marshal(self)
   if err != nil {
@@ -75,6 +85,7 @@ func (self *CoinTransaction)Serialize()[]byte{
   return data
 }
 
+// Rebuilds the CoinTransaction from its serialized data.
 func MarshalCoinTransaction(data []byte)*CoinTransaction{
   var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
