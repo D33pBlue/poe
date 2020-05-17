@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: nonce.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-14
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -15,7 +15,7 @@ import(
 )
 
 type Nonce struct{
-  Solution ga.DNA
+  Solution []byte //ga.DNA serialized
   Evaluation float64
   Complexity float64
   candidates chan ga.Sol // should be a buffered chan
@@ -24,7 +24,7 @@ type Nonce struct{
 // Reads a new Nonce from candidates and change the stored values.
 func (self *Nonce)Next(){
   result := <-self.candidates
-  self.Solution = result.Individual
+  self.Solution = result.Individual.Serialize()
   self.Evaluation = result.Fitness
   self.Complexity = result.Complex
 }
