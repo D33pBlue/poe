@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-14
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -283,6 +283,7 @@ func (self *Wallet)SubmitJob(jobPath,dataPath string,prize int)error{
   total,err := strconv.Atoi(self.GetTotal())
   if err!=nil{return err}
   if total<amountToPay{
+    // fmt.Printf("You want to pay %v for a job that requires at least %v\n",total,amountToPay)
     return errors.New("You does not have enough money")
   }
   // sort the available Entries by value
@@ -425,6 +426,23 @@ func (self *Wallet)addSpendableTransaction(block,transact string,index,value int
 // the next job should be executed. These numbers are determined by
 // the current blockchain's status.
 func (self *Wallet)chooseWhenProcessJob()(int,int){
-  // obtain current head and call NextSlotForJobExectution
-  return 0,0 // TODO: implement later
+  conn, err := net.Dial("tcp",self.MinerIp)
+  if err!=nil{
+    fmt.Println(err)
+    return 0,0
+  }
+  fmt.Fprintf(conn,"job_next_slot\n")
+  reader := bufio.NewReader(conn)
+  startbk,err4 := reader.ReadString('\n')
+  endbk,err5 := reader.ReadString('\n')
+  if err4!=nil || err5!=nil || len(startbk)<=0 || len(endbk)<=0 {
+    return 0,0
+  }
+  bk1,err2 := strconv.Atoi(startbk[:len(startbk)-1])
+  bk2,err3 := strconv.Atoi(endbk[:len(endbk)-1])
+  if err2!=nil || err3!=nil {
+    fmt.Println(err2,err3)
+    return 0,0
+  }
+  return bk1,bk2
 }

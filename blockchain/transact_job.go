@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -65,7 +65,7 @@ func MakeJobTransaction(creator utils.Addr,key utils.Key,
 // Returns the costs to store a job in the Blockchain, relative
 // to the amount of data and the use of external providers.
 func GetJobFixedCost(job,data string,url bool)int{
-  var jobcoeff float64 = 0.01
+  var jobcoeff float64 = 0.001
   var datacoeff float64 = jobcoeff*2
   var urlcoeff float64 = 0
   if url{
@@ -166,6 +166,8 @@ func (self *JobTransaction)Check(block *Block,trChanges *map[string]string)bool{
   bk1,bk2 := block.Previous.NextSlotForJobExectution()
   if bk1!=self.BlockStart || bk2!=self.BlockEnd{
     fmt.Println("Invalid execution slot")
+    fmt.Println(bk1,self.BlockStart)
+    fmt.Println(bk2,self.BlockEnd)
     return false
   }
   return true

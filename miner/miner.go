@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -18,6 +18,7 @@ import(
   "bufio"
   "regexp"
   "strings"
+  "strconv"
   "errors"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/conf"
@@ -64,6 +65,9 @@ func New(port string,id utils.Addr,config *conf.Config)*Miner{
 func (self *Miner)Serve()  {
   stopPropagation := make(chan bool)
   stopMining := make(chan bool)
+  if self.Chain==nil{
+    fmt.Println("Fail loading chain")
+  }
   go self.Chain.Communicate(self.id,stopMining)
   go self.propagateMinedBlocks(stopPropagation)
   l,err := net.Listen("tcp",":"+self.Port)
@@ -192,6 +196,10 @@ func (self *Miner)handleConnection(conn net.Conn){
       mexBlock.Data = []byte(miniblock)
       self.Chain.MiniBlockIn <- *mexBlock
     }
+  case "job_next_slot":
+    bk1,bk2 := self.Chain.GetNextSlotForJob()
+    conn.Write([]byte(strconv.Itoa(bk1)+"\n"))
+    conn.Write([]byte(strconv.Itoa(bk2)+"\n"))
   }
 }
 

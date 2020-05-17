@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -225,7 +225,9 @@ func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
   // and eventually stop current miniblock's mining process.
   for {
     // remaining is decreased each time a MiniBlock is mined by someone
-    if remaining<=0{ break }
+    if remaining<=0{
+      break
+    }
     if !(*keepmining){
       // stop all miniblock's mining processes
       for i:=0;i<len(MBkeepalive);i++{
@@ -247,6 +249,13 @@ func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
             mex.Data = mb.Serialize()
             mex.IpSender = string(id)
             miniblockout <- (*mex)
+          }else{
+            // last MiniBlock mined
+            self.access_data.Lock()
+            self.MerkleHash = self.Transactions.GetHash()
+            self.Hash = self.GetHash("")
+            self.mined = true
+            self.access_data.Unlock()
           }
         }
       }
@@ -274,9 +283,9 @@ func (self *Block)mineNoJob(keepmining *bool){
     }
     self.access_data.Lock()
     self.NonceNoJob.Next()
+    self.MerkleHash = self.Transactions.GetHash()
     self.Hash = self.GetHash("")
     self.mined = self.checkNonceNoJob()
-    self.MerkleHash = self.Transactions.GetHash()
     self.access_data.Unlock()
   }
   fmt.Println("ckck",self.GetHash(""))
@@ -335,7 +344,10 @@ func (self *Block)CheckStep1(hashPrev string)bool{
       fmt.Println("error in checkNonceNoJob")
       return false }
   }else if self.NumJobs>0{
-    if !self.checkNonceJobsStep1(hashPrev) { return false }
+    if !self.checkNonceJobsStep1(hashPrev) {
+      fmt.Println("error in checkNonceJobsStep1")
+      return false
+    }
   }else{ return false }
   return true
 }
@@ -520,7 +532,11 @@ func (self *Block)calculateHardness()int{
   if self.GetBlockIndex()==0{
     return 0
   }
-  return 6 // TODO: tune with NumJobs, mining time and complexity
+  // TODO: tune with NumJobs, mining time and complexity
+  if self.calculateNumJobs()>0{
+    return 4
+  }
+  return 6
 }
 
 func (self *Block)NextSlotForJobExectution()(int,int){

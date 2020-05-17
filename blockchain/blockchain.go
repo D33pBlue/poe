@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -92,11 +92,22 @@ func LoadChainFromFolder(id utils.Addr,folder string,config *conf.Config)*Blockc
     var filename string = fmt.Sprintf("%v/block%v.json",chain.folder,i)
     if !utils.FileExists(filename){break}
     data,err := ioutil.ReadFile(filename)
-    if err!=nil{return nil}
+    if err!=nil{
+      fmt.Println(err)
+      return nil
+    }
     b,hash := MarshalBlock(data)
-    if chain.Head!=nil && chain.Head.Hash!=hash{return nil}
+    if chain.Head!=nil && chain.Head.Hash!=hash{
+      fmt.Println("Chain head not match")
+      fmt.Println(chain.Head.Hash)
+      fmt.Println(hash)
+      return nil
+    }
     b.Previous = chain.Head
-    if !b.CheckStep1(hash){ return nil }
+    if !b.CheckStep1(hash){
+      fmt.Println("Fail in CheckStep1")
+      return nil
+    }
     chain.Head = b
     fmt.Printf("Loaded block %v\n",filename)
     i += 1
@@ -232,6 +243,13 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
         }
     }
   }
+}
+
+func (self *Blockchain)GetNextSlotForJob()(int,int){
+  self.access_data.Lock()
+  block := self.Head
+  self.access_data.Unlock()
+  return block.NextSlotForJobExectution()
 }
 
 // Called when mining process succeed to update the blockchain

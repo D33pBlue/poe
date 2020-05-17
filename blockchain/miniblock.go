@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miniblock.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-17
  * @Copyright: 2020
  */
 
@@ -60,17 +60,30 @@ func (self *MiniBlock)Mine(hardness int,keepmining *bool,chOut chan *MiniBlock){
 func (self *MiniBlock)CheckStep1(hashPrev string,hardness int)bool{
   // check the hash of the previous block
   if self.HashPrevBlock!=hashPrev{
+    fmt.Println("MiniBlock's HashPrevBlock does not match the hash")
+    fmt.Println(hashPrev)
+    fmt.Println(self.HashPrevBlock)
     return false
   }
   // check the hash of this block
   if self.GetHash()!=self.GetHashCached(){
+    fmt.Println("MiniBlock's stored hash is invalid")
+    fmt.Println(self.GetHashCached())
+    fmt.Println(self.GetHash())
     return false
   }
-  return self.checkHashPuzzle(hardness)
+  ckhard := self.checkHashPuzzle(hardness)
+  if !ckhard{
+    fmt.Println("Invalid MiniBlock's hardness")
+    return false
+  }
+  return true
 }
 
 // Given an hardness, checks the validity of the hash of this MiniBlock.
 func (self *MiniBlock)checkHashPuzzle(hardness int)bool {
+  self.Hash = self.GetHash()
+  // fmt.Println(self.Hash)
   for i:=0;i<hardness;i++{
     if self.Hash[i]!='0'{
       return false
@@ -97,6 +110,9 @@ func (self *MiniBlock)GetHash()string{
   hb.Add(self.Nonce.Evaluation)
   hb.Add(self.Nonce.Complexity)
   hash := hb.GetHash()
+  // fmt.Println("Nonce solution",self.Nonce.Solution)
+  // fmt.Println("Nonce evaluation",self.Nonce.Evaluation)
+  // fmt.Println("Nonce complexity",self.Nonce.Complexity)
   return fmt.Sprintf("%x",hash)
 }
 
