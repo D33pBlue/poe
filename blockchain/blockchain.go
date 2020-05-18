@@ -313,7 +313,9 @@ func (self *Blockchain)processIncomingBlock(block *Block,
     if replace{
       // stop mining
       self.keepmining = false
+      fmt.Println("keepmining:",self.keepmining)
       <-self.miningstatus // wait mining ending
+      fmt.Println("Mining ended!")
       // update the blockchain with the new
       self.storeCurrentBlockAndCreateNew(block,savingPoint,&transactionChanges)
       // restart mining

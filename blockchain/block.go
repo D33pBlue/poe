@@ -230,8 +230,10 @@ func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
     if remaining<=0{
       break
     }
+    // fmt.Println(*keepmining)
     if !(*keepmining){
       // stop all miniblock's mining processes
+      fmt.Println("Stopping all MBkeepalive")
       for i:=0;i<len(MBkeepalive);i++{
         MBkeepalive[i] = false
       }
@@ -270,8 +272,10 @@ func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
           self.storeMiniblockInBlock(mb)
         }
       }
+    default:
     }
   }
+  fmt.Println("End/stop mining (miniblocks)")
   //
   // where to stop jobs from executor when the slot expires??
 }
@@ -538,7 +542,7 @@ func (self *Block)calculateHardness()int{
   }
   // TODO: tune with NumJobs, mining time and complexity
   if self.calculateNumJobs()>0{
-    return 4
+    return 5
   }
   return 6
 }

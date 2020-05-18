@@ -44,7 +44,9 @@ func BuildMiniBlock(hashPrev,hashJobBlock,hashJobTr string,
 // If keepmining==false the mining should stop and send nil to ch.
 func (self *MiniBlock)Mine(hardness int,keepmining *bool,chOut chan *MiniBlock){
   for {
-    if !(*keepmining){ break }
+    if !(*keepmining){
+      fmt.Println("Miniblock stop mining")
+      break }
     if self.checkHashPuzzle(hardness){ break }
     self.Nonce.Next()
   }
