@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: solution.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-18
  * @Copyright: 2020
  */
 
@@ -25,6 +25,7 @@ type Sol struct{
   IsEval bool
   Conf Config
   Gen int
+  HashUsed []byte
 }
 
 func (self Sol)DeepCopy()Sol {
@@ -35,12 +36,14 @@ func (self Sol)DeepCopy()Sol {
   sol.IsEval = self.IsEval
   sol.Conf = self.Conf
   sol.Gen = self.Gen
+  sol.HashUsed = self.HashUsed
   return *sol
 }
 
-func (self *Sol)eval(st *op.State){
+func (self *Sol)eval(st *op.State,blockHash []byte){
   st.Reset()
   self.Fitness = self.Individual.Evaluate(st)
   self.Complex = st.NumOperations()
   self.IsEval = true
+  self.HashUsed = blockHash
 }

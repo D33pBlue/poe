@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-17
+ * @Last modified time: 2020-May-18
  * @Copyright: 2020
  */
 
@@ -114,7 +114,7 @@ func LoadChainFromFolder(id utils.Addr,folder string,config *conf.Config)*Blockc
   }
   fmt.Println("Checking loaded chain")
   trChanges := make(map[string]string)
-  if !chain.Head.CheckStep2(&trChanges){ return nil }
+  if !chain.Head.CheckStep2(&trChanges,chain.config){ return nil }
   fmt.Println("Initializing chain")
   chain.applyTransactionsChanges(&trChanges)
   chain.Current = BuildBlock(id,chain.Head)
@@ -304,7 +304,7 @@ func (self *Blockchain)processIncomingBlock(block *Block,
   }
   fmt.Println("chain has succeeded check step 1")
   transactionChanges := make(map[string]string)
-  if block.CheckStep2(&transactionChanges){// the the blockchain is valid
+  if block.CheckStep2(&transactionChanges,self.config){// the the blockchain is valid
     self.access_data.Lock()
     var replace bool = (block.LenSubChain>self.Head.LenSubChain)// || (
       // block.LenSubChain==self.Head.LenSubChain && block.NumJobs>self.Head.NumJobs))

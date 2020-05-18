@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: executor.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-18
  * @Copyright: 2020
  */
 
@@ -50,10 +50,11 @@ func (self *Executor)StopJob(job string){
 // with its definition and data. If the job runs correctly, this methos
 // returns a JobChannels with the channels to communicate with the job;
 // otherwise nil.
-func (self *Executor)StartJob(hash,publicKey,jobpath,datapath string)*JobChannels{
+func (self *Executor)StartJob(hash,hashPrev,publicKey,jobpath,datapath string)*JobChannels{
   job := BuildJob(jobpath,datapath)
   if job==nil{ return nil }
-  go job.Execute(hash,publicKey)
+  self.ActiveJobs[hash] = job
+  go job.Execute(hashPrev,publicKey)
   chs := new(JobChannels)
   chs.ChNonce = job.ChNonce
   chs.ChUpdateIn = job.ChUpdateIn
@@ -78,8 +79,11 @@ func (self *Executor)GetChannels(job string)*JobChannels{
 // Change the hash of the block in the job's execution configuration,
 // so that the coefficients for the complexity are updated.
 // The solutions in ChNonce channel are resetted.
-func (self *Executor)ChangeBlockHashInJob(job,hash string){
-  // TODO: implement later
+func (self *Executor)ChangeBlockHashInJob(job,hashPrev,publicKey string){
+  if self.IsExecutingJob(job){
+    executing := self.ActiveJobs[job]
+    executing.ChangeBlockHash(hashPrev,publicKey)
+  }
 }
 
 // Sends a good solution to an active job so that it can include it
@@ -89,13 +93,4 @@ func (self *Executor)InjectSharedSolution(job string,sol Sol){
   if chs!=nil{
     chs.ChUpdateIn <- sol
   }
-}
-
-// Returns the complete evaluation of a single solution candidate for
-// a job. Firstly, the job is built, then the solution evaluated with
-// miner's parameters, then the job is destryed and the evaluation returned.
-func EvaluateSingleSolution(hashBlock,publicKeyMiner,jobpath,datapath string,
-          indiv DNA)Sol{
-  var sol Sol
-  return sol// TODO: implement later
 }

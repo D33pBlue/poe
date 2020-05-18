@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: config.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-18
  * @Copyright: 2020
  */
 
@@ -14,6 +14,7 @@ package ga
 
 import(
   "fmt"
+  "sync"
   "math/rand"
   "encoding/binary"
 )
@@ -32,6 +33,7 @@ type Config struct{
   Verbose int
   BlockHash []byte
   keepmining *bool
+  access_hash sync.Mutex
 }
 
 
@@ -42,6 +44,22 @@ func BuildBlockchainGAConfig(hash []byte,keepmining *bool,step int)*Config{
   conf.keepmining = keepmining
   conf.BlockHash = hash
   return conf
+}
+
+func (self *Config)GetHash()[]byte{
+  self.access_hash.Lock()
+  var hash []byte
+  for i:=0;i<len(self.BlockHash);i++{
+    hash = append(hash,self.BlockHash[i])
+  }
+  self.access_hash.Unlock()
+  return hash
+}
+
+func (self *Config)ChangeHash(hash []byte){
+  self.access_hash.Lock()
+  self.BlockHash = hash
+  self.access_hash.Unlock()
 }
 
 // Change the current block's hash (useful to

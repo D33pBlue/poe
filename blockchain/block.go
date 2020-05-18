@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-17
+ * @Last modified time: 2020-May-18
  * @Copyright: 2020
  */
 
@@ -197,13 +197,15 @@ func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
     var jobchs *ga.JobChannels
     if executor.IsExecutingJob(hash){
       jobchs = executor.GetChannels(hash)
-      executor.ChangeBlockHashInJob(hash,self.Previous.GetHashCached())
+      executor.ChangeBlockHashInJob(hash,
+        self.Previous.GetHashCached(),string(id))
     }else{
       jobPath,dataPath := config.GetSuitablePathForJob(hash)
       err := transact.SaveJobInFile(jobPath)
       err2 := transact.SaveDataInFile(dataPath)
       if err==nil && err2==nil{
-        jobchs = executor.StartJob(hash,string(id),jobPath,dataPath)
+        jobchs = executor.StartJob(hash,
+          self.Previous.GetHashCached(),string(id),jobPath,dataPath)
       }else{
         fmt.Println(err,err2)
       }
@@ -354,10 +356,11 @@ func (self *Block)CheckStep1(hashPrev string)bool{
 
 // The CheckStep2 method checks the validity of the links
 // among blocks and of the depending data.
-func (self *Block)CheckStep2(transactionChanges *map[string]string)bool{
+func (self *Block)CheckStep2(transactionChanges *map[string]string,config *conf.Config)bool{
   if self.checked { return true }
   if self.NumJobs>0{
-    if !self.checkNonceJobsStep2(){
+    if !self.checkNonceJobsStep2(config){
+      fmt.Println("fail in checkNonceJobsStep2")
       return false
     }
   }
@@ -375,7 +378,7 @@ func (self *Block)CheckStep2(transactionChanges *map[string]string)bool{
     if self.Previous.LenSubChain!=self.LenSubChain-1 {
       fmt.Println("fail in LenSubChain")
       return false }
-    if !self.Previous.CheckStep2(transactionChanges){ return false } // TODO: remove recursion
+    if !self.Previous.CheckStep2(transactionChanges,config){ return false } // TODO: remove recursion
   }
   // transactions are checked only if the previous blocks are valid
   if !self.checkTransactions(transactionChanges) {
@@ -443,9 +446,10 @@ func (self *Block)checkNonceJobsStep1(hashPrev string)bool{
 
 // Complete the check of the validity of each MiniBlock
 // evaluating the given solutions.
-func (self *Block)checkNonceJobsStep2()bool{
+func (self *Block)checkNonceJobsStep2(config *conf.Config)bool{
   for i:=0;i<len(self.MiniBlocks);i++{
-    if !self.MiniBlocks[i].CheckStep2(self){
+    if !self.MiniBlocks[i].CheckStep2(self,config){
+      fmt.Printf("Error in miniblock in block %v\n",self.GetBlockIndex())
       return false
     }
   }

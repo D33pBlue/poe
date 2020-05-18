@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: ga.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-18
  * @Copyright: 2020
  */
 
@@ -80,7 +80,7 @@ func RunGA(dna DNA,conf *Config,chOut,chIn,chNonce chan Sol){
   var prng *rand.Rand = rand.New(rand.NewSource(99))
   prng.Seed(conf.Miner)
   var population Population = generatePopulation(conf.NPop,dna,prng)
-  var bestOfAll Sol = population.eval(conf.BlockHash,chNonce)
+  var bestOfAll Sol = population.eval(conf.GetHash(),chNonce)
   for epoch:=0; ;epoch++{
     if conf.keepmining==nil{
       if epoch>=conf.Gen{ break }
@@ -90,7 +90,7 @@ func RunGA(dna DNA,conf *Config,chOut,chIn,chNonce chan Sol){
     population = selectStd(population,conf.Mu)
     population = offspring(population,conf.Lambda,conf.Pcross,conf.Pmut,prng)
     population.reset()
-    best := population.eval(conf.BlockHash,chNonce)
+    best := population.eval(conf.GetHash(),chNonce)
     if Optimum(best.Fitness,bestOfAll.Fitness){
       bestOfAll = best
     }

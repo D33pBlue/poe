@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: utils.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-18
  * @Copyright: 2020
  */
 
@@ -38,9 +38,12 @@ func (self *HashBuilder)GetHash()([]byte){
 
 func CompareHashes(h1,h2 string)bool{
   return h1==h2
-  // if len(h1)!=len(h2){ return false }
-  // for i:=0;i<len(h1);i++{
-  //   if h1[i]!=h2[i]{ return false }
-  // }
-  // return true
+}
+
+func CompareSlices(h1,h2 []byte)bool{
+  if len(h1)!=len(h2){ return false }
+  for i:=0;i<len(h1);i++{
+    if h1[i]!=h2[i]{ return false }
+  }
+  return true
 }

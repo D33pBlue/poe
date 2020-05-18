@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miniblock.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-17
+ * @Last modified time: 2020-May-18
  * @Copyright: 2020
  */
 
@@ -15,6 +15,7 @@ import(
   "encoding/json"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/ga"
+  "github.com/D33pBlue/poe/conf"
 )
 
 type MiniBlock struct{
@@ -95,8 +96,49 @@ func (self *MiniBlock)checkHashPuzzle(hardness int)bool {
 // Complete the check evaluating the stored solution.
 // The block given must be the head of the complete chain in
 // order to load the JobTransaction.
-func (self *MiniBlock)CheckStep2(block *Block)bool{
-  return true // TODO: implement later
+func (self *MiniBlock)CheckStep2(block *Block,config *conf.Config)bool{
+  jobBlock := block.FindPrevBlock(self.JobBlock)
+  if jobBlock==nil{
+    fmt.Println("Unable to find the block with job transaction")
+    return false
+  }
+  transaction := jobBlock.FindTransaction(self.JobTrans)
+  if transaction==nil{
+    fmt.Println("Unable to find the job transaction")
+    return false
+  }
+  jobTr := transaction.(*JobTransaction)
+  jobPath,dataPath := config.GetSuitablePathForJob(self.JobTrans)
+  err := jobTr.SaveJobInFile(jobPath)
+  if err!=nil{
+    fmt.Println(err)
+    return false
+  }
+  err2 := jobTr.SaveDataInFile(dataPath)
+  if err2!=nil{
+    fmt.Println(err2)
+    return false
+  }
+  job := ga.BuildJob(jobPath,dataPath)
+  if job==nil{
+    fmt.Println("Unable to build job")
+    return false
+  }
+  sol := job.EvaluateSingleSolution(self.Nonce.Solution,
+    self.HashPrevBlock,string(self.Miner))
+  if sol==nil{
+    fmt.Println("Fail in executing the job to check the nonce")
+    return false
+  }
+  if self.Nonce.Evaluation != sol.Fitness {
+    fmt.Printf("Invalid fitness %v != %v\n",self.Nonce.Evaluation,sol.Fitness)
+    return false
+  }
+  if self.Nonce.Complexity != sol.Complex {
+    fmt.Printf("Invalid complexity %v != %v\n",self.Nonce.Complexity,sol.Complex)
+    return false
+  }
+  return true
 }
 
 // Recalculates and returns the hash of the MiniBlock.
