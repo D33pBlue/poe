@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: population.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-18
+ * @Last modified time: 2020-May-19
  * @Copyright: 2020
  */
 
@@ -29,6 +29,8 @@ func Minimize(s1,s2 float64) bool{
 
 var Optimum Comp = Minimize
 
+// A population is a set of solution candidates, and here is
+// represented as array of Sol.
 type Population []Sol
 
 func (a Population) Len() int { return len(a) }
@@ -38,6 +40,8 @@ func (a Population) Less(i, j int) bool {
   return Optimum(a[i].Fitness,a[j].Fitness)
 }
 
+// Evals the solution candidates of the population and
+// sends each evaluated one to the chNonce channel in input.
 func (pop Population)eval(blockHash []byte,chNonce chan Sol) Sol  {
   st := op.MakeState(blockHash)
   best := pop[0]
@@ -54,12 +58,14 @@ func (pop Population)eval(blockHash []byte,chNonce chan Sol) Sol  {
   return best
 }
 
+// Clears the fitness of the solutions in the population.
 func (self Population)reset(){
   for i:=0; i<self.Len(); i++{
     self[i].IsEval = false
   }
 }
 
+// Returns a deep copy instance of the whole population.
 func (self Population)DeepCopy()(pop Population){
   for i:=0;i<len(self);i++{
     pop = append(pop,self[i].DeepCopy())

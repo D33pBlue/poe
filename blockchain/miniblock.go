@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miniblock.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-18
+ * @Last modified time: 2020-May-19
  * @Copyright: 2020
  */
 
@@ -19,12 +19,12 @@ import(
 )
 
 type MiniBlock struct{
-  // JobTransaction
   HashPrevBlock string
   Miner utils.Addr
   JobBlock string // the hash of the block with the JobTransaction
   JobTrans string // the hash of the JobTransaction
   Hash string
+  // Hardness int // TODO: set custom hardness for each MiniBlock
   Nonce Nonce
 }
 
@@ -154,9 +154,6 @@ func (self *MiniBlock)GetHash()string{
   hb.Add(self.Nonce.Evaluation)
   hb.Add(self.Nonce.Complexity)
   hash := hb.GetHash()
-  // fmt.Println("Nonce solution",self.Nonce.Solution)
-  // fmt.Println("Nonce evaluation",self.Nonce.Evaluation)
-  // fmt.Println("Nonce complexity",self.Nonce.Complexity)
   return fmt.Sprintf("%x",hash)
 }
 
@@ -186,4 +183,12 @@ func MarshalMiniBlock(data []byte)*MiniBlock{
   json.Unmarshal(objmap["Hash"],&mb.Hash)
   json.Unmarshal(objmap["Nonce"],&mb.Nonce)
   return mb
+}
+
+func (self *MiniBlock)calculateHardness(targetHardness int)int{
+  return 0 // TODO: implement later
+}
+
+func (self *MiniBlock)calculateMiningValue()int{
+  return 0 // TODO: implement later
 }

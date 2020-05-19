@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: job.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-18
+ * @Last modified time: 2020-May-19
  * @Copyright: 2020
  */
 package ga
@@ -26,6 +26,8 @@ type Job struct{
   conf *Config
 }
 
+// Initialize a Job, loading its dna and data from file after
+// compiling a user-defined plugin.
 func BuildJob(jobpath,datapath string)*Job{
   // initialize the channels with buffers in order to made them async
   job := new(Job)
@@ -56,19 +58,23 @@ func (self *Job)Execute(hashPrev,publicKey string){
   RunGA(self.dna,self.conf,self.ChUpdateOut,self.ChUpdateIn,self.ChNonce)
 }
 
+// Change the hash used during the job execution to initialize
+// the coefficients of the operations, that are stored in the state.
 func (self *Job)ChangeBlockHash(hashPrev,publicKey string){
   hb := new(utils.HashBuilder)
   hb.Add(hashPrev)
   hb.Add(publicKey)
   hash := hb.GetHash()
   self.conf.ChangeHash(hash)
-  // clean ChNonce
+  // clean the channel ChNonce from Sol with old hash
   sol := <- self.ChNonce
   for ; (!utils.CompareSlices(sol.HashUsed,hash)) ;{
     sol = <-self.ChNonce
   }
 }
 
+// Builds a job and returns the evaluation of an individual,
+// without start executing the genetic algorithm.
 func (self *Job)EvaluateSingleSolution(individual []byte,
       hashPrev,publicKey string)*Sol{
   hb := new(utils.HashBuilder)

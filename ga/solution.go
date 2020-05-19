@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: solution.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-18
+ * @Last modified time: 2020-May-19
  * @Copyright: 2020
  */
 
@@ -28,6 +28,7 @@ type Sol struct{
   HashUsed []byte
 }
 
+// Returns a deep copy instance of a Sol
 func (self Sol)DeepCopy()Sol {
   sol := new(Sol)
   sol.Individual = self.Individual.DeepCopy()
@@ -40,7 +41,18 @@ func (self Sol)DeepCopy()Sol {
   return *sol
 }
 
+// Evaluates the individual stored in a Sol, saving its
+// Fitness and its Complexity. 
 func (self *Sol)eval(st *op.State,blockHash []byte){
+  st.Reset()
+  self.Fitness = self.Individual.Evaluate(st)
+  self.Complex = st.NumOperations()
+  self.IsEval = true
+  self.HashUsed = blockHash
+}
+
+// This method is used only for testing; please use eval to evaluate a Sol.
+func (self *Sol)Eval2(st *op.State,blockHash []byte){
   st.Reset()
   self.Fitness = self.Individual.Evaluate(st)
   self.Complex = st.NumOperations()

@@ -274,7 +274,6 @@ func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
       if index, ok := MBkeepaliveIndex[mb.JobTrans]; ok {
         if MBkeepalive[index]{
           MBkeepalive[index] = false
-
           fmt.Println("Storing incoming miniblock")
           self.storeMiniblockInBlock(mb)
         }
@@ -438,6 +437,7 @@ func (self *Block)GetHashCached()string{
   return self.Hash
 }
 
+// Returns the index of the current block in the entire Blockchain.
 func (self *Block)GetBlockIndex()int{
   return self.LenSubChain
 }
@@ -578,11 +578,14 @@ func (self *Block)getJobsForThisBlock()[]*JobTransaction{
   return jobs
 }
 
-
+// Returns the number of Jobs that has to be executed to
+// mine this block.
 func (self *Block)calculateNumJobs()int{
   return len(self.getJobsForThisBlock())
 }
 
+// Returns the target hardness of this block (number of 0 chars
+// at the beginning of the exadecimal hash of the block).
 func (self *Block)calculateHardness()int{
   if self.GetBlockIndex()==0{
     return 0
@@ -594,12 +597,15 @@ func (self *Block)calculateHardness()int{
   return 6
 }
 
+// Returns the slot in which the next job should execute.
+// The slot is made of the indexes of the block in which the
+// job should start, and the one in which it should end.
 func (self *Block)NextSlotForJobExectution()(int,int){
   index := self.GetBlockIndex()
   return index+1,index+5 // TODO: tune with complexity and number of open jobs
 }
 
-// Returns the value in coin of mining that block.
+// Returns the value in coin of mining this block.
 // This value depends on the hardness of the mining task.
 func (self *Block)calculateMiningValue()int{
   return (1+self.Hardness)*10 // TODO: tune with mining time
