@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-18
+ * @Last modified time: 2020-May-19
  * @Copyright: 2020
  */
 
@@ -239,7 +239,7 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
           self.access_data.Lock()
           block := self.Current
           self.access_data.Unlock()
-          block.AddMiniBlock(miniblock)
+          block.AddMiniBlock(miniblock,self.config)
         }
     }
   }

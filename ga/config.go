@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: config.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-18
+ * @Last modified time: 2020-May-19
  * @Copyright: 2020
  */
 
@@ -91,11 +91,11 @@ func RandConf(x int64,gen,step int)*Config{
   conf.Miner = x
   conf.Gen = gen
   conf.Step = step
-  conf.NPop = prng.Intn(600)+100
+  conf.NPop = prng.Intn(600)+200
   conf.Pcross = prng.Float64()+0.0001
   conf.Pmut = prng.Float64()+0.0001
-  conf.Mu = prng.Intn(350)+50
-  conf.Lambda = prng.Intn(350)+50
+  conf.Mu = prng.Intn(350)+100
+  conf.Lambda = prng.Intn(350)+100
   conf.Verbose = 1
   return conf
 }

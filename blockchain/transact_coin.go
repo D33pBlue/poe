@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-19
  * @Copyright: 2020
  */
 
@@ -41,9 +41,9 @@ func MakeCoinTransaction(receiver utils.Addr,value int)(*CoinTransaction,error){
   return tr,nil
 }
 
-
+// Returns always true because a CoinTransaction never spends money.
 func (self *CoinTransaction)Check(block *Block,trChanges *map[string]string)bool{
-  return true // TODO: implement later
+  return true
 }
 
 //Returns always the only TrOutput it stores.
