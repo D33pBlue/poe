@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miniblock.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-19
+ * @Last modified time: 2020-May-21
  * @Copyright: 2020
  */
 
@@ -12,6 +12,7 @@ package blockchain
 
 import(
   "fmt"
+  "math"
   "encoding/json"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/ga"
@@ -24,7 +25,7 @@ type MiniBlock struct{
   JobBlock string // the hash of the block with the JobTransaction
   JobTrans string // the hash of the JobTransaction
   Hash string
-  // Hardness int // TODO: set custom hardness for each MiniBlock
+  Hardness int // custom hardness tuned with job's complexity
   Nonce Nonce
 }
 
@@ -43,12 +44,14 @@ func BuildMiniBlock(hashPrev,hashJobBlock,hashJobTr string,
 // When this miniblock is mined it is sent to chOut.
 // If keepmining==false the mining should stop and send nil to ch.
 func (self *MiniBlock)Mine(hardness int,keepmining *bool,chOut chan *MiniBlock){
+  self.Hardness = hardness
   for {
     if !(*keepmining){
       fmt.Println("Miniblock stop mining")
       break }
-    if self.checkHashPuzzle(hardness){ break }
+    if self.checkHashPuzzle(self.Hardness){ break }
     self.Nonce.Next()
+    self.Hardness = self.calculateHardness(hardness,self.Nonce.Complexity)
   }
   if (*keepmining){
     chOut <- self
@@ -60,7 +63,7 @@ func (self *MiniBlock)Mine(hardness int,keepmining *bool,chOut chan *MiniBlock){
 // Checks the validity of the hash of the nonce in relation
 // to the hardness, but not the validity of the evaluation of the solution.
 // Also check if the hash of the previous block matches.
-func (self *MiniBlock)CheckStep1(hashPrev string,hardness int)bool{
+func (self *MiniBlock)CheckStep1(hashPrev string)bool{
   // check the hash of the previous block
   if self.HashPrevBlock!=hashPrev{
     fmt.Println("MiniBlock's HashPrevBlock does not match the hash")
@@ -75,9 +78,9 @@ func (self *MiniBlock)CheckStep1(hashPrev string,hardness int)bool{
     fmt.Println(self.GetHash())
     return false
   }
-  ckhard := self.checkHashPuzzle(hardness)
+  ckhard := self.checkHashPuzzle(self.Hardness)
   if !ckhard{
-    fmt.Println("Invalid MiniBlock's hardness")
+    fmt.Println("Invalid MiniBlock's hash puzzle")
     return false
   }
   return true
@@ -98,7 +101,7 @@ func (self *MiniBlock)checkHashPuzzle(hardness int)bool {
 // Complete the check evaluating the stored solution.
 // The block given must be the head of the complete chain in
 // order to load the JobTransaction.
-func (self *MiniBlock)CheckStep2(block *Block,config *conf.Config)bool{
+func (self *MiniBlock)CheckStep2(block *Block,hardness int,config *conf.Config)bool{
   jobBlock := block.FindPrevBlock(self.JobBlock)
   if jobBlock==nil{
     fmt.Println("Unable to find the block with job transaction")
@@ -140,6 +143,11 @@ func (self *MiniBlock)CheckStep2(block *Block,config *conf.Config)bool{
     fmt.Printf("Invalid complexity %v != %v\n",self.Nonce.Complexity,sol.Complex)
     return false
   }
+  if self.Hardness != self.calculateHardness(hardness,self.Nonce.Complexity){
+    fmt.Printf("Invalid hardness value %v != %v [%v]\n",
+      self.Hardness,self.calculateHardness(hardness,self.Nonce.Complexity),hardness)
+    return false
+  }
   return true
 }
 
@@ -150,6 +158,7 @@ func (self *MiniBlock)GetHash()string{
   hb.Add(self.Miner)
   hb.Add(self.JobBlock)
   hb.Add(self.JobTrans)
+  hb.Add(self.Hardness)
   hb.Add(self.Nonce.Solution)
   hb.Add(self.Nonce.Evaluation)
   hb.Add(self.Nonce.Complexity)
@@ -178,6 +187,7 @@ func MarshalMiniBlock(data []byte)*MiniBlock{
   mb := new(MiniBlock)
   json.Unmarshal(objmap["HashPrevBlock"],&mb.HashPrevBlock)
   json.Unmarshal(objmap["Miner"],&mb.Miner)
+  json.Unmarshal(objmap["Hardness"],&mb.Hardness)
   json.Unmarshal(objmap["JobBlock"],&mb.JobBlock)
   json.Unmarshal(objmap["JobTrans"],&mb.JobTrans)
   json.Unmarshal(objmap["Hash"],&mb.Hash)
@@ -185,10 +195,8 @@ func MarshalMiniBlock(data []byte)*MiniBlock{
   return mb
 }
 
-func (self *MiniBlock)calculateHardness(targetHardness int)int{
-  return 0 // TODO: implement later
-}
-
-func (self *MiniBlock)calculateMiningValue()int{
-  return 0 // TODO: implement later
+func (self *MiniBlock)calculateHardness(targetHardness int,complexity float64)int{
+  // should be y ~ k-log16((w+x)/w)
+  // but w is approximated with 21 (sperimental mean value)
+  return targetHardness-int(math.Round(math.Log((21.0+complexity)/21.0)/math.Log(16.0)))
 }

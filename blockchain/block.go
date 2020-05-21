@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-19
+ * @Last modified time: 2020-May-21
  * @Copyright: 2020
  */
 
@@ -321,11 +321,11 @@ func (self *Block)AddTransaction(transact Transaction)error{
 
 func (self *Block)AddMiniBlock(miniblock *MiniBlock,config *conf.Config){
   // check MiniBlock
-  if !miniblock.CheckStep1(self.Previous.Hash,self.Hardness){
+  if !miniblock.CheckStep1(self.Previous.Hash){
     fmt.Println("Miniblock does not pass CheckStep1")
     return
   }
-  if !miniblock.CheckStep2(self,config){
+  if !miniblock.CheckStep2(self,self.Hardness,config){
     fmt.Printf("Error in miniblock in block %v\n",self.GetBlockIndex())
     return
   }
@@ -455,7 +455,7 @@ func (self *Block)checkNonceNoJob()bool{
 // checking their job's solution score).
 func (self *Block)checkNonceJobsStep1(hashPrev string)bool{
   for i:=0;i<len(self.MiniBlocks);i++{
-    if !self.MiniBlocks[i].CheckStep1(hashPrev,self.Hardness){
+    if !self.MiniBlocks[i].CheckStep1(hashPrev){
       return false
     }
   }
@@ -466,7 +466,7 @@ func (self *Block)checkNonceJobsStep1(hashPrev string)bool{
 // evaluating the given solutions.
 func (self *Block)checkNonceJobsStep2(config *conf.Config)bool{
   for i:=0;i<len(self.MiniBlocks);i++{
-    if !self.MiniBlocks[i].CheckStep2(self,config){
+    if !self.MiniBlocks[i].CheckStep2(self,self.Hardness,config){
       fmt.Printf("Error in miniblock in block %v\n",self.GetBlockIndex())
       return false
     }
@@ -586,14 +586,13 @@ func (self *Block)calculateNumJobs()int{
 
 // Returns the target hardness of this block (number of 0 chars
 // at the beginning of the exadecimal hash of the block).
+// This hardness is the one used in PoW, and has to be adjusted in
+// MiniBlocks in according with the complexity of the job in use.
 func (self *Block)calculateHardness()int{
   if self.GetBlockIndex()==0{
     return 0
   }
-  // TODO: tune with NumJobs, mining time and complexity
-  if self.calculateNumJobs()>0{
-    return 5
-  }
+  // TODO: tune with mining time
   return 6
 }
 
@@ -605,7 +604,7 @@ func (self *Block)NextSlotForJobExectution()(int,int){
   return index+1,index+5 // TODO: tune with complexity and number of open jobs
 }
 
-// Returns the value in coin of mining this block.
+// Returns the value in coin of mining this block/miniblock.
 // This value depends on the hardness of the mining task.
 func (self *Block)calculateMiningValue()int{
   return (1+self.Hardness)*10 // TODO: tune with mining time

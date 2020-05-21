@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-17
+ * @Last modified time: 2020-May-21
  * @Copyright: 2020
  */
 
@@ -137,8 +137,22 @@ func (self *Wallet)Update()error {
             coinTr.GetHashCached(),
             0,coinTr.Output.Value)
         }
-      // case TrJob:
-        // ...
+      case TrJob:
+        jobTr := transactions[j].(*JobTransaction)
+        if jobTr.GetCreator()==self.Id{
+          for k:=0;k<len(jobTr.Inputs);k++{
+            self.removeSpentTransaction(
+              jobTr.Inputs[k].Block,
+              jobTr.Inputs[k].ToSpend,
+              jobTr.Inputs[k].Index)
+          }
+        }
+        if jobTr.Output.Address==self.Id{
+          self.addSpendableTransaction(
+              unseenBlocks[i].GetHashCached(),
+              jobTr.GetHashCached(),
+              0,jobTr.Output.Value)
+        }
       }
     }
   }

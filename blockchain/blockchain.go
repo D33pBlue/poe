@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-19
+ * @Last modified time: 2020-May-21
  * @Copyright: 2020
  */
 
@@ -18,6 +18,7 @@ import (
   "bufio"
   "strconv"
   "strings"
+  "errors"
   "io/ioutil"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/ga"
@@ -361,14 +362,28 @@ func (self *Blockchain)processIncomingTransaction(transaction Transaction) {
   if transaction.Check(self.Current,&trChanges){
     self.access_data.Lock()
     defer self.access_data.Unlock()
-    err := self.Current.AddTransaction(transaction)
-    if err!=nil{
-      fmt.Println(err)
-    }else{
-      fmt.Println("Transaction inserted in current block")
-      for k,v := range trChanges{
-        self.currentTrChanges[k] = v
+    // check double spending in current unmined block
+    var errDS error = nil
+    for k,_ := range trChanges{
+      if v2,ok := self.currentTrChanges[k]; ok{
+        if v2!=""{
+          errDS = errors.New("Double spending 3")
+          break
+        }
       }
+    }
+    if errDS==nil{
+      err := self.Current.AddTransaction(transaction)
+      if err!=nil{
+        fmt.Println(err)
+      }else{
+        fmt.Println("Transaction inserted in current block")
+        for k,v := range trChanges{
+          self.currentTrChanges[k] = v
+        }
+      }
+    }else{
+      fmt.Println(errDS)
     }
   }else{
     fmt.Println("Transaction not pass check")
