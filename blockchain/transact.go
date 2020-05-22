@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: transaction.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-09
+ * @Last modified time: 2020-May-22
  * @Copyright: 2020
  */
 
@@ -32,7 +32,6 @@ type Transaction interface{
   Check(block *Block,trChanges *map[string]string)bool
   GetHash()string
   GetHashCached()string
-  // GetSignature()string
   GetCreator()utils.Addr
   GetTimestamp()time.Time
   GetType()string

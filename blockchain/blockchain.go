@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-21
+ * @Last modified time: 2020-May-22
  * @Copyright: 2020
  */
 
@@ -220,10 +220,10 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
           transact = MarshalStdTransaction(mex.Data)
         case TrJob:
           transact = MarshalJobTransaction(mex.Data)
-        // case TrSol:
-          // transact = MarshalSolTransaction(mex.Data)
-        // case TrRes:
-          // transact = MarshalResTransaction(mex.Data)
+        case TrSol:
+          transact = MarshalSolTransaction(mex.Data)
+        case TrRes:
+          transact = MarshalResTransaction(mex.Data)
         default:
           transact = nil
         }
