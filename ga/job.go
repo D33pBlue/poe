@@ -56,7 +56,7 @@ func (self *Job)Execute(hashPrev,publicKey string){
   hb.Add(hashPrev)
   hb.Add(publicKey)
   hash := hb.GetHash()
-  self.conf = BuildBlockchainGAConfig(hash,&self.KeepRunning,100)
+  self.conf = BuildBlockchainGAConfig(hash,&self.KeepRunning,500)
   RunGA(self.dna,self.conf,self.ChUpdateOut,self.ChUpdateIn,self.ChNonce,self.jobHash)
 }
 

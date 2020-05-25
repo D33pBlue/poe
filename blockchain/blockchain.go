@@ -367,6 +367,7 @@ func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block,
 // The solutions should be stored in self.solutionToShare.
 // At the same time, checks if there are some shared solutions others
 // disclosed, and adds them in the population of the job.
+// This method is called inside self.access_data.Lock().
 func (self *Blockchain)discloseDeclaredSolutionsAndIntegrateShared(){
   // TODO: implement later
   // loop through all transactions in Head and:
@@ -387,7 +388,26 @@ func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
 // stops their execution and clears the executor.
 // This method is called inside self.access_data.Lock().
 func (self *Blockchain)checkJobsToClose(){
-  // TODO: implement later
+  oldJobs := self.Head.getOpenJobs() // Jobs that was open in the previous block
+  jobs := self.Current.getOpenJobs() // Jobs that are open in the current block
+  // find the jobs that need to be stopped:
+  var toClose []*JobTransaction
+  for i:=0;i<len(oldJobs);i++{
+    var ended bool = true
+    for j:=0;j<len(jobs);j++{
+      if oldJobs[i].GetHashCached()==jobs[j].GetHashCached(){
+        ended = false
+        break
+      }
+    }
+    if ended{
+      toClose = append(toClose,oldJobs[i])
+    }
+  }
+  // stop them
+  for i:=0;i<len(toClose);i++{
+    self.executor.StopJob(toClose[i].GetHashCached())
+  }
 }
 
 // Checks the validity of a new transaction and insert it
