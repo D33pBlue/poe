@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-17
+ * @Last modified time: 2020-May-23
  * @Copyright: 2020
  */
 
@@ -34,7 +34,6 @@ type JobTransaction struct{
   Prize int
   Hash string
   Signature string
-  spent bool // A job transaction is "spent" when closed
   fetched string
   blockContainer string // setted in Block.getJobsForThisBlock, used in Block.mineWithJobs
 }
@@ -58,7 +57,6 @@ func MakeJobTransaction(creator utils.Addr,key utils.Key,
   tr.Output = out
   tr.Hash = tr.GetHash()
   tr.Signature = fmt.Sprintf("%x",utils.GetSignatureFromHash(tr.Hash,key))
-  tr.spent = false
  return tr
 }
 
@@ -272,7 +270,6 @@ func MarshalJobTransaction(data []byte)*JobTransaction{
   json.Unmarshal(objmap["Creator"],&tr.Creator)
   json.Unmarshal(objmap["Hash"],&tr.Hash)
   json.Unmarshal(objmap["Signature"],&tr.Signature)
-  tr.spent = false
   return tr
 }
 

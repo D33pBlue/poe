@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-21
+ * @Last modified time: 2020-May-23
  * @Copyright: 2020
  */
 
@@ -153,6 +153,10 @@ func (self *Wallet)Update()error {
               jobTr.GetHashCached(),
               0,jobTr.Output.Value)
         }
+      // case TrSol:
+        // TODO: implement later
+      // case TrRes:
+        // TODO: implement later
       }
     }
   }

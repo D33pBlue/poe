@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-22
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -40,6 +40,12 @@ type MexBlock struct{
   IpSender string
 }
 
+// used to manage the publication of good solutions for a job
+type GoodSolution struct{
+  Solution []byte // the solution to disclose in a SolTransaction when is time
+  HashSol string // hash of the solution that you declared in a ResTransaction
+}
+
 // The blockchain has
 // - a reference to the head block,
 // - a current block that has to be mined before being inserted
@@ -67,6 +73,8 @@ type Blockchain struct{
   currentTrChanges map[string]string
   executor *ga.Executor
   config *conf.Config
+  solutionToShare []GoodSolution // has to be updated at least at each new block
+  chGoodSolutions chan ga.Sol // channel to receive good solutions from Executor.
 }
 
 // This method load a serialized blockchain from file.

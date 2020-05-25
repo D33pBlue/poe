@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-19
+ * @Last modified time: 2020-May-23
  * @Copyright: 2020
  */
 
@@ -24,7 +24,6 @@ type CoinTransaction struct{
   Output TrOutput
   Creator utils.Addr
   Hash string
-  spent bool
 }
 
 // Instantiates a new CoinTransaction.
@@ -37,7 +36,6 @@ func MakeCoinTransaction(receiver utils.Addr,value int)(*CoinTransaction,error){
   tr.Output = *out
   tr.Creator = receiver
   tr.Hash = tr.GetHash()
-  tr.spent = false
   return tr,nil
 }
 
@@ -94,7 +92,6 @@ func MarshalCoinTransaction(data []byte)*CoinTransaction{
   json.Unmarshal(objmap["Output"],&tr.Output)
   json.Unmarshal(objmap["Hash"],&tr.Hash)
   json.Unmarshal(objmap["Creator"],&tr.Creator)
-  tr.spent = false
   return tr
 }
 

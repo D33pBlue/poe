@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-21
+ * @Last modified time: 2020-May-24
  * @Copyright: 2020
  */
 
@@ -59,7 +59,6 @@ func BuildFirstBlock(id utils.Addr)*Block{
   block.Hash = block.GetHash("")
   block.checked = false
   block.mined = true
-  // block.incomingMiniblock = make(chan *MiniBlock)
   return block
 }
 
