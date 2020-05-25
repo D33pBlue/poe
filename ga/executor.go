@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: executor.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-18
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -13,18 +13,19 @@ package ga
 type JobChannels struct{
   ChNonce chan Sol // used to send nonce candidates
   ChUpdateIn chan Sol // used to receive shared solutions from miners
-  ChUpdateOut chan Sol // used to share good solutions to miners
 }
 
 type Executor struct{
   ActiveJobs map[string]*Job // the key is the hash of the JobTransaction
                             // in which the job is defined
+  ChUpdateOut chan Sol
 }
 
 // Builds and initialize an Executor
-func BuildExecutor()*Executor{
+func BuildExecutor(chUpdateOut chan Sol)*Executor{
   executor := new(Executor)
   executor.ActiveJobs = make(map[string]*Job)
+  executor.ChUpdateOut = chUpdateOut
   return executor
 }
 
@@ -50,15 +51,15 @@ func (self *Executor)StopJob(job string){
 // with its definition and data. If the job runs correctly, this methos
 // returns a JobChannels with the channels to communicate with the job;
 // otherwise nil.
-func (self *Executor)StartJob(hash,hashPrev,publicKey,jobpath,datapath string)*JobChannels{
-  job := BuildJob(jobpath,datapath)
+func (self *Executor)StartJob(hash,hashPrev,publicKey,
+      jobpath,datapath string)*JobChannels{
+  job := BuildJob(jobpath,datapath,self.ChUpdateOut,hash)
   if job==nil{ return nil }
   self.ActiveJobs[hash] = job
   go job.Execute(hashPrev,publicKey)
   chs := new(JobChannels)
   chs.ChNonce = job.ChNonce
   chs.ChUpdateIn = job.ChUpdateIn
-  chs.ChUpdateOut = job.ChUpdateOut
   return chs
 }
 
@@ -70,7 +71,6 @@ func (self *Executor)GetChannels(job string)*JobChannels{
     chs := new(JobChannels)
     chs.ChNonce = executing.ChNonce
     chs.ChUpdateIn = executing.ChUpdateIn
-    chs.ChUpdateOut = executing.ChUpdateOut
     return chs
   }
   return nil

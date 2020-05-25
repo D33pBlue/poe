@@ -40,12 +40,6 @@ type MexBlock struct{
   IpSender string
 }
 
-// used to manage the publication of good solutions for a job
-type GoodSolution struct{
-  Solution []byte // the solution to disclose in a SolTransaction when is time
-  HashSol string // hash of the solution that you declared in a ResTransaction
-}
-
 // The blockchain has
 // - a reference to the head block,
 // - a current block that has to be mined before being inserted
@@ -73,7 +67,7 @@ type Blockchain struct{
   currentTrChanges map[string]string
   executor *ga.Executor
   config *conf.Config
-  solutionToShare []GoodSolution // has to be updated at least at each new block
+  solutionToShare map[string]([]byte) // map the hash of the solution to the solution in []byte.
   chGoodSolutions chan ga.Sol // channel to receive good solutions from Executor.
 }
 
@@ -93,7 +87,8 @@ func LoadChainFromFolder(id utils.Addr,folder string,config *conf.Config)*Blockc
   chain.folder = folder
   chain.currentTrChanges = make(map[string]string)
   chain.Head = nil
-  chain.executor = ga.BuildExecutor()
+  chain.chGoodSolutions = make(chan ga.Sol,1000)
+  chain.executor = ga.BuildExecutor(chain.chGoodSolutions)
   chain.config = config
   var i int = 0
   fmt.Println("Loading chain from disk")
@@ -147,7 +142,8 @@ func NewBlockchain(id utils.Addr,folder string,config *conf.Config)*Blockchain{
   chain.internalMiniBlock = make(chan MexBlock)
   chain.miningstatus = make(chan bool)
   chain.Head = BuildFirstBlock(id)
-  chain.executor = ga.BuildExecutor()
+  chain.chGoodSolutions = make(chan ga.Sol,1000)
+  chain.executor = ga.BuildExecutor(chain.chGoodSolutions)
   chain.config = config
   chain.folder = folder
   chain.currentTrChanges = make(map[string]string)
@@ -215,6 +211,8 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
     select{
       case <-stop:// close message
         return
+      case sol := <-self.chGoodSolutions: // a good solution for a job has been found
+        self.processGoodSolutionFound(sol)
       case mex := <-self.internalBlock:// a block has been mined
         self.BlockOut <- mex
         self.startNewMiningProcess()
@@ -360,6 +358,36 @@ func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block,
     if err!=nil{fmt.Println(err)}
     b = b.Previous
   }
+  self.checkJobsToClose()
+  self.discloseDeclaredSolutionsAndIntegrateShared()
+}
+
+// Checks if in the last block (self.Head) you published a ResTransaction and,
+// in case, publish now the corresponding SolTransaction.
+// The solutions should be stored in self.solutionToShare.
+// At the same time, checks if there are some shared solutions others
+// disclosed, and adds them in the population of the job.
+func (self *Blockchain)discloseDeclaredSolutionsAndIntegrateShared(){
+  // TODO: implement later
+  // loop through all transactions in Head and:
+  // - if ResTransaction is yours, now make SolTransaction
+  // - if SolTransaction by others, use it
+}
+
+// Decides to publish or not a solution in a ResTransaction and,
+// in case, creates and propagates the transaction
+func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
+  fmt.Println("---Solution---")
+  fmt.Println(sol)
+  fmt.Println("----------")
+  // TODO: implement later
+}
+
+// Checks if some of the jobs used in Head should stop and, in case,
+// stops their execution and clears the executor.
+// This method is called inside self.access_data.Lock().
+func (self *Blockchain)checkJobsToClose(){
+  // TODO: implement later
 }
 
 // Checks the validity of a new transaction and insert it

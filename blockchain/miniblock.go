@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miniblock.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-21
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -124,7 +124,7 @@ func (self *MiniBlock)CheckStep2(block *Block,hardness int,config *conf.Config)b
     fmt.Println(err2)
     return false
   }
-  job := ga.BuildJob(jobPath,dataPath)
+  job := ga.BuildJob(jobPath,dataPath,nil,"")
   if job==nil{
     fmt.Println("Unable to build job")
     return false

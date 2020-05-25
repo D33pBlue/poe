@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: job.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-19
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 package ga
@@ -24,16 +24,17 @@ type Job struct{
   KeepRunning bool
   dna DNA
   conf *Config
+  jobHash string
 }
 
 // Initialize a Job, loading its dna and data from file after
 // compiling a user-defined plugin.
-func BuildJob(jobpath,datapath string)*Job{
+func BuildJob(jobpath,datapath string,chUpdateOut chan Sol,jobHash string)*Job{
   // initialize the channels with buffers in order to made them async
   job := new(Job)
   job.ChNonce = make(chan Sol,1000)
   job.ChUpdateIn = make(chan Sol,100)
-  job.ChUpdateOut = make(chan Sol,100)
+  job.ChUpdateOut = chUpdateOut
   // compile and load DNA
   var err error
   job.dna,err = LoadGA(jobpath,datapath)
@@ -41,6 +42,7 @@ func BuildJob(jobpath,datapath string)*Job{
     fmt.Println(err)
     return nil
   }
+  job.jobHash = jobHash
   return job
 }
 
@@ -55,7 +57,7 @@ func (self *Job)Execute(hashPrev,publicKey string){
   hb.Add(publicKey)
   hash := hb.GetHash()
   self.conf = BuildBlockchainGAConfig(hash,&self.KeepRunning,100)
-  RunGA(self.dna,self.conf,self.ChUpdateOut,self.ChUpdateIn,self.ChNonce)
+  RunGA(self.dna,self.conf,self.ChUpdateOut,self.ChUpdateIn,self.ChNonce,self.jobHash)
 }
 
 // Change the hash used during the job execution to initialize

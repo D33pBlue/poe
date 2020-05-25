@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: ga.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-18
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -74,7 +74,7 @@ func offspring(pop Population,n int,pcross,pmut float64,prng *rand.Rand)(off Pop
 }
 
 // Defines the standard execution of a GA
-func RunGA(dna DNA,conf *Config,chOut,chIn,chNonce chan Sol){
+func RunGA(dna DNA,conf *Config,chOut,chIn,chNonce chan Sol,jobHash string){
   if dna.HasToMinimize(){Optimum = Minimize
   }else{Optimum = Maximize}
   var prng *rand.Rand = rand.New(rand.NewSource(99))
@@ -97,12 +97,13 @@ func RunGA(dna DNA,conf *Config,chOut,chIn,chNonce chan Sol){
     if conf.Verbose>=2 {
       fmt.Printf("[%d]gen %d best fit: %f\n",conf.Miner,epoch,best.Fitness)
     }
-    if epoch%conf.Step==0{
+    if epoch>0 && epoch%conf.Step==0{
       if conf.Verbose==1{
         fmt.Printf("[%d,%d,%f]",conf.Miner,epoch,bestOfAll.Fitness)
       }
       bestOfAll.Conf = *conf
       bestOfAll.Gen = epoch
+      bestOfAll.JobHash = jobHash
       select{
       case chOut <- bestOfAll:
       default:

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: transaction.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-22
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -46,4 +46,5 @@ const (
   TrJob = "JobTransaction"
   TrSol = "SolTransaction"
   TrRes = "ResTransaction"
+  TrPrize = "PrizeTransaction"
 )

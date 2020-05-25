@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: config.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-19
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -43,6 +43,7 @@ func BuildBlockchainGAConfig(hash []byte,keepmining *bool,step int)*Config{
   conf := RandConf(x,0,step)
   conf.keepmining = keepmining
   conf.BlockHash = hash
+  conf.Verbose = 0
   return conf
 }
 

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-24
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -83,6 +83,11 @@ func BuildBlock(id utils.Addr,prev *Block)*Block{
   block.checked = false
   block.mined = false
   block.incomingMiniblock = make(chan *MiniBlock,10)
+  //
+  //
+  // TODO: add all prizes for the solutions of the previous block!!
+  //
+  //
   return block
 }
 
@@ -401,6 +406,11 @@ func (self *Block)CheckStep2(transactionChanges *map[string]string,config *conf.
     fmt.Println("fail in transactions")
     return false
   }
+  //
+  //
+  // TODO: add check of the prizes!!
+  //
+  // 
   self.checked = true
   return true
 }

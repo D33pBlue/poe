@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: transact_sol.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-23
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -22,7 +22,6 @@ import(
 // if the solution is correct and the creator deserves the prize.
 type SolTransaction struct{
   Timestamp time.Time
-  Output TrOutput
   Creator utils.Addr
   ResBlock string // the hash of the block with the ResTransaction
   ResTrans string // the hash of the ResTransaction
@@ -36,11 +35,9 @@ type SolTransaction struct{
 // the data it receives in input.
 func MakeSolTransaction(creator utils.Addr,key utils.Key,
       resblock,restrans,jobtrans string,
-      solution []byte,amount int)*SolTransaction{
+      solution []byte)*SolTransaction{
   tr := new(SolTransaction)
   tr.Timestamp = time.Now()
-  tr.Output.Address = creator
-  tr.Output.Value = amount
   tr.Creator = creator
   tr.ResBlock = resblock
   tr.ResTrans = restrans
@@ -62,7 +59,6 @@ func (self *SolTransaction)GetHash()string{
   hb.Add(self.Timestamp.Format("2006-01-02 15:04:05"))
   hb.Add(self.ResBlock)
   hb.Add(self.ResTrans)
-  hb.Add(self.Output)
   hb.Add(self.JobTrans)
   hb.Add(self.Solution)
   return fmt.Sprintf("%x",hb.GetHash())
@@ -88,10 +84,9 @@ func (self *SolTransaction)GetType()string{
   return TrSol
 }
 
-// Always returns the TrOutput stored in the transaction,
-// ignoring the parameter in input
+// Always returns nil
 func (self *SolTransaction)GetOutputAt(i int)*TrOutput{
-  return &self.Output
+  return nil
 }
 
 // Serializes the SolTransaction and returns it as []byte.
@@ -110,7 +105,6 @@ func MarshalSolTransaction(data []byte)*SolTransaction{
   json.Unmarshal(data, &objmap)
   tr := new(SolTransaction)
   json.Unmarshal(objmap["Timestamp"],&tr.Timestamp)
-  json.Unmarshal(objmap["Output"],&tr.Output)
   json.Unmarshal(objmap["Creator"],&tr.Creator)
   json.Unmarshal(objmap["ResBlock"],&tr.ResBlock)
   json.Unmarshal(objmap["ResTrans"],&tr.ResTrans)

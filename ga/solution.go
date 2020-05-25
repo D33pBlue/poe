@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: solution.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-19
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -26,6 +26,7 @@ type Sol struct{
   Conf Config
   Gen int
   HashUsed []byte
+  JobHash string // used only to share good solutions (to identify the job)
 }
 
 // Returns a deep copy instance of a Sol
@@ -38,11 +39,12 @@ func (self Sol)DeepCopy()Sol {
   sol.Conf = self.Conf
   sol.Gen = self.Gen
   sol.HashUsed = self.HashUsed
+  sol.JobHash = self.JobHash
   return *sol
 }
 
 // Evaluates the individual stored in a Sol, saving its
-// Fitness and its Complexity. 
+// Fitness and its Complexity.
 func (self *Sol)eval(st *op.State,blockHash []byte){
   st.Reset()
   self.Fitness = self.Individual.Evaluate(st)
