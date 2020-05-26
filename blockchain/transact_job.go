@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-23
+ * @Last modified time: 2020-May-26
  * @Copyright: 2020
  */
 
@@ -76,7 +76,25 @@ func GetJobFixedCost(job,data string,url bool)int{
 
 
 func GetJobMinPrize(job,data string)int{
-  return 10 // TODO: implement later
+  return 15
+}
+
+// Returns the amount of money the one who submitted a good solution
+// in the block should receive. Only the first 10 receives something.
+func (self *JobTransaction)GetSharingBlockPrize(position int)int{
+  switch position {
+  case 5:
+    return 1
+  case 4:
+    return 2
+  case 3:
+    return 3
+  case 2:
+    return 4
+  case 1:
+    return self.Prize-10
+  }
+  return 0
 }
 
 // Check validate the transaction and update trChanges. The parameter block

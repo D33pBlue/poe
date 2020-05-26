@@ -27,6 +27,7 @@ type Sol struct{
   Gen int
   HashUsed []byte
   JobHash string // used only to share good solutions (to identify the job)
+  IsMin bool // used only to share good solutions; true <=> minimization problem
 }
 
 // Returns a deep copy instance of a Sol

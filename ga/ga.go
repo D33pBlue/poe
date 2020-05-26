@@ -104,6 +104,7 @@ func RunGA(dna DNA,conf *Config,chOut,chIn,chNonce chan Sol,jobHash string){
       bestOfAll.Conf = *conf
       bestOfAll.Gen = epoch
       bestOfAll.JobHash = jobHash
+      bestOfAll.IsMin = dna.HasToMinimize()
       select{
       case chOut <- bestOfAll:
       default:

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: conf.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -63,6 +63,20 @@ func (self *Config)GetSuitablePathForJob(hash string)(string,string){
   jobPath := self.MainDataFolder+self.JobFolder+hash+".go"
   dataPath := self.MainDataFolder+self.JobFolder+hash+"_data.json"
   return jobPath,dataPath
+}
+
+func (self *Config)GetPrivateKey()utils.Key{
+  path := self.GetKeyPath()
+  data, err := ioutil.ReadFile(path)
+  if err!=nil{ return nil }
+  pub,err2 := utils.LoadPublicKeyFromPemStr(data)
+  if err2!=nil { return nil}
+  data, err = ioutil.ReadFile(path+".priv")
+  if err!=nil { return nil}
+  priv,err3 := utils.LoadPrivateKeyFromPemStr(data)
+  if err3!=nil { return nil }
+  priv.PublicKey = *pub
+  return priv
 }
 
 func (self *Config)GetPublicKey()utils.Addr{

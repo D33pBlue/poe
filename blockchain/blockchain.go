@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-25
+ * @Last modified time: 2020-May-26
  * @Copyright: 2020
  */
 
@@ -87,6 +87,7 @@ func LoadChainFromFolder(id utils.Addr,folder string,config *conf.Config)*Blockc
   chain.folder = folder
   chain.currentTrChanges = make(map[string]string)
   chain.Head = nil
+  chain.solutionToShare = make(map[string]([]byte))
   chain.chGoodSolutions = make(chan ga.Sol,1000)
   chain.executor = ga.BuildExecutor(chain.chGoodSolutions)
   chain.config = config
@@ -142,6 +143,7 @@ func NewBlockchain(id utils.Addr,folder string,config *conf.Config)*Blockchain{
   chain.internalMiniBlock = make(chan MexBlock)
   chain.miningstatus = make(chan bool)
   chain.Head = BuildFirstBlock(id)
+  chain.solutionToShare = make(map[string]([]byte))
   chain.chGoodSolutions = make(chan ga.Sol,1000)
   chain.executor = ga.BuildExecutor(chain.chGoodSolutions)
   chain.config = config
@@ -371,16 +373,183 @@ func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block,
 func (self *Blockchain)discloseDeclaredSolutionsAndIntegrateShared(){
   // TODO: implement later
   // loop through all transactions in Head and:
-  // - if ResTransaction is yours, now make SolTransaction
+  // - if ResTransaction is yours, now make SolTransaction (and update solutionToShare)
   // - if SolTransaction by others, use it
 }
 
 // Decides to publish or not a solution in a ResTransaction and,
 // in case, creates and propagates the transaction
 func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
-  fmt.Println("---Solution---")
-  fmt.Println(sol)
-  fmt.Println("----------")
+  hashJob := sol.JobHash
+  self.access_data.Lock()
+  transactions := self.Current.Transactions.GetTransactionArray()
+  openJobs := self.Current.getOpenJobs()
+  self.access_data.Unlock()
+  // check if the job is open and get block of the JobTransaction
+  var open bool = false
+  var jobBlock string
+  for i:=0;i<len(openJobs);i++{
+    if openJobs[i].GetHashCached()==hashJob{
+      open = true
+      jobBlock = openJobs[i].blockContainer
+      break
+    }
+  }
+  if open==false{ return }
+  // find the current best score for the current block
+  var bestScore float64
+  var first bool = true
+  for i:=0;i<len(transactions);i++{
+    if transactions[i].GetType()==TrSol{
+      solTr := transactions[i].(*SolTransaction)
+      if solTr.JobTrans==hashJob{
+        if first{
+          bk := self.Current.FindPrevBlock(solTr.ResBlock)
+          if bk!=nil{
+            resTr := bk.FindTransaction(solTr.ResTrans)
+            if resTr!=nil{
+              bestScore = resTr.(*ResTransaction).Evaluation
+              first = false
+            }
+          }
+        }else{// bestSol != nil
+          bk := self.Current.FindPrevBlock(solTr.ResBlock)
+          if bk!=nil{
+            resTr := bk.FindTransaction(solTr.ResTrans)
+            if resTr!=nil{
+              score := resTr.(*ResTransaction).Evaluation
+              if (sol.IsMin && score<bestScore)||(sol.IsMin==false && score>bestScore){
+                bestScore = score
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  if (sol.IsMin && sol.Fitness<bestScore)||(sol.IsMin==false && sol.Fitness>bestScore){
+    // the solution is better than the current ones
+    // check if you possess enough money:
+    var amount int = 1
+    inps,tot := self.getUnspentCoin(amount)
+    if tot<amount { return }
+    // make ResTransaction
+    var out TrOutput
+    out.Address = self.id
+    out.Value = tot-amount // set back the remainder
+    hb := new(utils.HashBuilder)
+    serializedSol := sol.Individual.Serialize()
+    hb.Add(serializedSol)
+    hashSol := fmt.Sprintf("%x",hb.GetHash())
+    resTr := MakeResTransaction(self.id,self.config.GetPrivateKey(),
+          inps,out,jobBlock,hashJob,hashSol,sol.Fitness)
+    // update self.solutionToShare
+    self.solutionToShare[hashJob] = serializedSol
+    // propagate the ResTransaction
+    self.propagateTransaction(resTr)
+  }
+}
+
+// Searches backward in the chain some unspent TrOutputs untill an amount
+// is reached or the chain has been completely explored. If the amount
+// is covered a []TrInput is returned, with the total amount of money.
+func (self *Blockchain)getUnspentCoin(amount int)([]TrInput,int){
+  type TrINOUT struct{
+    In TrInput
+    Out TrOutput
+  }
+  b := self.Head
+  var spent []TrInput
+  var unspent []TrINOUT
+  for{
+    var usable []TrINOUT
+    if b==nil{ return nil,0 }
+    transactions := b.Transactions.GetTransactionArray()
+    for i:=0;i<len(transactions);i++{
+      switch transactions[i].GetType() {
+      case TrStd:
+        tr := transactions[i].(*StdTransaction)
+        if tr.Creator==self.id{
+          spent = append(spent,tr.Inputs...)
+        }
+        for j:=0;j<len(tr.Outputs);j++{
+          if tr.Outputs[j].Address==self.id{
+            var inout TrINOUT
+            inout.Out = tr.Outputs[j]
+            inout.In.Block = b.GetHashCached()
+            inout.In.ToSpend = tr.GetHashCached()
+            inout.In.Index = j
+            usable = append(usable,inout)
+          }
+        }
+      case TrCoin:
+        out := transactions[i].GetOutputAt(0)
+        if out.Address==self.id{
+          var inout TrINOUT
+          inout.Out.Address = out.Address
+          inout.Out.Value = out.Value
+          inout.Out.Address = out.Address
+          inout.In.Block = b.GetHashCached()
+          inout.In.ToSpend = transactions[i].GetHashCached()
+          inout.In.Index = 0
+          usable = append(usable,inout)
+        }
+      case TrJob:
+        tr := transactions[i].(*JobTransaction)
+        if tr.Creator==self.id{
+          spent = append(spent,tr.Inputs...)
+        }
+        if tr.Output.Address==self.id{
+          var inout TrINOUT
+          inout.Out = tr.Output
+          inout.In.Block = b.GetHashCached()
+          inout.In.ToSpend = tr.GetHashCached()
+          inout.In.Index = 0
+          usable = append(usable,inout)
+        }
+      case TrSol:
+      //   TODO ...
+      case TrRes:
+      //   TODO ...
+      case TrPrize:
+      //   TODO ...
+      }
+    }
+    for i:=0;i<len(usable);i++{
+      valid := true
+      for j:=0;valid && j<len(spent);j++{
+        if (usable[i].In.Block==spent[j].Block &&
+            usable[i].In.ToSpend==spent[j].ToSpend &&
+            usable[i].In.Index==spent[j].Index){
+          valid = false
+          break
+        }
+      }
+      if valid{
+        if usable[i].Out.Value>=amount{
+          var result []TrInput
+          result = append(result,usable[i].In)
+          return result,usable[i].Out.Value
+        }else{
+          unspent = append(unspent,usable[i])
+          var tot int = 0
+          var result []TrInput
+          for k:=0;k<len(unspent);k++{
+            tot += unspent[k].Out.Value
+            result = append(result,unspent[k].In)
+          }
+          if tot>=amount{
+            return result,tot
+          }
+        }
+      }
+    }
+    b = b.Previous
+  }
+  return nil,0
+}
+
+func (self *Blockchain)propagateTransaction(tr Transaction){
   // TODO: implement later
 }
 
