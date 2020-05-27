@@ -55,8 +55,72 @@ func MakeResTransaction(creator utils.Addr,key utils.Key,
  return tr
 }
 
+// Check validate the transaction and update trChanges. The parameter block
+// is assumed to be the block in which this transaction is stored.
+// The validity is checked in relation to the chain that is linked
+// to that block. The subchain must be valid/already checked.
+// In order to be valid, the transaction must have:
+// - the hash that matches the one declared
+// - the signature verified with the public key of the creator
+// - all sources that belongs to the creator
+// - all sources unspent (no double spending)
+// - the total amount of money in sources >= the fixed cost calculated with GetResTransactionCost()
 func (self *ResTransaction)Check(block *Block,trChanges *map[string]string)bool{
-  return true // TODO: implement later
+  hash2 := self.GetHash()
+  if hash2!=self.Hash{
+    fmt.Println("The hash does not match")
+    fmt.Printf("%v !=\n%v\n",hash2,self.Hash)
+    return false}
+  if !utils.CheckSignature(self.Signature,self.Hash,self.Creator){
+    fmt.Println("The signature is not valid")
+    return false}
+  var tot int = 0
+  for i:=0;i<len(self.Inputs);i++{
+    source := self.Inputs[i].GetSource(block)
+    if source==nil{
+      // the Input source does not exist in the block's chain
+      fmt.Println("Inesistend input source in transaction")
+      return false
+    }
+    if source.Address!=self.Creator{
+      // The Input source does not belong to the creator of this transaction
+      fmt.Println("The input does not belong to the creator of the transaction")
+      return false
+    }
+    spentInBlock := source.GetSpentIn()
+    trSourceId := self.Inputs[i].ToString()
+    if spentInBlock!=""{
+      if block.FindPrevBlock(spentInBlock)!=nil{
+        // double spending: the TrOutput was spent in a block
+        // that is reachable from the current block
+        fmt.Println("Double spending case 1")
+        return false
+      }else{
+        // if block.FindPrevBlock(spentInBlock)==nil but spentInBlock!="",
+        // the TrOutput was spent in a previous blockchain, but now the
+        // blockchain considered is different (maybe due to a fork), and
+        // in this new blockchain the TrOutput may be unspent. However,
+        // it can be spent in the new chain, thus, trChanges must be
+        // checked.
+        if _, ok := (*trChanges)[trSourceId]; ok {
+          // the transaction is spent in a block of the new chain
+          // => double spending
+          fmt.Println("Double spending case 2")
+          return false
+        }
+      }
+    }
+    // the TrOutput was available and it is spent now
+    // => update trChanges
+    (*trChanges)[trSourceId] = block.GetHashCached()
+    tot += source.Value
+  }
+  var spent int = self.Output.Value+GetResTransactionCost()
+  if tot<spent{
+    fmt.Printf("Tot: %v, spent: %v\n",tot,spent)
+    return false
+  }
+  return true
 }
 
 // Recalculates and return the hash of the transaction.
@@ -98,6 +162,12 @@ func (self *ResTransaction)GetType()string{
 // Always returns the only Output stored in the transaction.
 func (self *ResTransaction)GetOutputAt(i int)*TrOutput{
   return &self.Output
+}
+
+// Returns the amount of money that should be paid in order to
+// submit a ResTransaction.
+func GetResTransactionCost()int{
+  return 1 // TODO: tune later
 }
 
 // Serializes the transactions and returns it as []byte

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: transact_prize.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-25
+ * @Last modified time: 2020-May-27
  * @Copyright: 2020
  */
 
@@ -54,5 +54,9 @@ func (self *PrizeTransaction)GetOutputAt(int)*TrOutput{
 }
 
 func (self *PrizeTransaction)Serialize()[]byte{
+  return nil // TODO: implement later
+}
+
+func MarshalPrizeTransaction(data []byte)*PrizeTransaction{
   return nil // TODO: implement later
 }

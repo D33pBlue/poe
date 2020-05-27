@@ -101,7 +101,7 @@ func LoadChainFromFolder(id utils.Addr,folder string,config *conf.Config)*Blockc
       fmt.Println(err)
       return nil
     }
-    b,hash := MarshalBlock(data)
+    b,hash := MarshalBlock(data,chain.config)
     if chain.Head!=nil && chain.Head.Hash!=hash{
       fmt.Println("Chain head not match")
       fmt.Println(chain.Head.Hash)
@@ -219,7 +219,7 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
         self.BlockOut <- mex
         self.startNewMiningProcess()
       case mex := <-self.BlockIn:// someone sent a block
-        block,hashPrev := MarshalBlock(mex.Data)
+        block,hashPrev := MarshalBlock(mex.Data,self.config)
         self.processIncomingBlock(block,hashPrev,mex.IpSender)
       case mex := <-self.TransQueue:// someone sent a transaction
         var transact Transaction
@@ -229,7 +229,7 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
         case TrJob:
           transact = MarshalJobTransaction(mex.Data)
         case TrSol:
-          transact = MarshalSolTransaction(mex.Data)
+          transact = MarshalSolTransaction(mex.Data,self.config)
         case TrRes:
           transact = MarshalResTransaction(mex.Data)
         default:
@@ -270,7 +270,7 @@ func (self *Blockchain)startNewMiningProcess(){
 
 // Ask another miner a block with a specific hash and returns
 // it or nil (in case of error).
-func askBlock(blockHash string,ipaddress string)(*Block,string){
+func askBlock(blockHash string,ipaddress string,config *conf.Config)(*Block,string){
   fmt.Println("asking for ",blockHash," to ",ipaddress)
   conn, err := net.Dial("tcp",ipaddress)
   if err!=nil{
@@ -281,7 +281,7 @@ func askBlock(blockHash string,ipaddress string)(*Block,string){
   if err2!=nil{
     fmt.Println(err2)
     return nil,"" }
-  return MarshalBlock([]byte(blockRaw))
+  return MarshalBlock([]byte(blockRaw),config)
 }
 
 // Checks the block and updates the blockchain.
@@ -307,7 +307,7 @@ func (self *Blockchain)processIncomingBlock(block *Block,
       b.Previous = existingBlock
       break
     }
-    b.Previous,hp = askBlock(hp,ipSender)
+    b.Previous,hp = askBlock(hp,ipSender,self.config)
     b = b.Previous
     savingPoint += 1
   }
@@ -381,7 +381,7 @@ func (self *Blockchain)discloseDeclaredSolutionsAndIntegrateShared(){
         hashjob := transactions[i].(*ResTransaction).JobTrans
         tr := MakeSolTransaction(self.id,self.config.GetPrivateKey(),
               self.Head.GetHashCached(),transactions[i].GetHashCached(),
-              hashjob,self.solutionToShare[hashjob])
+              hashjob,self.solutionToShare[hashjob],self.config)
         delete(self.solutionToShare,hashjob)
         go self.propagateTransaction(tr)
       }
@@ -423,9 +423,9 @@ func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
   var seen int = 0
   for i:=0;i<len(transactions);i++{
     if transactions[i].GetType()==TrSol{
-      seen += 1
       solTr := transactions[i].(*SolTransaction)
       if solTr.JobTrans==hashJob{
+        seen += 1
         if first{
           bk := self.Current.FindPrevBlock(solTr.ResBlock)
           if bk!=nil{
@@ -455,7 +455,7 @@ func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
     // the solution is better than the current ones
     fmt.Println("The solution is good")
     // check if you possess enough money:
-    var amount int = 1
+    var amount int = GetResTransactionCost()
     inps,tot := self.getUnspentCoin(amount)
     if tot<amount { return }
     fmt.Println("You have money")

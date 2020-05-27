@@ -16,6 +16,7 @@ import(
 	"fmt"
 	"sync"
 	"encoding/json"
+	"github.com/D33pBlue/poe/conf"
 	"github.com/D33pBlue/poe/utils"
 )
 
@@ -84,7 +85,7 @@ func (self *Tree)PruneSpentTransactions()  {
 }
 
 // Builds a transaction from its serialized data.
-func marshalTransaction(data []byte,tp string)Transaction{
+func marshalTransaction(data []byte,tp string,config *conf.Config)Transaction{
 	if len(data)<=0{ return nil }
 	var transact Transaction = nil
 	switch tp {
@@ -94,12 +95,18 @@ func marshalTransaction(data []byte,tp string)Transaction{
 		transact = MarshalStdTransaction(data)
 	case TrJob:
 		transact = MarshalJobTransaction(data)
+	case TrRes:
+		transact = MarshalResTransaction(data)
+	case TrSol:
+		transact = MarshalSolTransaction(data,config)
+	case TrPrize:
+		transact = MarshalPrizeTransaction(data)
 	}
 	return transact
 }
 
 // Builds a Node from its serialization data.
-func marshalMerkleNode(data []byte,parent *Node)(node *Node,transactions []Transaction){
+func marshalMerkleNode(data []byte,parent *Node,config *conf.Config)(node *Node,transactions []Transaction){
 	// fmt.Println("Marshal merkle node")
 	if len(data)<=0{
 		// fmt.Println("Empty data!")
@@ -113,18 +120,18 @@ func marshalMerkleNode(data []byte,parent *Node)(node *Node,transactions []Trans
 	json.Unmarshal(objmap["Hash"],&node.Hash)
 	if len(node.Hash)<=0{ return nil,transactions}
 	// fmt.Printf("Loaded merkle node %v \n",node.Type)
-	node.Transaction = marshalTransaction(objmap["Transaction"],node.Type)
+	node.Transaction = marshalTransaction(objmap["Transaction"],node.Type,config)
 	if node.Transaction!=nil{
 		transactions = append(transactions,node.Transaction)
 	}
 	var trs []Transaction
-	node.L,trs = marshalMerkleNode(objmap["L"],node)
+	node.L,trs = marshalMerkleNode(objmap["L"],node,config)
 	for i:=0;i<len(trs);i++{
 		if trs[i]!=nil{
 			transactions = append(transactions,trs[i])
 		}
 	}
-	node.R,trs = marshalMerkleNode(objmap["R"],node)
+	node.R,trs = marshalMerkleNode(objmap["R"],node,config)
 	for i:=0;i<len(trs);i++{
 		if trs[i]!=nil{
 			transactions = append(transactions,trs[i])
@@ -134,12 +141,12 @@ func marshalMerkleNode(data []byte,parent *Node)(node *Node,transactions []Trans
 }
 
 // Builds a Tree from its serialized data.
-func MarshalMerkleTree(data []byte)*Tree {
+func MarshalMerkleTree(data []byte,config *conf.Config)*Tree {
 	tree := new(Tree)
 	var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
   json.Unmarshal(objmap["Nleaves"],&tree.Nleaves)
-	tree.Root,tree.transactions = marshalMerkleNode(objmap["Root"],nil)
+	tree.Root,tree.transactions = marshalMerkleNode(objmap["Root"],nil,config)
 	return tree
 }
 

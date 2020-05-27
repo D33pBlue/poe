@@ -89,10 +89,10 @@ func (self *Executor)ChangeBlockHashInJob(job,hashPrev,publicKey string){
 // Sends a good solution to an active job so that it can include it
 // in his population.
 func (self *Executor)InjectSharedSolution(job string,solSerialized []byte){
-  var sol Sol
-  sol.Individual.LoadFromSerialization(solSerialized)
   chs := self.GetChannels(job)
   if chs!=nil{
+    sol := <-chs.ChNonce
+    sol.Individual.LoadFromSerialization(solSerialized)
     chs.ChUpdateIn <- sol
   }
 }

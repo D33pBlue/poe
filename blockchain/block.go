@@ -169,7 +169,7 @@ func (self *Block)Serialize()[]byte{
 // Returns a Block parsing the serialized json, and also
 // the hash of the previous block. The block is not linked to
 // the previous one.
-func MarshalBlock(data []byte)(*Block,string){
+func MarshalBlock(data []byte,config *conf.Config)(*Block,string){
   var objmap map[string]json.RawMessage
   json.Unmarshal(data, &objmap)
   var block *Block = new(Block)
@@ -183,7 +183,7 @@ func MarshalBlock(data []byte)(*Block,string){
   json.Unmarshal(objmap["NonceNoJob"],&block.NonceNoJob)
   json.Unmarshal(objmap["MiniBlocks"],&block.MiniBlocks)
   json.Unmarshal(objmap["Hash"],&block.Hash)
-  block.Transactions = MarshalMerkleTree(objmap["Transactions"])
+  block.Transactions = MarshalMerkleTree(objmap["Transactions"],config)
   var prev string = ""
   json.Unmarshal(objmap["Previous"],&prev)
   return block,prev
