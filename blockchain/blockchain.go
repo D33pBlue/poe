@@ -468,7 +468,7 @@ func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
     hb.Add(serializedSol)
     hashSol := fmt.Sprintf("%x",hb.GetHash())
     resTr := MakeResTransaction(self.id,self.config.GetPrivateKey(),
-          inps,out,jobBlock,hashJob,hashSol,sol.Fitness)
+          inps,out,jobBlock,hashJob,hashSol,sol.Fitness,sol.IsMin)
     // update self.solutionToShare
     self.solutionToShare[hashJob] = serializedSol
     // propagate the ResTransaction

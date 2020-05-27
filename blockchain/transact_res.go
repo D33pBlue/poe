@@ -30,6 +30,7 @@ type ResTransaction struct{
   JobBlock string // the hash of the block with the JobTransaction
   JobTrans string // the hash of the JobTransaction
   Evaluation float64
+  IsMin bool
   HashSol string // the hash of solution: [individual,evaluation,creator]
   Hash string
   Signature string
@@ -40,7 +41,7 @@ type ResTransaction struct{
 func MakeResTransaction(creator utils.Addr,key utils.Key,
       inps []TrInput,out TrOutput,
       jobblock,jobtrans,hashsol string,
-      evaluation float64)*ResTransaction{
+      evaluation float64,isMin bool)*ResTransaction{
   tr := new(ResTransaction)
   tr.Timestamp = time.Now()
   tr.Output = out
@@ -50,6 +51,7 @@ func MakeResTransaction(creator utils.Addr,key utils.Key,
   tr.JobTrans = jobtrans
   tr.HashSol = hashsol
   tr.Evaluation = evaluation
+  tr.IsMin = isMin
   tr.Hash = tr.GetHash()
   tr.Signature = fmt.Sprintf("%x",utils.GetSignatureFromHash(tr.Hash,key))
  return tr
@@ -136,6 +138,7 @@ func (self *ResTransaction)GetHash()string{
   }
   hb.Add(self.HashSol)
   hb.Add(self.Evaluation)
+  hb.Add(self.IsMin)
   return fmt.Sprintf("%x",hb.GetHash())
 }
 
@@ -192,6 +195,7 @@ func MarshalResTransaction(data []byte)*ResTransaction{
   json.Unmarshal(objmap["JobTrans"],&tr.JobTrans)
   json.Unmarshal(objmap["HashSol"],&tr.HashSol)
   json.Unmarshal(objmap["Evaluation"],&tr.Evaluation)
+  json.Unmarshal(objmap["IsMin"],&tr.IsMin)
   json.Unmarshal(objmap["Hash"],&tr.Hash)
   json.Unmarshal(objmap["Signature"],&tr.Signature)
   return tr

@@ -16,6 +16,7 @@ import(
   "fmt"
   "time"
   "sync"
+  "sort"
   "encoding/json"
   "errors"
   "github.com/D33pBlue/poe/utils"
@@ -83,11 +84,7 @@ func BuildBlock(id utils.Addr,prev *Block)*Block{
   block.checked = false
   block.mined = false
   block.incomingMiniblock = make(chan *MiniBlock,10)
-  //
-  //
-  // TODO: add all prizes for the solutions of the previous block!!
-  //
-  //
+  block.assignPrizes()
   return block
 }
 
@@ -288,6 +285,42 @@ func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
   fmt.Println("End/stop mining (miniblocks)")
   //
   // where to stop jobs from executor when the slot expires??
+}
+
+// Adds all prizes for the solutions of the previous block
+func (self *Block)assignPrizes(){
+  if self.Previous == nil{ return }
+  transactions := self.Previous.Transactions.GetTransactionArray()
+  solutions := make(map[string]([]*SolTransaction))
+  // collect all the solutions submitted in the previous block
+  for i:=0;i<len(transactions);i++{
+    if transactions[i].GetType()==TrSol{
+      tr := transactions[i].(*SolTransaction)
+      solutions[tr.JobTrans] = append(solutions[tr.JobTrans],tr)
+    }
+  }
+  // sort the solutions by the fitness score for each job
+  for k,_ := range solutions{
+    sort.SliceStable(solutions[k], func(i, j int) bool {
+      res_i := self.Previous.Previous.FindTransaction(solutions[k][i].ResTrans).(*ResTransaction)
+      res_j := self.Previous.Previous.FindTransaction(solutions[k][j].ResTrans).(*ResTransaction)
+      isMin := res_i.IsMin
+      if isMin{
+        return res_i.Evaluation < res_j.Evaluation
+      }
+      return  res_i.Evaluation > res_j.Evaluation })
+    resTr := self.Previous.Previous.FindTransaction(solutions[k][0].ResTrans).(*ResTransaction)
+    jobBlock := self.FindPrevBlock(resTr.JobBlock)
+    jobTr := jobBlock.FindTransaction(resTr.JobTrans).(*JobTransaction)
+    for i:=0;i<len(solutions[k]);i++{
+      prize := jobTr.GetSharingBlockPrize(i+1)
+      if prize<=0{
+        break
+      }else{
+        // TODO: make PrizeTransaction
+      }
+    }
+  }
 }
 
 // The mining process without jobs => PoW.
