@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: transact_sol.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-25
+ * @Last modified time: 2020-May-27
  * @Copyright: 2020
  */
 
@@ -49,7 +49,7 @@ func MakeSolTransaction(creator utils.Addr,key utils.Key,
 }
 
 func (self *SolTransaction)Check(block *Block,trChanges *map[string]string)bool{
-  return false // TODO: implement later
+  return true // TODO: implement later
 }
 
 // Recalculates and return the hash of the transaction.

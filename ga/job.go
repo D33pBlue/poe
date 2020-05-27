@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: job.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-25
+ * @Last modified time: 2020-May-27
  * @Copyright: 2020
  */
 package ga
@@ -56,7 +56,7 @@ func (self *Job)Execute(hashPrev,publicKey string){
   hb.Add(hashPrev)
   hb.Add(publicKey)
   hash := hb.GetHash()
-  self.conf = BuildBlockchainGAConfig(hash,&self.KeepRunning,500)
+  self.conf = BuildBlockchainGAConfig(hash,&self.KeepRunning,1000)
   RunGA(self.dna,self.conf,self.ChUpdateOut,self.ChUpdateIn,self.ChNonce,self.jobHash)
 }
 

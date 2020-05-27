@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-26
+ * @Last modified time: 2020-May-27
  * @Copyright: 2020
  */
 
@@ -371,15 +371,35 @@ func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block,
 // disclosed, and adds them in the population of the job.
 // This method is called inside self.access_data.Lock().
 func (self *Blockchain)discloseDeclaredSolutionsAndIntegrateShared(){
-  // TODO: implement later
   // loop through all transactions in Head and:
-  // - if ResTransaction is yours, now make SolTransaction (and update solutionToShare)
-  // - if SolTransaction by others, use it
+  transactions := self.Head.Transactions.GetTransactionArray()
+  for i:=0;i<len(transactions);i++{
+    switch transactions[i].GetType() {
+    case TrRes:
+      if transactions[i].GetCreator()==self.id{
+        // disclose your solution
+        hashjob := transactions[i].(*ResTransaction).JobTrans
+        tr := MakeSolTransaction(self.id,self.config.GetPrivateKey(),
+              self.Head.GetHashCached(),transactions[i].GetHashCached(),
+              hashjob,self.solutionToShare[hashjob])
+        delete(self.solutionToShare,hashjob)
+        go self.propagateTransaction(tr)
+      }
+    case TrSol:
+      if transactions[i].GetCreator()!=self.id{
+        // integrate the solution from others
+        tr := transactions[i].(*SolTransaction)
+        hashJob := tr.JobTrans
+        self.executor.InjectSharedSolution(hashJob,tr.Solution)
+      }
+    }
+  }
 }
 
 // Decides to publish or not a solution in a ResTransaction and,
 // in case, creates and propagates the transaction
 func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
+  fmt.Println("Process good solution")
   hashJob := sol.JobHash
   self.access_data.Lock()
   transactions := self.Current.Transactions.GetTransactionArray()
@@ -396,11 +416,14 @@ func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
     }
   }
   if open==false{ return }
+  fmt.Println("The job is open")
   // find the current best score for the current block
   var bestScore float64
   var first bool = true
+  var seen int = 0
   for i:=0;i<len(transactions);i++{
     if transactions[i].GetType()==TrSol{
+      seen += 1
       solTr := transactions[i].(*SolTransaction)
       if solTr.JobTrans==hashJob{
         if first{
@@ -427,12 +450,15 @@ func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
       }
     }
   }
-  if (sol.IsMin && sol.Fitness<bestScore)||(sol.IsMin==false && sol.Fitness>bestScore){
+  fmt.Printf("Best score: %v your: %v\n",bestScore,sol.Fitness)
+  if (seen<=0)||(sol.IsMin && sol.Fitness<bestScore)||(sol.IsMin==false && sol.Fitness>bestScore){
     // the solution is better than the current ones
+    fmt.Println("The solution is good")
     // check if you possess enough money:
     var amount int = 1
     inps,tot := self.getUnspentCoin(amount)
     if tot<amount { return }
+    fmt.Println("You have money")
     // make ResTransaction
     var out TrOutput
     out.Address = self.id
@@ -446,7 +472,8 @@ func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
     // update self.solutionToShare
     self.solutionToShare[hashJob] = serializedSol
     // propagate the ResTransaction
-    self.propagateTransaction(resTr)
+    fmt.Println("Propagate")
+    go self.propagateTransaction(resTr)
   }
 }
 
@@ -507,12 +534,31 @@ func (self *Blockchain)getUnspentCoin(amount int)([]TrInput,int){
           inout.In.Index = 0
           usable = append(usable,inout)
         }
-      case TrSol:
-      //   TODO ...
       case TrRes:
-      //   TODO ...
+        tr := transactions[i].(*ResTransaction)
+        if tr.Creator==self.id{
+          spent = append(spent,tr.Inputs...)
+        }
+        if tr.Output.Address==self.id{
+          var inout TrINOUT
+          inout.Out = tr.Output
+          inout.In.Block = b.GetHashCached()
+          inout.In.ToSpend = tr.GetHashCached()
+          inout.In.Index = 0
+          usable = append(usable,inout)
+        }
       case TrPrize:
-      //   TODO ...
+        out := transactions[i].GetOutputAt(0)
+        if out.Address==self.id{
+          var inout TrINOUT
+          inout.Out.Address = out.Address
+          inout.Out.Value = out.Value
+          inout.Out.Address = out.Address
+          inout.In.Block = b.GetHashCached()
+          inout.In.ToSpend = transactions[i].GetHashCached()
+          inout.In.Index = 0
+          usable = append(usable,inout)
+        }
       }
     }
     for i:=0;i<len(usable);i++{
@@ -549,8 +595,16 @@ func (self *Blockchain)getUnspentCoin(amount int)([]TrInput,int){
   return nil,0
 }
 
+// Sends a transaction to the miner itself (localhost:port)
 func (self *Blockchain)propagateTransaction(tr Transaction){
-  // TODO: implement later
+  conn, err := net.Dial("tcp","127.0.0.1:"+self.config.Port)
+  if err!=nil{
+    fmt.Println(err)
+    return
+  }
+  fmt.Fprintf(conn,"transaction\n")
+  fmt.Fprintf(conn,tr.GetType()+"\n")
+  fmt.Fprintf(conn,string(tr.Serialize())+"\n")
 }
 
 // Checks if some of the jobs used in Head should stop and, in case,

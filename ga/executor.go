@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: executor.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-25
+ * @Last modified time: 2020-May-27
  * @Copyright: 2020
  */
 
@@ -88,7 +88,9 @@ func (self *Executor)ChangeBlockHashInJob(job,hashPrev,publicKey string){
 
 // Sends a good solution to an active job so that it can include it
 // in his population.
-func (self *Executor)InjectSharedSolution(job string,sol Sol){
+func (self *Executor)InjectSharedSolution(job string,solSerialized []byte){
+  var sol Sol
+  sol.Individual.LoadFromSerialization(solSerialized)
   chs := self.GetChannels(job)
   if chs!=nil{
     chs.ChUpdateIn <- sol

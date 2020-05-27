@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-25
+ * @Last modified time: 2020-May-27
  * @Copyright: 2020
  */
 
@@ -345,7 +345,10 @@ func (self *Block)storeMiniblockInBlock(miniblock *MiniBlock){
   }
   self.MiniBlocks = append(self.MiniBlocks,*miniblock)
   transact,_ := MakeCoinTransaction(miniblock.Miner,self.calculateMiningValue())
+  fmt.Println("CoinTransaction inserted for MiniBlock")
+  // fmt.Printf("Before: %v %v\n",self.Transactions.CountCoinTr2(),CountCoinTr(self.Transactions.Root))
   self.Transactions.Add(transact)
+  // fmt.Printf("After: %v %v\n",self.Transactions.CountCoinTr2(),CountCoinTr(self.Transactions.Root))
   self.access_data.Unlock()
 }
 
@@ -410,7 +413,7 @@ func (self *Block)CheckStep2(transactionChanges *map[string]string,config *conf.
   //
   // TODO: add check of the prizes!!
   //
-  // 
+  //
   self.checked = true
   return true
 }
@@ -533,6 +536,7 @@ func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
     for k,v := range shouldBePaid{
       if minersCoin[k] != v {
         fmt.Println("A miniblock's miner has not been paid correctly in block",self.GetBlockIndex())
+        fmt.Println(minersCoin[k],v)
         return false
       }
     }

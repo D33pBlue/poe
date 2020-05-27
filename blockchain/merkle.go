@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: merkle.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-17
+ * @Last modified time: 2020-May-27
  * @Copyright: 2020
  */
 
@@ -71,6 +71,7 @@ func (self *Tree)Add(trans Transaction){
 	n.Children = 0
 	self.insertNode(n)
 }
+
 
 // Returns an array with all the Transactions inside the tree.
 func (self *Tree)GetTransactionArray()[]Transaction{
@@ -206,7 +207,7 @@ func (self *Tree)insertNode(n *Node){
 	x2 := n
 	p = new(Node)
 	p.parent = x1.parent
-	p.parent.L = p
+	p.parent.R = p
 	p.L = x1
 	x1.parent = p
 	p.R = x2
