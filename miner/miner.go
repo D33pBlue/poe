@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: miner.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-17
+ * @Last modified time: 2020-May-21
  * @Copyright: 2020
  */
 
@@ -14,6 +14,7 @@ import(
   "os"
   "fmt"
   "net"
+  "time"
   "sync"
   "bufio"
   "regexp"
@@ -36,6 +37,8 @@ type Miner struct{
   addrch chan string
   id utils.Addr
   config *conf.Config
+  chPropagation chan string
+  updateSent map[string]int64
 }
 
 // Create a new Miner. In order to start mining you have to
@@ -57,6 +60,8 @@ func New(port string,id utils.Addr,config *conf.Config)*Miner{
   }
   miner.keepServing = false
   miner.addrch = make(chan string)
+  miner.chPropagation = make(chan string,100)
+  miner.updateSent = make(map[string]int64)
   return miner
 }
 
@@ -164,14 +169,16 @@ func (self *Miner)handleConnection(conn net.Conn){
   case "chain":
     port,_ := reader.ReadString('\n')
     block,err2 := reader.ReadString('\n')
-    fmt.Println(err2)
-    fmt.Printf("Content of chain: %v\n",block)
     if err2==nil{
       mexBlock := new(blockchain.MexBlock)
       mexBlock.Data = []byte(block)
       var ipaddress string = fmt.Sprint(conn.RemoteAddr())
       mexBlock.IpSender = ipaddress[:strings.Index(ipaddress,":")]+":"+port[:len(port)-1]
       self.Chain.BlockIn <- *mexBlock
+      var toPropagate string = message+port+block
+      // toPropagate = append(toPropagate,port)
+      // toPropagate = append(toPropagate,block)
+      self.chPropagation <- toPropagate
     }
   case "transaction":
     transacType,err := reader.ReadString('\n')
@@ -186,6 +193,10 @@ func (self *Miner)handleConnection(conn net.Conn){
         mexTransaction.Type = transacType[:len(transacType)-1]
         mexTransaction.Data = []byte(data)
         self.Chain.TransQueue <- *mexTransaction
+        var toPropagate string = message+transacType+data
+        // toPropagate = append(toPropagate,transacType)
+        // toPropagate = append(toPropagate,data)
+        self.chPropagation <- toPropagate
       }
     }
   case "miniblock":
@@ -195,6 +206,9 @@ func (self *Miner)handleConnection(conn net.Conn){
       mexBlock := new(blockchain.MexBlock)
       mexBlock.Data = []byte(miniblock)
       self.Chain.MiniBlockIn <- *mexBlock
+      var toPropagate string = message+miniblock
+      // toPropagate = append(toPropagate,miniblock)
+      self.chPropagation <- toPropagate
     }
   case "job_next_slot":
     bk1,bk2 := self.Chain.GetNextSlotForJob()
@@ -251,10 +265,32 @@ func (self *Miner)propagateMinedBlocks(close chan bool){
           go self.sendMiniBlockUpdate(self.Connected[i],string(mex.Data))
         }
         self.connected_lock.Unlock()
+      case toPropagate := <- self.chPropagation:
+        self.connected_lock.Lock()
+        if _,ok := self.updateSent[toPropagate]; !ok{
+          self.updateSent[toPropagate] = time.Now().UnixNano()
+          for i:=0;i<len(self.Connected);i++{
+            fmt.Println("Propagate updates to ",self.Connected[i])
+            go self.propagateReceivedMex(self.Connected[i],toPropagate)
+          }
+        }
+        self.connected_lock.Unlock()
+      case <-time.After(10 * time.Second):
+        self.clearOldMex()
     }
   }
 }
 
+
+func (self *Miner)clearOldMex(){
+  self.connected_lock.Lock()
+  for k,v := range self.updateSent{
+    if time.Now().UnixNano()-v>10*int64(time.Second){
+      delete(self.updateSent,k)
+    }
+  }
+  self.connected_lock.Unlock()
+}
 
 // Sends a message and wait for ack.
 func (self *Miner)sendMexAck(address,mex string)error{
@@ -286,4 +322,10 @@ func (self *Miner)sendMiniBlockUpdate(address string,mex string){
   if err!=nil{ return }
   fmt.Fprintf(conn,"miniblock\n")
   fmt.Fprintf(conn,mex+"\n")
+}
+
+func (self *Miner)propagateReceivedMex(address string,mex string){
+  conn, err := net.Dial("tcp",address)
+  if err!=nil{ return }
+  fmt.Fprintf(conn,mex)
 }

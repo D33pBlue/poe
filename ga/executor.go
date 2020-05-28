@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: executor.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-27
  * @Copyright: 2020
  */
 
@@ -13,18 +13,19 @@ package ga
 type JobChannels struct{
   ChNonce chan Sol // used to send nonce candidates
   ChUpdateIn chan Sol // used to receive shared solutions from miners
-  ChUpdateOut chan Sol // used to share good solutions to miners
 }
 
 type Executor struct{
   ActiveJobs map[string]*Job // the key is the hash of the JobTransaction
                             // in which the job is defined
+  ChUpdateOut chan Sol
 }
 
 // Builds and initialize an Executor
-func BuildExecutor()*Executor{
+func BuildExecutor(chUpdateOut chan Sol)*Executor{
   executor := new(Executor)
   executor.ActiveJobs = make(map[string]*Job)
+  executor.ChUpdateOut = chUpdateOut
   return executor
 }
 
@@ -50,14 +51,15 @@ func (self *Executor)StopJob(job string){
 // with its definition and data. If the job runs correctly, this methos
 // returns a JobChannels with the channels to communicate with the job;
 // otherwise nil.
-func (self *Executor)StartJob(hash,publicKey,jobpath,datapath string)*JobChannels{
-  job := BuildJob(jobpath,datapath)
+func (self *Executor)StartJob(hash,hashPrev,publicKey,
+      jobpath,datapath string)*JobChannels{
+  job := BuildJob(jobpath,datapath,self.ChUpdateOut,hash)
   if job==nil{ return nil }
-  go job.Execute(hash,publicKey)
+  self.ActiveJobs[hash] = job
+  go job.Execute(hashPrev,publicKey)
   chs := new(JobChannels)
   chs.ChNonce = job.ChNonce
   chs.ChUpdateIn = job.ChUpdateIn
-  chs.ChUpdateOut = job.ChUpdateOut
   return chs
 }
 
@@ -69,7 +71,6 @@ func (self *Executor)GetChannels(job string)*JobChannels{
     chs := new(JobChannels)
     chs.ChNonce = executing.ChNonce
     chs.ChUpdateIn = executing.ChUpdateIn
-    chs.ChUpdateOut = executing.ChUpdateOut
     return chs
   }
   return nil
@@ -78,24 +79,20 @@ func (self *Executor)GetChannels(job string)*JobChannels{
 // Change the hash of the block in the job's execution configuration,
 // so that the coefficients for the complexity are updated.
 // The solutions in ChNonce channel are resetted.
-func (self *Executor)ChangeBlockHashInJob(job,hash string){
-  // TODO: implement later
+func (self *Executor)ChangeBlockHashInJob(job,hashPrev,publicKey string){
+  if self.IsExecutingJob(job){
+    executing := self.ActiveJobs[job]
+    executing.ChangeBlockHash(hashPrev,publicKey)
+  }
 }
 
 // Sends a good solution to an active job so that it can include it
 // in his population.
-func (self *Executor)InjectSharedSolution(job string,sol Sol){
+func (self *Executor)InjectSharedSolution(job string,solSerialized []byte){
   chs := self.GetChannels(job)
   if chs!=nil{
+    sol := <-chs.ChNonce
+    sol.Individual.LoadFromSerialization(solSerialized)
     chs.ChUpdateIn <- sol
   }
-}
-
-// Returns the complete evaluation of a single solution candidate for
-// a job. Firstly, the job is built, then the solution evaluated with
-// miner's parameters, then the job is destryed and the evaluation returned.
-func EvaluateSingleSolution(hashBlock,publicKeyMiner,jobpath,datapath string,
-          indiv DNA)Sol{
-  var sol Sol
-  return sol// TODO: implement later
 }

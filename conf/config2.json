@@ -2,12 +2,12 @@
   "mainDataFolder": "/home/d33pblue/Documenti/uni/tesi/poedata/",
   "keyFolder": "keys/",
   "jobFolder": "jobs/",
-  "chainFolder": "chain6666/",
-  "key": "key0.pem",
-  "port": "6666",
+  "chainFolder": "chain6667/",
+  "key": "key2.pem",
+  "port": "6667",
   "miners": [
     "127.0.0.1:7777",
-    "127.0.0.1:6667",
+    "127.0.0.1:6666",
     "127.0.0.1:6668"
   ]
 }

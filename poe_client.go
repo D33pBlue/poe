@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: client.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-28
  * @Copyright: 2020
  */
 
@@ -64,8 +64,13 @@ func processOnWallet(cmd string,args []string,obj interface{})string{
     }
     fixedCost,advPrize := obj.(*wallet.Wallet).EstimateJobCost(args[0],args[1])
     return fmt.Sprintf("Fixed cost: %v\nMinimal prize: %v\nMin Total: %v",fixedCost,advPrize,fixedCost+advPrize)
+  case "jobs":
+    return obj.(*wallet.Wallet).GetSubmittedJobs()
   case "results":
-    return "results" // TODO: implement later
+    if len(args)!=1{
+      return "invalid arguments <job id>"
+    }
+    return obj.(*wallet.Wallet).FetchAndStoreResults(args[0])
   }
   return "invalid cmd"
 }

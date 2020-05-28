@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: solution.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-Apr-19
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -25,8 +25,12 @@ type Sol struct{
   IsEval bool
   Conf Config
   Gen int
+  HashUsed []byte
+  JobHash string // used only to share good solutions (to identify the job)
+  IsMin bool // used only to share good solutions; true <=> minimization problem
 }
 
+// Returns a deep copy instance of a Sol
 func (self Sol)DeepCopy()Sol {
   sol := new(Sol)
   sol.Individual = self.Individual.DeepCopy()
@@ -35,12 +39,26 @@ func (self Sol)DeepCopy()Sol {
   sol.IsEval = self.IsEval
   sol.Conf = self.Conf
   sol.Gen = self.Gen
+  sol.HashUsed = self.HashUsed
+  sol.JobHash = self.JobHash
   return *sol
 }
 
-func (self *Sol)eval(st *op.State){
+// Evaluates the individual stored in a Sol, saving its
+// Fitness and its Complexity.
+func (self *Sol)eval(st *op.State,blockHash []byte){
   st.Reset()
   self.Fitness = self.Individual.Evaluate(st)
   self.Complex = st.NumOperations()
   self.IsEval = true
+  self.HashUsed = blockHash
+}
+
+// This method is used only for testing; please use eval to evaluate a Sol.
+func (self *Sol)Eval2(st *op.State,blockHash []byte){
+  st.Reset()
+  self.Fitness = self.Individual.Evaluate(st)
+  self.Complex = st.NumOperations()
+  self.IsEval = true
+  self.HashUsed = blockHash
 }

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: config.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-25
  * @Copyright: 2020
  */
 
@@ -14,6 +14,7 @@ package ga
 
 import(
   "fmt"
+  "sync"
   "math/rand"
   "encoding/binary"
 )
@@ -32,6 +33,7 @@ type Config struct{
   Verbose int
   BlockHash []byte
   keepmining *bool
+  access_hash sync.Mutex
 }
 
 
@@ -41,7 +43,24 @@ func BuildBlockchainGAConfig(hash []byte,keepmining *bool,step int)*Config{
   conf := RandConf(x,0,step)
   conf.keepmining = keepmining
   conf.BlockHash = hash
+  conf.Verbose = 0
   return conf
+}
+
+func (self *Config)GetHash()[]byte{
+  self.access_hash.Lock()
+  var hash []byte
+  for i:=0;i<len(self.BlockHash);i++{
+    hash = append(hash,self.BlockHash[i])
+  }
+  self.access_hash.Unlock()
+  return hash
+}
+
+func (self *Config)ChangeHash(hash []byte){
+  self.access_hash.Lock()
+  self.BlockHash = hash
+  self.access_hash.Unlock()
 }
 
 // Change the current block's hash (useful to
@@ -73,11 +92,11 @@ func RandConf(x int64,gen,step int)*Config{
   conf.Miner = x
   conf.Gen = gen
   conf.Step = step
-  conf.NPop = prng.Intn(600)+100
+  conf.NPop = prng.Intn(600)+200
   conf.Pcross = prng.Float64()+0.0001
   conf.Pmut = prng.Float64()+0.0001
-  conf.Mu = prng.Intn(350)+50
-  conf.Lambda = prng.Intn(350)+50
+  conf.Mu = prng.Intn(350)+100
+  conf.Lambda = prng.Intn(350)+100
   conf.Verbose = 1
   return conf
 }

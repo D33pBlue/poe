@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-17
+ * @Last modified time: 2020-May-28
  * @Copyright: 2020
  */
 
@@ -18,6 +18,7 @@ import (
   "bufio"
   "strconv"
   "strings"
+  "errors"
   "io/ioutil"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/ga"
@@ -66,6 +67,8 @@ type Blockchain struct{
   currentTrChanges map[string]string
   executor *ga.Executor
   config *conf.Config
+  solutionToShare map[string]([]byte) // map the hash of the solution to the solution in []byte.
+  chGoodSolutions chan ga.Sol // channel to receive good solutions from Executor.
 }
 
 // This method load a serialized blockchain from file.
@@ -84,7 +87,9 @@ func LoadChainFromFolder(id utils.Addr,folder string,config *conf.Config)*Blockc
   chain.folder = folder
   chain.currentTrChanges = make(map[string]string)
   chain.Head = nil
-  chain.executor = ga.BuildExecutor()
+  chain.solutionToShare = make(map[string]([]byte))
+  chain.chGoodSolutions = make(chan ga.Sol,1000)
+  chain.executor = ga.BuildExecutor(chain.chGoodSolutions)
   chain.config = config
   var i int = 0
   fmt.Println("Loading chain from disk")
@@ -96,7 +101,7 @@ func LoadChainFromFolder(id utils.Addr,folder string,config *conf.Config)*Blockc
       fmt.Println(err)
       return nil
     }
-    b,hash := MarshalBlock(data)
+    b,hash := MarshalBlock(data,chain.config)
     if chain.Head!=nil && chain.Head.Hash!=hash{
       fmt.Println("Chain head not match")
       fmt.Println(chain.Head.Hash)
@@ -114,7 +119,7 @@ func LoadChainFromFolder(id utils.Addr,folder string,config *conf.Config)*Blockc
   }
   fmt.Println("Checking loaded chain")
   trChanges := make(map[string]string)
-  if !chain.Head.CheckStep2(&trChanges){ return nil }
+  if !chain.Head.CheckStep2(&trChanges,chain.config){ return nil }
   fmt.Println("Initializing chain")
   chain.applyTransactionsChanges(&trChanges)
   chain.Current = BuildBlock(id,chain.Head)
@@ -138,7 +143,9 @@ func NewBlockchain(id utils.Addr,folder string,config *conf.Config)*Blockchain{
   chain.internalMiniBlock = make(chan MexBlock)
   chain.miningstatus = make(chan bool)
   chain.Head = BuildFirstBlock(id)
-  chain.executor = ga.BuildExecutor()
+  chain.solutionToShare = make(map[string]([]byte))
+  chain.chGoodSolutions = make(chan ga.Sol,1000)
+  chain.executor = ga.BuildExecutor(chain.chGoodSolutions)
   chain.config = config
   chain.folder = folder
   chain.currentTrChanges = make(map[string]string)
@@ -206,11 +213,13 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
     select{
       case <-stop:// close message
         return
+      case sol := <-self.chGoodSolutions: // a good solution for a job has been found
+        self.processGoodSolutionFound(sol)
       case mex := <-self.internalBlock:// a block has been mined
         self.BlockOut <- mex
         self.startNewMiningProcess()
       case mex := <-self.BlockIn:// someone sent a block
-        block,hashPrev := MarshalBlock(mex.Data)
+        block,hashPrev := MarshalBlock(mex.Data,self.config)
         self.processIncomingBlock(block,hashPrev,mex.IpSender)
       case mex := <-self.TransQueue:// someone sent a transaction
         var transact Transaction
@@ -219,10 +228,12 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
           transact = MarshalStdTransaction(mex.Data)
         case TrJob:
           transact = MarshalJobTransaction(mex.Data)
-        // case TrSol:
-          // transact = MarshalSolTransaction(mex.Data)
-        // case TrRes:
-          // transact = MarshalResTransaction(mex.Data)
+        case TrSol:
+          transact = MarshalSolTransaction(mex.Data,self.config)
+        case TrRes:
+          transact = MarshalResTransaction(mex.Data)
+        // TrPrize and TrCoin are inserted by miners in blocks directly,
+        // thus they are not exchanged as single transaction.
         default:
           transact = nil
         }
@@ -239,7 +250,7 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
           self.access_data.Lock()
           block := self.Current
           self.access_data.Unlock()
-          block.AddMiniBlock(miniblock)
+          block.AddMiniBlock(miniblock,self.config)
         }
     }
   }
@@ -261,7 +272,7 @@ func (self *Blockchain)startNewMiningProcess(){
 
 // Ask another miner a block with a specific hash and returns
 // it or nil (in case of error).
-func askBlock(blockHash string,ipaddress string)(*Block,string){
+func askBlock(blockHash string,ipaddress string,config *conf.Config)(*Block,string){
   fmt.Println("asking for ",blockHash," to ",ipaddress)
   conn, err := net.Dial("tcp",ipaddress)
   if err!=nil{
@@ -272,7 +283,7 @@ func askBlock(blockHash string,ipaddress string)(*Block,string){
   if err2!=nil{
     fmt.Println(err2)
     return nil,"" }
-  return MarshalBlock([]byte(blockRaw))
+  return MarshalBlock([]byte(blockRaw),config)
 }
 
 // Checks the block and updates the blockchain.
@@ -298,13 +309,13 @@ func (self *Blockchain)processIncomingBlock(block *Block,
       b.Previous = existingBlock
       break
     }
-    b.Previous,hp = askBlock(hp,ipSender)
+    b.Previous,hp = askBlock(hp,ipSender,self.config)
     b = b.Previous
     savingPoint += 1
   }
   fmt.Println("chain has succeeded check step 1")
   transactionChanges := make(map[string]string)
-  if block.CheckStep2(&transactionChanges){// the the blockchain is valid
+  if block.CheckStep2(&transactionChanges,self.config){// the the blockchain is valid
     self.access_data.Lock()
     var replace bool = (block.LenSubChain>self.Head.LenSubChain)// || (
       // block.LenSubChain==self.Head.LenSubChain && block.NumJobs>self.Head.NumJobs))
@@ -313,7 +324,9 @@ func (self *Blockchain)processIncomingBlock(block *Block,
     if replace{
       // stop mining
       self.keepmining = false
+      fmt.Println("keepmining:",self.keepmining)
       <-self.miningstatus // wait mining ending
+      fmt.Println("Mining ended!")
       // update the blockchain with the new
       self.storeCurrentBlockAndCreateNew(block,savingPoint,&transactionChanges)
       // restart mining
@@ -349,6 +362,277 @@ func (self *Blockchain)storeCurrentBlockAndCreateNew(block *Block,
     if err!=nil{fmt.Println(err)}
     b = b.Previous
   }
+  self.checkJobsToClose()
+  self.discloseDeclaredSolutionsAndIntegrateShared()
+}
+
+// Checks if in the last block (self.Head) you published a ResTransaction and,
+// in case, publish now the corresponding SolTransaction.
+// The solutions should be stored in self.solutionToShare.
+// At the same time, checks if there are some shared solutions others
+// disclosed, and adds them in the population of the job.
+// This method is called inside self.access_data.Lock().
+func (self *Blockchain)discloseDeclaredSolutionsAndIntegrateShared(){
+  // loop through all transactions in Head and:
+  transactions := self.Head.Transactions.GetTransactionArray()
+  for i:=0;i<len(transactions);i++{
+    switch transactions[i].GetType() {
+    case TrRes:
+      if transactions[i].GetCreator()==self.id{
+        // disclose your solution
+        hashjob := transactions[i].(*ResTransaction).JobTrans
+        tr := MakeSolTransaction(self.id,self.config.GetPrivateKey(),
+              self.Head.GetHashCached(),transactions[i].GetHashCached(),
+              hashjob,self.solutionToShare[hashjob],self.config)
+        delete(self.solutionToShare,hashjob)
+        go self.propagateTransaction(tr)
+      }
+    case TrSol:
+      if transactions[i].GetCreator()!=self.id{
+        // integrate the solution from others
+        tr := transactions[i].(*SolTransaction)
+        hashJob := tr.JobTrans
+        self.executor.InjectSharedSolution(hashJob,tr.Solution)
+      }
+    }
+  }
+}
+
+// Decides to publish or not a solution in a ResTransaction and,
+// in case, creates and propagates the transaction
+func (self *Blockchain)processGoodSolutionFound(sol ga.Sol){
+  fmt.Println("Process good solution")
+  hashJob := sol.JobHash
+  self.access_data.Lock()
+  transactions := self.Current.Transactions.GetTransactionArray()
+  openJobs := self.Current.getOpenJobs()
+  self.access_data.Unlock()
+  // check if the job is open and get block of the JobTransaction
+  var open bool = false
+  var jobBlock string
+  for i:=0;i<len(openJobs);i++{
+    if openJobs[i].GetHashCached()==hashJob{
+      open = true
+      jobBlock = openJobs[i].blockContainer
+      break
+    }
+  }
+  if open==false{ return }
+  fmt.Println("The job is open")
+  // find the current best score for the current block
+  var bestScore float64
+  var first bool = true
+  var seen int = 0
+  for i:=0;i<len(transactions);i++{
+    if transactions[i].GetType()==TrSol{
+      solTr := transactions[i].(*SolTransaction)
+      if solTr.JobTrans==hashJob{
+        seen += 1
+        if first{
+          bk := self.Current.FindPrevBlock(solTr.ResBlock)
+          if bk!=nil{
+            resTr := bk.FindTransaction(solTr.ResTrans)
+            if resTr!=nil{
+              bestScore = resTr.(*ResTransaction).Evaluation
+              first = false
+            }
+          }
+        }else{// bestSol != nil
+          bk := self.Current.FindPrevBlock(solTr.ResBlock)
+          if bk!=nil{
+            resTr := bk.FindTransaction(solTr.ResTrans)
+            if resTr!=nil{
+              score := resTr.(*ResTransaction).Evaluation
+              if (sol.IsMin && score<bestScore)||(sol.IsMin==false && score>bestScore){
+                bestScore = score
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  fmt.Printf("Best score: %v your: %v\n",bestScore,sol.Fitness)
+  if (seen<=0)||(sol.IsMin && sol.Fitness<bestScore)||(sol.IsMin==false && sol.Fitness>bestScore){
+    // the solution is better than the current ones
+    fmt.Println("The solution is good")
+    // check if you possess enough money:
+    var amount int = GetResTransactionCost()
+    inps,tot := self.getUnspentCoin(amount)
+    if tot<amount { return }
+    fmt.Println("You have money")
+    // make ResTransaction
+    var out TrOutput
+    out.Address = self.id
+    out.Value = tot-amount // set back the remainder
+    hb := new(utils.HashBuilder)
+    serializedSol := sol.Individual.Serialize()
+    hb.Add(serializedSol)
+    hashSol := fmt.Sprintf("%x",hb.GetHash())
+    resTr := MakeResTransaction(self.id,self.config.GetPrivateKey(),
+          inps,out,jobBlock,hashJob,hashSol,sol.Fitness,sol.IsMin)
+    // update self.solutionToShare
+    self.solutionToShare[hashJob] = serializedSol
+    // propagate the ResTransaction
+    fmt.Println("Propagate")
+    go self.propagateTransaction(resTr)
+  }
+}
+
+// Searches backward in the chain some unspent TrOutputs untill an amount
+// is reached or the chain has been completely explored. If the amount
+// is covered a []TrInput is returned, with the total amount of money.
+func (self *Blockchain)getUnspentCoin(amount int)([]TrInput,int){
+  type TrINOUT struct{
+    In TrInput
+    Out TrOutput
+  }
+  b := self.Head
+  var spent []TrInput
+  var unspent []TrINOUT
+  for{
+    var usable []TrINOUT
+    if b==nil{ return nil,0 }
+    transactions := b.Transactions.GetTransactionArray()
+    for i:=0;i<len(transactions);i++{
+      switch transactions[i].GetType() {
+      case TrStd:
+        tr := transactions[i].(*StdTransaction)
+        if tr.Creator==self.id{
+          spent = append(spent,tr.Inputs...)
+        }
+        for j:=0;j<len(tr.Outputs);j++{
+          if tr.Outputs[j].Address==self.id{
+            var inout TrINOUT
+            inout.Out = tr.Outputs[j]
+            inout.In.Block = b.GetHashCached()
+            inout.In.ToSpend = tr.GetHashCached()
+            inout.In.Index = j
+            usable = append(usable,inout)
+          }
+        }
+      case TrCoin:
+        out := transactions[i].GetOutputAt(0)
+        if out.Address==self.id{
+          var inout TrINOUT
+          inout.Out.Address = out.Address
+          inout.Out.Value = out.Value
+          inout.Out.Address = out.Address
+          inout.In.Block = b.GetHashCached()
+          inout.In.ToSpend = transactions[i].GetHashCached()
+          inout.In.Index = 0
+          usable = append(usable,inout)
+        }
+      case TrJob:
+        tr := transactions[i].(*JobTransaction)
+        if tr.Creator==self.id{
+          spent = append(spent,tr.Inputs...)
+        }
+        if tr.Output.Address==self.id{
+          var inout TrINOUT
+          inout.Out = tr.Output
+          inout.In.Block = b.GetHashCached()
+          inout.In.ToSpend = tr.GetHashCached()
+          inout.In.Index = 0
+          usable = append(usable,inout)
+        }
+      case TrRes:
+        tr := transactions[i].(*ResTransaction)
+        if tr.Creator==self.id{
+          spent = append(spent,tr.Inputs...)
+        }
+        if tr.Output.Address==self.id{
+          var inout TrINOUT
+          inout.Out = tr.Output
+          inout.In.Block = b.GetHashCached()
+          inout.In.ToSpend = tr.GetHashCached()
+          inout.In.Index = 0
+          usable = append(usable,inout)
+        }
+      case TrPrize:
+        out := transactions[i].GetOutputAt(0)
+        if out.Address==self.id{
+          var inout TrINOUT
+          inout.Out.Address = out.Address
+          inout.Out.Value = out.Value
+          inout.Out.Address = out.Address
+          inout.In.Block = b.GetHashCached()
+          inout.In.ToSpend = transactions[i].GetHashCached()
+          inout.In.Index = 0
+          usable = append(usable,inout)
+        }
+      }
+    }
+    for i:=0;i<len(usable);i++{
+      valid := true
+      for j:=0;valid && j<len(spent);j++{
+        if (usable[i].In.Block==spent[j].Block &&
+            usable[i].In.ToSpend==spent[j].ToSpend &&
+            usable[i].In.Index==spent[j].Index){
+          valid = false
+          break
+        }
+      }
+      if valid{
+        if usable[i].Out.Value>=amount{
+          var result []TrInput
+          result = append(result,usable[i].In)
+          return result,usable[i].Out.Value
+        }else{
+          unspent = append(unspent,usable[i])
+          var tot int = 0
+          var result []TrInput
+          for k:=0;k<len(unspent);k++{
+            tot += unspent[k].Out.Value
+            result = append(result,unspent[k].In)
+          }
+          if tot>=amount{
+            return result,tot
+          }
+        }
+      }
+    }
+    b = b.Previous
+  }
+  return nil,0
+}
+
+// Sends a transaction to the miner itself (localhost:port)
+func (self *Blockchain)propagateTransaction(tr Transaction){
+  conn, err := net.Dial("tcp","127.0.0.1:"+self.config.Port)
+  if err!=nil{
+    fmt.Println(err)
+    return
+  }
+  fmt.Fprintf(conn,"transaction\n")
+  fmt.Fprintf(conn,tr.GetType()+"\n")
+  fmt.Fprintf(conn,string(tr.Serialize())+"\n")
+}
+
+// Checks if some of the jobs used in Head should stop and, in case,
+// stops their execution and clears the executor.
+// This method is called inside self.access_data.Lock().
+func (self *Blockchain)checkJobsToClose(){
+  oldJobs := self.Head.getOpenJobs() // Jobs that was open in the previous block
+  jobs := self.Current.getOpenJobs() // Jobs that are open in the current block
+  // find the jobs that need to be stopped:
+  var toClose []*JobTransaction
+  for i:=0;i<len(oldJobs);i++{
+    var ended bool = true
+    for j:=0;j<len(jobs);j++{
+      if oldJobs[i].GetHashCached()==jobs[j].GetHashCached(){
+        ended = false
+        break
+      }
+    }
+    if ended{
+      toClose = append(toClose,oldJobs[i])
+    }
+  }
+  // stop them
+  for i:=0;i<len(toClose);i++{
+    self.executor.StopJob(toClose[i].GetHashCached())
+  }
 }
 
 // Checks the validity of a new transaction and insert it
@@ -359,14 +643,28 @@ func (self *Blockchain)processIncomingTransaction(transaction Transaction) {
   if transaction.Check(self.Current,&trChanges){
     self.access_data.Lock()
     defer self.access_data.Unlock()
-    err := self.Current.AddTransaction(transaction)
-    if err!=nil{
-      fmt.Println(err)
-    }else{
-      fmt.Println("Transaction inserted in current block")
-      for k,v := range trChanges{
-        self.currentTrChanges[k] = v
+    // check double spending in current unmined block
+    var errDS error = nil
+    for k,_ := range trChanges{
+      if v2,ok := self.currentTrChanges[k]; ok{
+        if v2!=""{
+          errDS = errors.New("Double spending 3")
+          break
+        }
       }
+    }
+    if errDS==nil{
+      err := self.Current.AddTransaction(transaction)
+      if err!=nil{
+        fmt.Println(err)
+      }else{
+        fmt.Println("Transaction inserted in current block")
+        for k,v := range trChanges{
+          self.currentTrChanges[k] = v
+        }
+      }
+    }else{
+      fmt.Println(errDS)
     }
   }else{
     fmt.Println("Transaction not pass check")

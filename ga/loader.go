@@ -2,7 +2,7 @@
  * @Author: d33pblue
  * @Date:   2020-Apr-19
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-16
+ * @Last modified time: 2020-May-19
  * @Copyright: 2020
  */
 
@@ -130,7 +130,6 @@ func LoadGA(path2job,path2data string)(DNA,error){
   plugName := path2job[index+1:]
   index = strings.LastIndex(plugName,".")
   plugName = plugName[:index]
-  fmt.Println(plugDir,plugName)
   err := compilePlugin(plugDir,plugName)
   if err != nil { return nil,err}
   plug, err := plugin.Open(plugDir+plugName+".so")
