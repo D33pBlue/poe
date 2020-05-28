@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: conf.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-25
+ * @Last modified time: 2020-May-28
  * @Copyright: 2020
  */
 
@@ -64,6 +64,12 @@ func (self *Config)GetSuitablePathForJob(hash string)(string,string){
   dataPath := self.MainDataFolder+self.JobFolder+hash+"_data.json"
   return jobPath,dataPath
 }
+
+
+func (self *Config)GetSuitablePathForResults(jobind string)string{
+  return self.MainDataFolder+self.JobFolder+"Results_"+jobind+".json"
+}
+
 
 func (self *Config)GetPrivateKey()utils.Key{
   path := self.GetKeyPath()

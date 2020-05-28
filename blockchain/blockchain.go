@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: blockchain.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-27
+ * @Last modified time: 2020-May-28
  * @Copyright: 2020
  */
 
@@ -232,6 +232,8 @@ func (self *Blockchain)Communicate(id utils.Addr,stop chan bool){
           transact = MarshalSolTransaction(mex.Data,self.config)
         case TrRes:
           transact = MarshalResTransaction(mex.Data)
+        // TrPrize and TrCoin are inserted by miners in blocks directly,
+        // thus they are not exchanged as single transaction.
         default:
           transact = nil
         }

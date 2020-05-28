@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: transact_sol.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-27
+ * @Last modified time: 2020-May-28
  * @Copyright: 2020
  */
 
@@ -49,7 +49,7 @@ func MakeSolTransaction(creator utils.Addr,key utils.Key,
   tr.Hash = tr.GetHash()
   tr.Signature = fmt.Sprintf("%x",utils.GetSignatureFromHash(tr.Hash,key))
   tr.config = config
- return tr
+  return tr
 }
 
 // Check validate the transaction and update trChanges. The parameter block

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: wallet.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-23
+ * @Last modified time: 2020-May-28
  * @Copyright: 2020
  */
 
@@ -22,6 +22,7 @@ import (
   "bufio"
   "errors"
   "strconv"
+  "encoding/json"
   "github.com/D33pBlue/poe/utils"
   "github.com/D33pBlue/poe/conf"
   . "github.com/D33pBlue/poe/blockchain"
@@ -31,6 +32,13 @@ import (
 type WalletEntry struct{
   Value int
   Spendable TrInput
+}
+
+// Used to keep track of the solutions some miners have submitted.
+type Solution struct{
+  Job string
+  Solution []byte
+  Evaluation float64
 }
 
 // A Wallet collects the spendable transactions and can
@@ -47,6 +55,9 @@ type Wallet struct{
   Entries []WalletEntry // keep track of spendable transactions
   SeenBlocks []string // keep hashes of checked blocks
   config *conf.Config
+  jobsSubmitted []string
+  results map[string]float64
+  solutions []Solution
 }
 
 // Initializes a Wallet. If a non-empty path is given the public key
@@ -68,6 +79,7 @@ func New(config *conf.Config,ip string,trust bool)*Wallet{
     return nil
   }
   wallet.Id = utils.GetAddr(wallet.Key)
+  wallet.results = make(map[string]float64)
   return wallet
 }
 
@@ -81,7 +93,7 @@ func (self *Wallet)Update()error {
   data, err2 := reader.ReadString('\n')
   fmt.Printf("Received: %v",data)
   if err2!=nil{ return err2 }
-  head,prev := MarshalBlock([]byte(data))
+  head,prev := MarshalBlock([]byte(data),self.config)
   if head==nil{
     return errors.New("Unable to marshal block")
   }
@@ -137,9 +149,18 @@ func (self *Wallet)Update()error {
             coinTr.GetHashCached(),
             0,coinTr.Output.Value)
         }
+      case TrPrize:
+        prizeTr := transactions[j].(*PrizeTransaction)
+        if prizeTr.Output.Address==self.Id{
+          self.addSpendableTransaction(
+            unseenBlocks[i].GetHashCached(),
+            prizeTr.GetHashCached(),
+            0,prizeTr.Output.Value)
+        }
       case TrJob:
         jobTr := transactions[j].(*JobTransaction)
         if jobTr.GetCreator()==self.Id{
+          self.jobsSubmitted = append(self.jobsSubmitted,jobTr.GetHashCached())
           for k:=0;k<len(jobTr.Inputs);k++{
             self.removeSpentTransaction(
               jobTr.Inputs[k].Block,
@@ -153,10 +174,30 @@ func (self *Wallet)Update()error {
               jobTr.GetHashCached(),
               0,jobTr.Output.Value)
         }
-      // case TrSol:
-        // TODO: implement later
-      // case TrRes:
-        // TODO: implement later
+      case TrSol:
+        solTr := transactions[j].(*SolTransaction)
+        var sol Solution
+        sol.Job = solTr.JobTrans
+        sol.Solution = solTr.Solution
+        sol.Evaluation = self.results[solTr.ResTrans]
+        self.solutions = append(self.solutions,sol)
+      case TrRes:
+        resTr := transactions[j].(*ResTransaction)
+        self.results[resTr.GetHashCached()] = resTr.Evaluation
+        if resTr.GetCreator()==self.Id{
+          for k:=0;k<len(resTr.Inputs);k++{
+            self.removeSpentTransaction(
+              resTr.Inputs[k].Block,
+              resTr.Inputs[k].ToSpend,
+              resTr.Inputs[k].Index)
+          }
+        }
+        if resTr.Output.Address==self.Id{
+          self.addSpendableTransaction(
+              unseenBlocks[i].GetHashCached(),
+              resTr.GetHashCached(),
+              0,resTr.Output.Value)
+        }
       }
     }
   }
@@ -360,6 +401,45 @@ func generateKey(config *conf.Config)(utils.Key,error){
   return key,nil
 }
 
+
+// Returns the list of the jobs submitted with this address, with their IDs
+func (self *Wallet)GetSubmittedJobs()string{
+  self.Update()
+  var list string
+  if len(self.jobsSubmitted)<=0{
+    return "no jobs"
+  }
+  for i:=0;i<len(self.jobsSubmitted);i++{
+    list += strconv.Itoa(i)+"\t"+self.jobsSubmitted[i]+"\n"
+  }
+  return list
+}
+
+// Fetches the Blockchain searching for the solutions disclosed for a job,
+// and stores them in a file (if found).
+func (self *Wallet)FetchAndStoreResults(jobid string)string{
+  self.Update()
+  index,err := strconv.Atoi(jobid)
+  if err!=nil || index<0 || index>=len(self.jobsSubmitted){
+    return "Invalid job index. Use \"jobs\" to get the list of job's indexes"
+  }
+  hash := self.jobsSubmitted[index]
+  filename := self.config.GetSuitablePathForResults(jobid)
+  var results []Solution
+  for i:=0;i<len(self.solutions);i++{
+    if self.solutions[i].Job == hash{
+      results = append(results,self.solutions[i])
+    }
+  }
+  data, err := json.Marshal(results)
+  if err != nil {
+    fmt.Println(err)
+  }
+  err2 := ioutil.WriteFile(filename,data, 0644)
+  if err2!=nil{fmt.Println(err2)}
+  return "Results stored in "+filename
+}
+
 // Loads from file a couple of public and private keys.
 func loadKey(path string)(utils.Key,error){
   data, err := ioutil.ReadFile(path)
@@ -398,7 +478,7 @@ func (self *Wallet)askBlock(blockHash string,ipaddress string)(*Block,string){
   if err2!=nil{
     fmt.Println(err2)
     return nil,"" }
-  return MarshalBlock([]byte(blockRaw))
+  return MarshalBlock([]byte(blockRaw),self.config)
 }
 
 // Checks the received unseen blocks

@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-27
+ * @Last modified time: 2020-May-28
  * @Copyright: 2020
  */
 
@@ -116,7 +116,7 @@ func (self *Block)FindPrevBlock(hash string)*Block{
   return nil
 }
 
-// TODO: improve efficiency
+
 // Returns (if exists) the transaction in this block with
 // a specific hash, or nil
 func (self *Block)FindTransaction(hash string)Transaction{
@@ -283,8 +283,7 @@ func (self *Block)mineWithJobs(id utils.Addr,keepmining *bool,
     }
   }
   fmt.Println("End/stop mining (miniblocks)")
-  //
-  // where to stop jobs from executor when the slot expires??
+  // the jobs in executor are stopped when the slot expires by the blockchain
 }
 
 // Adds all prizes for the solutions of the previous block
@@ -317,10 +316,83 @@ func (self *Block)assignPrizes(){
       if prize<=0{
         break
       }else{
-        // TODO: make PrizeTransaction
+        tr := MakePrizeTransaction(solutions[k][i].Creator,prize,
+              self.Previous.GetHashCached(),
+              solutions[k][i].GetHashCached(),resTr.JobTrans)
+        self.AddTransaction(tr)
       }
     }
   }
+}
+
+// Returns true iff the block contains the right prizes: a prize with a
+// suitable amount of money for each top-fitness solution shared.
+func (self *Block)checkPrizes()bool{
+  if self.Previous == nil{
+    // if there is no previous block there must be 0 PrizeTransactions.
+    transactions := self.Transactions.GetTransactionArray()
+    for i:=0;i<len(transactions);i++{
+      if transactions[i].GetType()==TrPrize{
+        return false
+      }
+    }
+    return true
+  }
+  transactions := self.Previous.Transactions.GetTransactionArray()
+  solutions := make(map[string]([]*SolTransaction))
+  // collect all the solutions submitted in the previous block
+  for i:=0;i<len(transactions);i++{
+    if transactions[i].GetType()==TrSol{
+      tr := transactions[i].(*SolTransaction)
+      solutions[tr.JobTrans] = append(solutions[tr.JobTrans],tr)
+    }
+  }
+  prizeTargets := make(map[string]int)// target money for each miner
+  // sort the solutions by the fitness score for each job
+  for k,_ := range solutions{
+    sort.SliceStable(solutions[k], func(i, j int) bool {
+      res_i := self.Previous.Previous.FindTransaction(solutions[k][i].ResTrans).(*ResTransaction)
+      res_j := self.Previous.Previous.FindTransaction(solutions[k][j].ResTrans).(*ResTransaction)
+      isMin := res_i.IsMin
+      if isMin{
+        return res_i.Evaluation < res_j.Evaluation
+      }
+      return  res_i.Evaluation > res_j.Evaluation })
+    resTr := self.Previous.Previous.FindTransaction(solutions[k][0].ResTrans).(*ResTransaction)
+    jobBlock := self.FindPrevBlock(resTr.JobBlock)
+    jobTr := jobBlock.FindTransaction(resTr.JobTrans).(*JobTransaction)
+    for i:=0;i<len(solutions[k]);i++{
+      prize := jobTr.GetSharingBlockPrize(i+1)
+      mnr := string(solutions[k][i].GetCreator())
+      if _,ok := prizeTargets[mnr];ok{
+        prizeTargets[mnr] += prize
+      }else{
+        prizeTargets[mnr] = prize
+      }
+    }
+  }
+  prizePaid := make(map[string]int)// paid money for each miner
+  transactions2 := self.Transactions.GetTransactionArray()
+  for i:=0;i<len(transactions2);i++{
+    if transactions2[i].GetType()==TrPrize{
+      tr := transactions2[i].(*PrizeTransaction)
+      mnr := string(tr.Output.Address)
+      prize := tr.Output.Value
+      if _,ok := prizePaid[mnr];ok{
+        prizePaid[mnr] += prize
+      }else{
+        prizePaid[mnr] = prize
+      }
+    }
+  }
+  for k,v := range prizeTargets{
+    if prizePaid[k]!=v{
+      fmt.Println(k)
+      fmt.Printf("[%v] Wrong prize: received %v instead of %v\n",self.GetBlockIndex(),prizePaid[k],v)
+      return false
+    }
+  }
+  return true
 }
 
 // The mining process without jobs => PoW.
@@ -442,11 +514,6 @@ func (self *Block)CheckStep2(transactionChanges *map[string]string,config *conf.
     fmt.Println("fail in transactions")
     return false
   }
-  //
-  //
-  // TODO: add check of the prizes!!
-  //
-  //
   self.checked = true
   return true
 }
@@ -578,6 +645,10 @@ func (self *Block)checkTransactions(transactionChanges *map[string]string)bool{
       fmt.Println("Wrong number of CoinTransaction",len(minersCoin))
       return false
     }
+  }
+  if !self.checkPrizes(){
+    fmt.Println("Error in prize assignation")
+    return false
   }
   return true
 }
