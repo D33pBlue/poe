@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: block.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-28
+ * @Last modified time: 2020-May-29
  * @Copyright: 2020
  */
 
@@ -427,7 +427,7 @@ func (self *Block)AddTransaction(transact Transaction)error{
   return nil
 }
 
-
+// Checks the validity of a MiniBlock and stores it in the blockchain.
 func (self *Block)AddMiniBlock(miniblock *MiniBlock,config *conf.Config){
   // check MiniBlock
   if !miniblock.CheckStep1(self.Previous.Hash){
@@ -442,6 +442,9 @@ func (self *Block)AddMiniBlock(miniblock *MiniBlock,config *conf.Config){
   fmt.Println("Incoming miniblock processed.")
 }
 
+// Insert a miniblock in the current block, if the block is not yet mined.
+// The MiniBlock should be mined correctly because a CoinTransaction is also
+// inserted to pay the miner, but the MiniBlock is not checked.
 func (self *Block)storeMiniblockInBlock(miniblock *MiniBlock){
   self.access_data.Lock()
   if self.mined{
@@ -682,6 +685,8 @@ func (self *Block)getOpenJobs()[]*JobTransaction{
   return self.jobs
 }
 
+// Returns a list with all the JobTransaction that defines the
+// jobs that shuld be used to mine this block.
 func (self *Block)getJobsForThisBlock()[]*JobTransaction{
   jobtrans := self.getOpenJobs()
   var jobs []*JobTransaction
