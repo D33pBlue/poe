@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: std_trans.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-27
+ * @Last modified time: 2020-May-29
  * @Copyright: 2020
  */
 
@@ -67,7 +67,7 @@ func GetJobFixedCost(job,data string,url bool)int{
   var datacoeff float64 = jobcoeff*2
   var urlcoeff float64 = 0
   if url{
-    datacoeff = datacoeff*0.5
+    datacoeff = datacoeff*0.1
     urlcoeff = 10
   }
   tot := jobcoeff*float64(len(job))+datacoeff*float64(len(data))+urlcoeff
@@ -208,11 +208,8 @@ func (self *JobTransaction)SaveDataInFile(path string)error{
     data,err = hex.DecodeString(self.Data)
     if err!=nil{ return err }
   }else{
-    //
-    //
-    // TODO: download the data from url
-    //
-    //
+    // download the data from url
+    return utils.DownloadFile(self.DataUrl,path)
   }
   return ioutil.WriteFile(path, data, 0644)
 }
@@ -284,6 +281,7 @@ func MarshalJobTransaction(data []byte)*JobTransaction{
   json.Unmarshal(objmap["Output"],&tr.Output)
   json.Unmarshal(objmap["Job"],&tr.Job)
   json.Unmarshal(objmap["Data"],&tr.Data)
+  json.Unmarshal(objmap["DataUrl"],&tr.DataUrl)
   json.Unmarshal(objmap["Prize"],&tr.Prize)
   json.Unmarshal(objmap["Creator"],&tr.Creator)
   json.Unmarshal(objmap["Hash"],&tr.Hash)
