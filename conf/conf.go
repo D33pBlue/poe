@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: conf.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-28
+ * @Last modified time: 2020-Jun-27
  * @Copyright: 2020
  */
 
@@ -31,19 +31,21 @@ type Config struct{
 }
 
 
-func LoadConfiguration(file string)(*Config,error) {
+func LoadConfiguration(file,mode string)(*Config,error) {
   // Load and parse config file
   config := new(Config)
   dat, err := ioutil.ReadFile(file)
   if err != nil { return nil,err }
   err = json.Unmarshal([]byte(dat), config)
   if err != nil { return nil,err }
-  // check and load public key
-  err2 := config.loadPublicKey(config.MainDataFolder+config.KeyFolder+config.Key)
-  if err2 != nil { return nil,err2 }
-  // check numeric port
-  _,err3 := strconv.Atoi(config.Port)
-  if err3!=nil{ return nil,err3 }
+  if mode!="genkey"{
+    // check and load public key
+    err2 := config.loadPublicKey(config.MainDataFolder+config.KeyFolder+config.Key)
+    if err2 != nil { return nil,err2 }
+    // check numeric port
+    _,err3 := strconv.Atoi(config.Port)
+    if err3!=nil{ return nil,err3 }
+  }
   return config,nil
 }
 

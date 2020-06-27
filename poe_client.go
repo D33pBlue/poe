@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: client.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-28
+ * @Last modified time: 2020-Jun-27
  * @Copyright: 2020
  */
 
@@ -90,7 +90,7 @@ func main()  {
   trusted := flag.Bool("trusted",true,"Set to true only if the miner is trusted")
   configFile := flag.String("conf","conf/config0.json","path to the config file")
   flag.Parse()
-  config,err := conf.LoadConfiguration(*configFile)
+  config,err := conf.LoadConfiguration(*configFile,*mode)
   if err!=nil{
     fmt.Println(err)
     return

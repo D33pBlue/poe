@@ -4,7 +4,7 @@
  * @Project: Proof of Evolution
  * @Filename: poe.go
  * @Last modified by:   d33pblue
- * @Last modified time: 2020-May-10
+ * @Last modified time: 2020-Jun-27
  * @Copyright: 2020
  */
 
@@ -62,7 +62,7 @@ func main()  {
   fmt.Println("---- Proof of Evolution Blockchain ----\n")
   configFile := flag.String("conf","conf/config0.json","path to the config file")
   flag.Parse()
-  config,err := conf.LoadConfiguration(*configFile)
+  config,err := conf.LoadConfiguration(*configFile,"")
   if err!=nil{
     fmt.Println(err)
     return
